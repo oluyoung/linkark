@@ -2,8 +2,13 @@ import Image from 'next/image';
 import Logo from '@/app/components/Logo';
 import FeedbackForm from '@/app/components/FeedbackForm';
 import SignIn from '@/app/components/SignInButton';
+import { getServerSession } from 'next-auth';
+import { redirect } from 'next/navigation';
 
 export default async function Home() {
+  const session = await getServerSession();
+  if (session && session.user) redirect('/home');
+
   return (
     <main className="mx-auto w-100">
       <div className="w-100 text-center py-16 bg-black flex justify-center">
