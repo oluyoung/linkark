@@ -12,17 +12,17 @@ export const authOptions = {
         return {
           id: profile.id.toString(),
           email: profile.email,
-          name: profile.name ?? profile.login
+          name: profile.name ?? profile.login,
         };
-      }
-    })
+      },
+    }),
   ],
   callbacks: {
-    async signIn({ user, account, email, credentials }) {
+    async signIn({ user, account }) {
       if (account?.provider) await findOrCreateSocialUser(user, account);
       return true;
-    }
-  }
+    },
+  },
 } satisfies NextAuthOptions;
 
 export const handler = NextAuth(authOptions);

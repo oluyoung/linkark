@@ -1,6 +1,6 @@
 'use client';
 
-import { signIn } from "next-auth/react";
+import { signIn } from 'next-auth/react';
 import clsx from 'clsx';
 
 interface SignInButtonProps {
@@ -9,11 +9,24 @@ interface SignInButtonProps {
   isLoggedIn?: boolean;
 }
 
-function SignIn({ title = 'Login', size = 'sm', isLoggedIn = false }: SignInButtonProps) {
+function SignIn({
+  title = 'Login',
+  size = 'sm',
+  isLoggedIn = false,
+}: SignInButtonProps) {
   return (
     <>
       {isLoggedIn ? null : (
-        <button className={clsx('bg-blue-500 text-white py-2 rounded-full', { 'text-sm px-4': size === 'sm', 'px-6': size === 'md', 'text-md px-10': size === 'lg' })} onClick={() => signIn()}>{title}</button>
+        <button
+          className={clsx('bg-blue-500 text-white py-2 rounded-full', {
+            'text-sm px-4': size === 'sm',
+            'px-6': size === 'md',
+            'text-md px-10': size === 'lg',
+          })}
+          onClick={() => signIn()}
+        >
+          {title}
+        </button>
       )}
     </>
   );

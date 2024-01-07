@@ -10,11 +10,7 @@ async function Links() {
   const session = await getServerSession();
   if (!session || !session.user) redirect('/api/auth/signin');
 
-  return (
-    <div>
-      Links
-    </div>
-  );
+  return <div>Links</div>;
 }
 
 export default Links;
