@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { getServerSession } from 'next-auth';
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 import SessionProvider from './components/SessionProvider';
 import Header from './components/Header';
 import './globals.css';
@@ -23,8 +24,10 @@ export default async function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <SessionProvider session={session}>
-          <Header />
-          {children}
+          <AppRouterCacheProvider>
+            <Header />
+            {children}
+          </AppRouterCacheProvider>
         </SessionProvider>
       </body>
     </html>
