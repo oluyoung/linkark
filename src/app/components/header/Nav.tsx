@@ -1,6 +1,16 @@
 'use client';
 
-import { useMediaQuery, Box, SwipeableDrawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
+import {
+  useMediaQuery,
+  Box,
+  SwipeableDrawer,
+  List,
+  ListItem,
+  ListItemButton,
+  Typography
+} from '@mui/material';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { drawerWidth, navItems } from '../home/Nav';
 
 interface NavProps {
@@ -10,6 +20,7 @@ interface NavProps {
 }
 
 function Nav({ open, onOpen, onClose }: NavProps) {
+  const pathname = usePathname();
   const smScreenWidthMatches = useMediaQuery('(max-width:1024px)');
 
   return (
@@ -23,18 +34,38 @@ function Nav({ open, onOpen, onClose }: NavProps) {
       }}
       sx={{
         display: smScreenWidthMatches ? 'block' : 'none',
-        width: { sm: drawerWidth, xs: '100vw' }, flexShrink: { sm: 0 },
+        width: { sm: drawerWidth, xs: '100vw' },
+        flexShrink: { sm: 0 },
       }}
     >
-      <Box role="presentation" component="nav" sx={{ width: { sm: drawerWidth, xs: '100vw' } }}>
-        <List>
+      <Box role="presentation" sx={{ width: { sm: drawerWidth, xs: '100vw' } }}>
+        <List component="nav">
           {navItems.map((item) => (
-            <ListItem key={item.title} disablePadding>
-              <ListItemButton href={item.href} title={item.title}>
-                <ListItemIcon>
-                  <item.Icon />
-                </ListItemIcon>
-                <ListItemText primary={item.title} />
+            <ListItem
+              key={item.title}
+              sx={({ spacing }) => ({ p: spacing(0, 1) })}
+            >
+              <ListItemButton
+                href={item.href}
+                component={Link}
+                title={item.title}
+                selected={pathname.startsWith(item.href)}
+                sx={({ spacing, palette }) => ({
+                  py: spacing(1.5),
+                  '&.Mui-selected': {
+                    color: palette.primary.main,
+                  },
+                })}
+              >
+                <item.Icon />
+                <Typography
+                  component="span"
+                  fontFamily="inherit"
+                  ml={1.5}
+                  display="inline-block"
+                >
+                  {item.title}
+                </Typography>
               </ListItemButton>
             </ListItem>
           ))}

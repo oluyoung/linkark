@@ -2,8 +2,9 @@ import { Fragment } from 'react';
 import Nav from '@/app/components/home/Nav';
 import { redirect } from 'next/navigation';
 import { getServerSession } from 'next-auth';
+import Main from './Main';
 
-async function layout({ children }: { children: React.ReactNode; }) {
+async function layout({ children }: { children: React.ReactNode }) {
   const session = await getServerSession();
 
   if (!session || !session.user) redirect('/api/auth/signin');
@@ -11,7 +12,7 @@ async function layout({ children }: { children: React.ReactNode; }) {
   return (
     <Fragment>
       <Nav />
-      {children}
+      <Main>{children}</Main>
     </Fragment>
   );
 }

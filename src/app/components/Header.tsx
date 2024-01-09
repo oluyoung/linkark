@@ -21,10 +21,17 @@ function Header() {
   const isLanding = path === '/' && !session;
   const isLoggedIn = !!session && !!session?.user?.name;
 
-  const toggleDrawer = (open_: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
-    if (event && event.type === 'keydown' && ((event as React.KeyboardEvent).key === 'Tab' || (event as React.KeyboardEvent).key === 'Shift')) return;
-    setOpen(open_);
-  };
+  const toggleDrawer =
+    (open_: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
+      if (
+        event &&
+        event.type === 'keydown' &&
+        ((event as React.KeyboardEvent).key === 'Tab' ||
+          (event as React.KeyboardEvent).key === 'Shift')
+      )
+        return;
+      setOpen(open_);
+    };
 
   return (
     <header className={clsx('flex justify-center', { 'bg-black': isLanding })}>
@@ -33,10 +40,16 @@ function Header() {
           <IconButton onClick={toggleDrawer(true)}>
             <MenuIcon />
           </IconButton>
-          <Nav open={open} onClose={toggleDrawer(false)} onOpen={toggleDrawer(true)} />
+          <Nav
+            open={open}
+            onClose={toggleDrawer(false)}
+            onOpen={toggleDrawer(true)}
+          />
         </>
       ) : null}
-      <div className={clsx('flex justify-between items-center px-6 py-4 w-full')}>
+      <div
+        className={clsx('flex justify-between items-center px-6 py-4 w-full')}
+      >
         <Logo shade={isLanding ? 'light' : 'dark'} />
         <div className="flex space-x-4">
           <SignIn isLoggedIn={isLoggedIn} />

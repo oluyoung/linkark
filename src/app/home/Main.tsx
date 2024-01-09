@@ -7,7 +7,9 @@ import { drawerWidth } from '@/app/components/home/Nav';
 
 const headerHeight = '68px';
 
-const MainStyled = styled('main', { shouldForwardProp: (prop) => prop !== 'mobile' })<{
+const MainStyled = styled('main', {
+  shouldForwardProp: (prop) => prop !== 'mobile',
+})<{
   mobile?: boolean;
 }>(({ theme, mobile }) => ({
   transition: theme.transitions.create('margin', {
@@ -25,12 +27,14 @@ const MainStyled = styled('main', { shouldForwardProp: (prop) => prop !== 'mobil
   }),
 }));
 
-
-function Main({ children }: { children: React.ReactNode; }) {
+function Main({ children }: { children: React.ReactNode }) {
   const smScreenWidthMatches = useMediaQuery('(max-width:1024px)');
 
   return (
-    <MainStyled className="bg-gray-100 flex items-center justify-center grow" mobile={smScreenWidthMatches}>
+    <MainStyled
+      className="bg-gray-100 flex items-center justify-center grow"
+      mobile={smScreenWidthMatches}
+    >
       {children}
     </MainStyled>
   );
