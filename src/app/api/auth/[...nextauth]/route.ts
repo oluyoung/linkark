@@ -1,9 +1,12 @@
 import NextAuth from 'next-auth';
 import type { NextAuthOptions } from 'next-auth';
+import { Adapter } from 'next-auth/adapters';
 import GithubProvider, { GithubProfile } from 'next-auth/providers/github';
-import { findOrCreateSocialUser } from '../utils';
+import { PrismaAdapter } from '@auth/prisma-adapter';
+import prismaClient from '@/app/db/prisma-client';
 
 export const authOptions = {
+  adapter: PrismaAdapter(prismaClient) as Adapter,
   providers: [
     GithubProvider({
       clientId: process.env.GITHUB_CLIENT_ID as string,
@@ -17,11 +20,16 @@ export const authOptions = {
       },
     }),
   ],
+  debug: process.env.NODE_ENV === "development",
+  session: {
+    strategy: "jwt"
+  },
+  secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
-    async signIn({ user, account }) {
-      if (account?.provider) await findOrCreateSocialUser(user, account);
-      return true;
-    },
+    async session({ session, token, user }) {
+      if (token) session.user.id = token.sub;
+      return session;
+    }
   },
 } satisfies NextAuthOptions;
 

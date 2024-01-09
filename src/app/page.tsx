@@ -7,7 +7,7 @@ import { redirect } from 'next/navigation';
 
 export default async function Home() {
   const session = await getServerSession();
-  if (session && session.user) redirect('/home');
+  if (session && session.user) redirect('/home/links');
 
   return (
     <main className="mx-auto w-100">

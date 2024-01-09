@@ -1,17 +1,12 @@
-import { redirect } from 'next/navigation';
-import { getServerSession } from 'next-auth';
 import { Metadata } from 'next';
 import LinkIcon from '@mui/icons-material/Link';
 import Fab from '@mui/material/Fab';
 
 export const metadata: Metadata = {
-  title: 'Home | LinkMe',
+  title: 'All Links | LinkMe',
 };
 
-async function Home() {
-  const session = await getServerSession();
-  if (!session || !session.user) redirect('/api/auth/signin');
-
+async function page() {
   return (
     <>
       <div className="text-center flex justify-center items-center flex-col flex-nowrap">
@@ -38,4 +33,4 @@ async function Home() {
   );
 }
 
-export default Home;
+export default page;
