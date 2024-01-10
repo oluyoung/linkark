@@ -35,5 +35,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+## Custom
 .env
 .db
+src/app/home/seed
