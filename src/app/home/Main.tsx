@@ -32,7 +32,7 @@ function Main({ children }: { children: React.ReactNode }) {
 
   return (
     <MainStyled
-      className="bg-gray-100 flex items-center justify-center grow"
+      className="bg-gray-100 flex flex-col items-center justify-center flex-wrap grow"
       mobile={smScreenWidthMatches}
     >
       {children}
