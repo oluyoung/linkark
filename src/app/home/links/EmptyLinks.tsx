@@ -9,10 +9,8 @@ function EmptyLinks() {
           sx={{ width: '75px', height: '75px', transform: 'rotate(-30deg)' }}
         />
       </div>
-      <div className="mb-6 text-gray-600">
-        <p>No links saved yet</p>
-        <p>Click on the &apos;+&apos; below to add a link</p>
-      </div>
+      <p className="text-gray-600">No links saved yet</p>
+      <p className="text-gray-600">Click on the &apos;+&apos; below to add a link</p>
     </div>
   );
 }
