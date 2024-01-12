@@ -11,6 +11,8 @@ import SignIn from './SignInButton';
 import SignOut from './SignOutButton';
 import clsx from 'clsx';
 
+export const headerHeight = '52px';
+
 function Header() {
   const smScreenWidthMatches = useMediaQuery('(max-width:1024px)');
   const { data: session } = useSession();
@@ -47,9 +49,7 @@ function Header() {
           />
         </>
       ) : null}
-      <div
-        className={clsx('flex justify-between items-center px-6 py-4 w-full')}
-      >
+      <div className={clsx('flex justify-between items-center px-6 py-2 w-full')}>
         <Logo shade={isLanding ? 'light' : 'dark'} />
         <div className="flex space-x-4">
           <SignIn isLoggedIn={isLoggedIn} />

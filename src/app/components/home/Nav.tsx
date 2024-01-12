@@ -15,9 +15,9 @@ import LinkIcon from '@mui/icons-material/Link';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined';
+import { headerHeight } from '@/app/components/Header';
 
 export const drawerWidth = 250;
-export const headerHeight = '68px';
 
 export const navItems = [
   {

@@ -4,8 +4,7 @@ import React from 'react';
 import { useMediaQuery } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { drawerWidth } from '@/app/components/home/Nav';
-
-const headerHeight = '68px';
+import { headerHeight } from '@/app/components/Header';
 
 const MainStyled = styled('main', {
   shouldForwardProp: (prop) => prop !== 'mobile',
@@ -32,7 +31,7 @@ function Main({ children }: { children: React.ReactNode }) {
 
   return (
     <MainStyled
-      className="bg-gray-100 flex flex-col items-center justify-center flex-wrap grow"
+      className="bg-gray-100 flex flex-col items-center grow"
       mobile={smScreenWidthMatches}
     >
       {children}

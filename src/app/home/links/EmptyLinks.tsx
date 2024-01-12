@@ -2,7 +2,7 @@ import LinkIcon from '@mui/icons-material/Link';
 
 function EmptyLinks() {
   return (
-    <div className="text-center flex justify-center items-center flex-col flex-nowrap">
+    <div className="h-full flex flex-col justify-center items-center" id="empty-links">
       <div className="mb-4 text-blue-500">
         <LinkIcon
           color="inherit"
@@ -14,7 +14,7 @@ function EmptyLinks() {
         <p>Click on the &apos;+&apos; below to add a link</p>
       </div>
     </div>
-  )
+  );
 }
 
 export default EmptyLinks;

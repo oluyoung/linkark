@@ -1,7 +1,9 @@
 import { Metadata } from 'next';
+import { Suspense } from 'react';
 import Fab from '@mui/material/Fab';
 import clsx from 'clsx';
 import LinksList from './LinksList';
+import LinksSkeleton from './LinksSkeleton';
 
 export const metadata: Metadata = {
   title: 'All Links | LinkMe',
@@ -13,13 +15,13 @@ export const metadata: Metadata = {
 async function page() {
   return (
     <>
-      <div className="text-center flex justify-center items-center flex-col flex-nowrap">
+      <Suspense fallback={<LinksSkeleton />}>
         <LinksList />
-      </div>
+      </Suspense>
       <Fab
         variant="extended"
         color="primary"
-        className="!absolute bottom-[16px] right-[16px]"
+        className="!fixed bottom-[16px] right-[16px]"
       >
         ADD LINK
         <span className="ml-2">+</span>
