@@ -1,25 +1,20 @@
 import { Metadata } from 'next';
-import LinkIcon from '@mui/icons-material/Link';
 import Fab from '@mui/material/Fab';
+import clsx from 'clsx';
+import LinksList from './LinksList';
 
 export const metadata: Metadata = {
   title: 'All Links | LinkMe',
 };
 
+// if not empty add classes to keep it at top with padding
+// if empty then display empty as centered
+
 async function page() {
   return (
     <>
       <div className="text-center flex justify-center items-center flex-col flex-nowrap">
-        <div className="mb-4 text-blue-500">
-          <LinkIcon
-            color="inherit"
-            sx={{ width: '75px', height: '75px', transform: 'rotate(-30deg)' }}
-          />
-        </div>
-        <div className="mb-6 text-gray-600">
-          <p>No links saved yet</p>
-          <p>Click on the &apos;+&apos; below to add a link</p>
-        </div>
+        <LinksList />
       </div>
       <Fab
         variant="extended"
