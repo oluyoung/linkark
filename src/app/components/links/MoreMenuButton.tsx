@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, MouseEvent, Fragment } from 'react';
+import { useState, MouseEvent } from 'react';
 import { IconButton, Divider, Menu, MenuItem } from '@mui/material';
 import { styled, alpha } from '@mui/material';
 import { MenuProps } from '@mui/material/Menu';
@@ -12,17 +12,17 @@ import DeleteIcon from '@mui/icons-material/Delete';
 const menuItems = [
   {
     Icon: EditIcon,
-    text: 'Edit'
+    text: 'Edit',
   },
   {
     Icon: ContentCopyIcon,
-    text: 'Copy'
+    text: 'Copy',
   },
   {
     Icon: DeleteIcon,
     text: 'Delete',
-    noDivider: true
-  }
+    noDivider: true,
+  },
 ];
 
 const StyledMenu = styled((props: MenuProps) => (
@@ -43,14 +43,16 @@ const StyledMenu = styled((props: MenuProps) => (
     borderRadius: 6,
     minWidth: 100,
     color:
-      theme.palette.mode === 'light' ? 'rgb(55, 65, 81)' : theme.palette.grey[300],
+      theme.palette.mode === 'light'
+        ? 'rgb(55, 65, 81)'
+        : theme.palette.grey[300],
     boxShadow:
       'rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px',
     '& .MuiMenu-list': {
       padding: 0,
     },
     '& .MuiDivider-root': {
-      margin: 0
+      margin: 0,
     },
     '& .MuiMenuItem-root': {
       fontFamily: 'inherit',
@@ -62,14 +64,15 @@ const StyledMenu = styled((props: MenuProps) => (
       '&:active': {
         backgroundColor: alpha(
           theme.palette.primary.main,
-          theme.palette.action.selectedOpacity,
+          theme.palette.action.selectedOpacity
         ),
       },
     },
   },
 }));
 
-function MoreMenuButton({ id }: { id: string; }) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function MoreMenuButton({ id }: { id: string }) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
