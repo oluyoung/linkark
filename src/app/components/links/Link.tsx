@@ -25,7 +25,7 @@ function Link({ link }: { link: LinkModel }) {
           </div>
           <div className="flex flex-col items-end justify-between h-full">
             <p className="text-gray-400 text-sm">{format(link.createdAt, 'dd MMM yy')}</p>
-            <MoreMenuButton id={link.id} />
+            <MoreMenuButton link={link} />
           </div>
       </div>
     </div>

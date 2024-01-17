@@ -39,45 +39,6 @@ const LinkSchema = z.object({
   tags: z.array(z.string().cuid()).optional(), // use mui/chip to add tags and pass the cuids
 });
 
-async function getLinkMetadata(url_: string): Promise<Omit<Link, 'id' | 'createdAt' | 'updatedAt' | 'title' | 'description' | 'creatorId'> | undefined> {
-  try {
-    const url = new URL(url_);
-
-    // this is written this away so errors fail silently
-    const ogsResult = await ogs({ url: url_ }).then((res) => res).catch(error => error);
-
-    let ogTitle, ogType, ogUrl, ogDescription;
-
-    if (ogsResult) {
-      if (ogsResult.error) {
-        // Only care if the url does not exist
-        if (ogsResult.result.error === 'Page not found') throw new Error('This URL does not exist');
-        // Log error if needed
-        // else console.error(ogsResult.result)
-     } else {
-        ogTitle = ogsResult.result.ogTitle;
-        ogType = ogsResult.result.ogType;
-        ogUrl = ogsResult.result.ogUrl,
-        ogDescription = ogsResult.result.ogDescription;
-      }
-    }
-
-    return {
-      origin: url.origin,
-      hostname: url.hostname,
-      path: url.pathname,
-      query: url.search,
-      rawUrl: url.href,
-      ogTitle,
-      ogDescription,
-      ogType,
-      ogUrl
-    };
-  } catch (error) {
-    console.error(error);
-  }
-}
-
 export async function createLink(values: Fields): Promise<State> {
   const session = await getServerSession(authOptions);
 
@@ -124,7 +85,60 @@ export async function createLink(values: Fields): Promise<State> {
 
   revalidatePath('/home/links');
   return {
-    message: 'Link was created successfully'
+    message: 'SUCCESS'
+  };
+}
+
+export async function updateLink(linkId: string, existingUrl: string, values: Fields): Promise<State> {
+  const session = await getServerSession(authOptions);
+
+  if (!session || !session.user || !session.user.id) return redirect('/auth/signin');
+
+  if (!values.title && values.description) {
+    return {
+      errors: {
+        title: ['There must be a title with a description.']
+      }
+    };
+  }
+
+  const validatedFields =  LinkSchema.safeParse(values);
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors
+    };
+  }
+
+  const { url, title, description } = validatedFields.data;
+
+  try {
+    const meta = await getLinkMetadata(url);
+    if (!meta) return {
+      errors: {
+        url: ['This URL does not exist.']
+      }
+    };
+
+    await prismaClient.link.update({
+      data: {
+        ...meta,
+        title,
+        description,
+      },
+      where: {
+        id: linkId,
+        creatorId: session.user.id
+      }
+    });
+  } catch (error) {
+    console.error(error);
+    throw new Error('Could not create link, please try again.');
+  }
+
+  revalidatePath('/home/links');
+  return {
+    message: 'SUCCESS'
   };
 }
 
@@ -140,4 +154,41 @@ export async function fetchOgMeta(url: string): Promise<State | SuccessResult> {
     }
   }
   return ogsResult;
+}
+
+async function getLinkMetadata(url_: string): Promise<Omit<Link, 'id' | 'createdAt' | 'updatedAt' | 'title' | 'description' | 'creatorId'> | undefined> {
+  try {
+    const url = new URL(url_);
+
+    // this is written this away so errors fail silently
+    const ogsResult = await ogs({ url: url_ }).then((res) => res).catch(error => error);
+
+    let ogTitle, ogType, ogUrl, ogDescription;
+
+    if (ogsResult) {
+      if (ogsResult.error) {
+        // Only care if the url does not exist
+        if (ogsResult.result.error === 'Page not found') throw new Error('This URL does not exist');
+     } else {
+        ogTitle = ogsResult.result.ogTitle;
+        ogType = ogsResult.result.ogType;
+        ogUrl = ogsResult.result.ogUrl,
+        ogDescription = ogsResult.result.ogDescription;
+      }
+    }
+
+    return {
+      origin: url.origin,
+      hostname: url.hostname,
+      path: url.pathname,
+      query: url.search,
+      rawUrl: url.href,
+      ogTitle,
+      ogDescription,
+      ogType,
+      ogUrl
+    };
+  } catch (error) {
+    console.error(error);
+  }
 }

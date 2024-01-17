@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, MouseEvent } from 'react';
+import { useState, useMemo, MouseEvent } from 'react';
 import { IconButton, Divider, Menu, MenuItem } from '@mui/material';
 import { styled, alpha } from '@mui/material';
 import { MenuProps } from '@mui/material/Menu';
@@ -8,22 +8,8 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import EditIcon from '@mui/icons-material/Edit';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
-
-const menuItems = [
-  {
-    Icon: EditIcon,
-    text: 'Edit',
-  },
-  {
-    Icon: ContentCopyIcon,
-    text: 'Copy',
-  },
-  {
-    Icon: DeleteIcon,
-    text: 'Delete',
-    noDivider: true,
-  },
-];
+import EditLinkForm from '@/app/components/links/EditLinkForm';
+import { Link } from '@prisma/client';
 
 const StyledMenu = styled((props: MenuProps) => (
   <Menu
@@ -72,8 +58,9 @@ const StyledMenu = styled((props: MenuProps) => (
 }));
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function MoreMenuButton({ id }: { id: string }) {
+function MoreMenuButton({ link }: { link: Link }) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [editModalOpen, setEditModalOpen] = useState(false);
   const open = Boolean(anchorEl);
 
   const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
@@ -84,6 +71,34 @@ function MoreMenuButton({ id }: { id: string }) {
     setAnchorEl(null);
   };
 
+  const openEditLinkModal = () => {
+    setEditModalOpen(true);
+    setAnchorEl(null);
+  }
+  const closeEditLinkModal = () => {
+    setEditModalOpen(false);
+    setAnchorEl(null);
+  }
+
+  const menuItems = useMemo(() => ([
+    {
+      Icon: EditIcon,
+      text: 'Edit',
+      onClick: openEditLinkModal
+    },
+    {
+      Icon: ContentCopyIcon,
+      text: 'Copy',
+      onClick: () => {}
+    },
+    {
+      Icon: DeleteIcon,
+      text: 'Delete',
+      noDivider: true,
+      onClick: () => {}
+    },
+  ]), []);
+  
   return (
     <>
       <IconButton
@@ -116,7 +131,7 @@ function MoreMenuButton({ id }: { id: string }) {
         {menuItems.map((i) => {
           return (
             <div key={i.text} style={{ display: 'contents' }}>
-              <MenuItem onClick={handleClose} disableRipple>
+              <MenuItem onClick={i.onClick} disableRipple>
                 <i.Icon />
                 {i.text}
               </MenuItem>
@@ -125,6 +140,7 @@ function MoreMenuButton({ id }: { id: string }) {
           );
         })}
       </StyledMenu>
+      <EditLinkForm open={editModalOpen} onClose={closeEditLinkModal} link={link} />
     </>
   );
 }

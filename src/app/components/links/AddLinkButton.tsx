@@ -27,8 +27,8 @@ function AddLinkButton() {
       <Modal
         open={open}
         onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
+        aria-labelledby="create-link-modal-title"
+        aria-describedby="create-link-modal-description"
       >
         <div className="contents">
           <AddLinkForm onClose={handleClose} />

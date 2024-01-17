@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState, useRef } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { useFormik } from 'formik';
 import {
   Box,
@@ -9,6 +9,8 @@ import {
   TextField,
   InputAdornment,
 } from '@mui/material';
+import { styled } from '@mui/material';
+import { BoxProps } from '@mui/material/Box';
 import {
   createLink,
   State,
@@ -16,22 +18,32 @@ import {
 } from '@/app/lib/actions/links.actions';
 import LinkIcon from '@mui/icons-material/Link';
 import ClearIcon from '@mui/icons-material/Clear';
+import SubtitlesOutlinedIcon from '@mui/icons-material/SubtitlesOutlined';
+import ViewStreamOutlinedIcon from '@mui/icons-material/ViewStreamOutlined';
 
-const style = {
+export const StyledForm = styled((props: BoxProps) => (
+  <Box
+    component="form"
+    noValidate
+    autoComplete="off"
+    {...props}
+  />
+))(({ theme }) => ({
   position: 'absolute',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
+  width: 640,
+  backgroundColor: theme.palette.common.white,
   border: '2px solid #000',
-  boxShadow: 24,
-  p: 4,
-};
+  boxShadow: theme.shadows[24],
+  padding: theme.spacing(6, 4, 4),
+  borderRadius: 5,
+  '& > :not(style)': { m: 1 },
+}));
 
 const AddLinkForm = ({ onClose }: { onClose: () => void }) => {
   const initialState = { message: null, errors: {} };
-  const formRef = useRef();
   const [state, setState] = useState<State>(initialState);
 
   const formik = useFormik<Fields>({
@@ -64,20 +76,16 @@ const AddLinkForm = ({ onClose }: { onClose: () => void }) => {
     [state]
   );
 
+  useEffect(() => {
+    if (state.message === 'SUCCESS') onClose();
+  }, [state, onClose]);
+
   return (
-    <Box
-      component="form"
-      sx={{
-        ...style,
-        '& > :not(style)': { m: 1, width: '25ch' },
-      }}
-      noValidate
-      autoComplete="off"
+    <StyledForm
       onSubmit={e => {
         e.preventDefault();
         formik.submitForm();
       }}
-      ref={formRef}
     >
       <TextField
         fullWidth
@@ -91,7 +99,7 @@ const AddLinkForm = ({ onClose }: { onClose: () => void }) => {
         required
         aria-required="true"
         multiline
-        rows={4}
+        rows={2}
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
@@ -108,6 +116,9 @@ const AddLinkForm = ({ onClose }: { onClose: () => void }) => {
         }}
         error={!!getFirstError('url')}
         helperText={getFirstError('url')}
+        sx={{
+          mb: 4
+        }}
       />
 
       <TextField
@@ -121,6 +132,11 @@ const AddLinkForm = ({ onClose }: { onClose: () => void }) => {
         value={formik.values.title}
         onChange={formik.handleChange}
         InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <ViewStreamOutlinedIcon />
+            </InputAdornment>
+          ),
           endAdornment: (
             <InputAdornment position="end">
               <IconButton onClick={() => resetField('title')}>
@@ -128,6 +144,9 @@ const AddLinkForm = ({ onClose }: { onClose: () => void }) => {
               </IconButton>
             </InputAdornment>
           )
+        }}
+        sx={{
+          mb: 4
         }}
       />
 
@@ -141,7 +160,14 @@ const AddLinkForm = ({ onClose }: { onClose: () => void }) => {
         onChange={formik.handleChange}
         error={!!getFirstError('description')}
         helperText={getFirstError('description')}
+        multiline
+        rows={4}
         InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <SubtitlesOutlinedIcon />
+            </InputAdornment>
+          ),
           endAdornment: (
             <InputAdornment position="end">
               <IconButton onClick={() => resetField('description')}>
@@ -158,7 +184,7 @@ const AddLinkForm = ({ onClose }: { onClose: () => void }) => {
         </Button>
         <Button type="submit" disabled={!formik.dirty}>Create Link</Button>
       </div>
-    </Box>
+    </StyledForm>
   );
 }
 
