@@ -17,7 +17,7 @@ function AddLinkButton() {
       <Fab
         variant="extended"
         color="primary"
-        className="!fixed bottom-[16px] right-[16px]"
+        className="!fixed bottom-6 right-6"
         onClick={handleOpen}
       >
         ADD LINK

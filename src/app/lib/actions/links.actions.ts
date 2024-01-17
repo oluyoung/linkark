@@ -5,7 +5,7 @@ import prismaClient from '@/app/db/prisma-client';
 import { Link } from '@prisma/client';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/authOptions';
-import ogs from 'open-graph-scraper';
+import ogs, { SuccessResult } from 'open-graph-scraper';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 
@@ -17,18 +17,26 @@ interface StateErrors {
   [key: number]: string[];
 };
 
+export interface Fields {
+  url: string;
+  title: string;
+  description: string;
+  tags: string[];
+  [key: string]: string |string[] | undefined;
+};
+
 export interface State {
   errors?: StateErrors;
   message?: string | null;
 }
 
 const LinkSchema = z.object({
+  title: z.string().optional(),
+  description: z.string().optional(),
   url: z.string().url({
     message: 'Please enter a valid url',
   }),
-  title: z.string(),
-  description: z.string(),
-  tags: z.array(z.string().cuid()), // use mui/chip to add tags and pass the cuids
+  tags: z.array(z.string().cuid()).optional(), // use mui/chip to add tags and pass the cuids
 });
 
 async function getLinkMetadata(url_: string): Promise<Omit<Link, 'id' | 'createdAt' | 'updatedAt' | 'title' | 'description' | 'creatorId'> | undefined> {
@@ -43,7 +51,7 @@ async function getLinkMetadata(url_: string): Promise<Omit<Link, 'id' | 'created
     if (ogsResult) {
       if (ogsResult.error) {
         // Only care if the url does not exist
-        if (ogsResult.result.error === 'Page not found') throw new Error('Invalid URL: This URL does not exist');
+        if (ogsResult.result.error === 'Page not found') throw new Error('This URL does not exist');
         // Log error if needed
         // else console.error(ogsResult.result)
      } else {
@@ -70,32 +78,36 @@ async function getLinkMetadata(url_: string): Promise<Omit<Link, 'id' | 'created
   }
 }
 
-export async function createLink(prevState: State, formData: FormData): Promise<State> {
+export async function createLink(values: Fields): Promise<State> {
   const session = await getServerSession(authOptions);
 
   if (!session || !session.user || !session.user.id) return redirect('/auth/signin');
 
-  const validatedFields =  LinkSchema.safeParse({
-    url: formData.get('url'),
-    title: formData.get('title'),
-    description: formData.get('description')
-  })
+  if (!values.title && values.description) {
+    return {
+      errors: {
+        title: ['There must be a title with a description.']
+      }
+    };
+  }
 
-  // If form validation fails, return errors early. Otherwise, continue.
+  const validatedFields =  LinkSchema.safeParse(values);
+
   if (!validatedFields.success) {
-    console.log(validatedFields.error);
     return {
       errors: validatedFields.error.flatten().fieldErrors
     };
   }
 
-  // Prepare data for insertion into the database
   const { url, title, description } = validatedFields.data;
 
-  
   try {
     const meta = await getLinkMetadata(url);
-    if (!meta) throw new Error('Database Error: Failed to Create Link');
+    if (!meta) return {
+      errors: {
+        url: ['This URL does not exist.']
+      }
+    };
 
     await prismaClient.link.create({
       data: {
@@ -106,9 +118,26 @@ export async function createLink(prevState: State, formData: FormData): Promise<
       }
     });
   } catch (error) {
-    throw new Error('Database Error: Failed to Create Link');
+    console.error(error);
+    throw new Error('Could not create link, please try again.');
   }
 
   revalidatePath('/home/links');
-  redirect('/home/links');
+  return {
+    message: 'Link was created successfully'
+  };
+}
+
+export async function fetchOgMeta(url: string): Promise<State | SuccessResult> {
+  const ogsResult = await ogs({ url }).catch(error => error);
+  if (ogsResult.error) {
+    if (ogsResult.result.error === 'Page not found') {
+      return {
+        errors: {
+          url: ['This URL does not exist']
+        }
+      };
+    }
+  }
+  return ogsResult;
 }
