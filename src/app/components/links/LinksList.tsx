@@ -11,7 +11,7 @@ async function LinksList() {
   const links = await fetchLinks({ creatorId });
 
   return links.length ? (
-    <div className="flex flex-col flex-nowrap items-center pt-10 h-full w-full overflow-y-scroll" id="links-list">
+    <div className="flex flex-col flex-nowrap items-center pt-10 h-full w-full" id="links-list">
       <div className="max-w-screen-sm w-full overflow-x-hidden py-4 px-4">
         {links.map((l) => <Link key={l.id} link={l} />)}
       </div>

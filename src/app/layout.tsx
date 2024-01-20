@@ -5,9 +5,10 @@ import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 import { authOptions } from '@/app/api/auth/authOptions';
 import SessionProvider from './components/SessionProvider';
 import Header from './components/Header';
+import MuiTheme from './components/MuiTheme';
 import './globals.css';
 
-const inter = Inter({ subsets: ['latin'] });
+export const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'LinkMe',
@@ -26,8 +27,10 @@ export default async function RootLayout({
       <body className={inter.className}>
         <SessionProvider session={session}>
           <AppRouterCacheProvider>
-            <Header />
-            {children}
+            <MuiTheme>
+              <Header />
+              {children}
+            </MuiTheme>
           </AppRouterCacheProvider>
         </SessionProvider>
       </body>

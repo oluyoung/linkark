@@ -140,7 +140,7 @@ function MoreMenuButton({ link }: { link: Link }) {
       >
         {menuItems.map((i) => {
           return (
-            <div key={i.text} style={{ display: 'contents' }}>
+            <div key={i.text} className="contents">
               <MenuItem onClick={i.onClick} disableRipple>
                 <i.Icon />
                 {i.text}

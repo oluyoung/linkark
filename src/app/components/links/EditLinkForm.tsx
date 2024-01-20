@@ -71,7 +71,7 @@ const EditLinkForm = ({ open, onClose, link }: Props) => {
       aria-labelledby="edit-link-modal-title"
       aria-describedby="edit-link-modal-description"
     >
-      <div style={{ display: 'contents' }}>
+      <div className="contents">
         <StyledForm
           onSubmit={e => {
             e.preventDefault();
@@ -90,7 +90,6 @@ const EditLinkForm = ({ open, onClose, link }: Props) => {
             required
             aria-required="true"
             multiline
-            rows={2}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
