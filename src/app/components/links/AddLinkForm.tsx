@@ -43,8 +43,7 @@ export const StyledForm = styled((props: BoxProps) => (
 }));
 
 const AddLinkForm = ({ onClose }: { onClose: () => void }) => {
-  const initialState = { message: null, errors: {} };
-  const [state, setState] = useState<State>(initialState);
+  const [state, setState] = useState<State>({});
 
   const formik = useFormik<Fields>({
     initialValues: {

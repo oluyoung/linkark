@@ -28,6 +28,7 @@ export interface Fields {
 export interface State {
   errors?: StateErrors;
   message?: string | null;
+  success?: boolean;
 }
 
 const LinkSchema = z.object({
@@ -85,11 +86,11 @@ export async function createLink(values: Fields): Promise<State> {
 
   revalidatePath('/home/links');
   return {
-    message: 'SUCCESS'
+    success: true
   };
 }
 
-export async function updateLink(linkId: string, existingUrl: string, values: Fields): Promise<State> {
+export async function updateLink(linkId: string, values: Fields): Promise<State> {
   const session = await getServerSession(authOptions);
 
   if (!session || !session.user || !session.user.id) return redirect('/auth/signin');
@@ -138,7 +139,29 @@ export async function updateLink(linkId: string, existingUrl: string, values: Fi
 
   revalidatePath('/home/links');
   return {
-    message: 'SUCCESS'
+    success: true
+  };
+}
+
+export async function deleteLink(linkId: string): Promise<State> {
+  const session = await getServerSession(authOptions);
+
+  if (!session || !session.user || !session.user.id) return redirect('/auth/signin');
+
+  try {
+    await prismaClient.link.delete({
+      where: {
+        id: linkId,
+        creatorId: session.user.id
+      }
+    });
+  } catch (error) {
+    throw error;
+  }
+
+  revalidatePath('/home/links');
+  return {
+    success: true
   };
 }
 

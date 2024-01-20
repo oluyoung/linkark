@@ -9,6 +9,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditLinkForm from '@/app/components/links/EditLinkForm';
+import DeleteLinkDialog from '@/app/components/links/DeleteLinkDialog';
 import { Link } from '@prisma/client';
 
 const StyledMenu = styled((props: MenuProps) => (
@@ -61,23 +62,32 @@ const StyledMenu = styled((props: MenuProps) => (
 function MoreMenuButton({ link }: { link: Link }) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpenOpen] = useState(false);
   const open = Boolean(anchorEl);
 
   const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+  const closeMenu = () => setAnchorEl(null);
 
   const openEditLinkModal = () => {
     setEditModalOpen(true);
-    setAnchorEl(null);
+    closeMenu();
   }
+
   const closeEditLinkModal = () => {
     setEditModalOpen(false);
-    setAnchorEl(null);
+    closeMenu();
+  }
+
+  const openDeleteLinkDialogModal = () => {
+    setDeleteDialogOpenOpen(true);
+    closeMenu();
+  }
+  const closeDeleteLinkDialogModal = () => {
+    setDeleteDialogOpenOpen(false);
+    closeMenu();
   }
 
   const menuItems = useMemo(() => ([
@@ -95,7 +105,7 @@ function MoreMenuButton({ link }: { link: Link }) {
       Icon: DeleteIcon,
       text: 'Delete',
       noDivider: true,
-      onClick: () => {}
+      onClick: openDeleteLinkDialogModal
     },
   ]), []);
   
@@ -114,7 +124,7 @@ function MoreMenuButton({ link }: { link: Link }) {
         id="more-menu"
         anchorEl={anchorEl}
         open={open}
-        onClose={handleClose}
+        onClose={closeMenu}
         MenuListProps={{
           'aria-labelledby': 'more-menu-button',
         }}
@@ -140,7 +150,8 @@ function MoreMenuButton({ link }: { link: Link }) {
           );
         })}
       </StyledMenu>
-      <EditLinkForm open={editModalOpen} onClose={closeEditLinkModal} link={link} />
+      {editModalOpen && <EditLinkForm open={editModalOpen} onClose={closeEditLinkModal} link={link} />}
+      {deleteDialogOpen && <DeleteLinkDialog open={deleteDialogOpen} onClose={closeDeleteLinkDialogModal} id={link.id} />}
     </>
   );
 }

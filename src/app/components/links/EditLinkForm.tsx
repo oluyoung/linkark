@@ -23,13 +23,12 @@ import { StyledForm } from './AddLinkForm';
 
 interface Props {
   open: boolean;
-  onClose: () => void;
   link: Link
+  onClose: () => void;
 }
 
 const EditLinkForm = ({ open, onClose, link }: Props) => {
-  const initialState = { message: null, errors: {} };
-  const [state, setState] = useState<State>(initialState);
+  const [state, setState] = useState<State>({});
 
   const formik = useFormik<Fields>({
     initialValues: {
@@ -39,12 +38,12 @@ const EditLinkForm = ({ open, onClose, link }: Props) => {
       tags: []
     },
     onSubmit: async (values) => {
-      setState(await updateLink(link.id, link.rawUrl, values));
+      setState(await updateLink(link.id, values));
     }
   });
 
   useEffect(() => {
-    if (state.message === 'SUCCESS') onClose();
+    if (state.success) onClose();
   }, [state, onClose]);
 
   const resetField = (field: string) => {
