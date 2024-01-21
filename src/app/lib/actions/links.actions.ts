@@ -65,11 +65,13 @@ export async function createLink(values: Fields): Promise<State> {
 
   try {
     const meta = await getLinkMetadata(url);
-    if (!meta) return {
-      errors: {
-        url: ['This URL does not exist.']
-      }
-    };
+    if (!meta) {
+      return {
+        errors: {
+          url: ['This URL does not exist.']
+        }
+      };
+    }
 
     await prismaClient.link.create({
       data: {
@@ -133,8 +135,7 @@ export async function updateLink(linkId: string, values: Fields): Promise<State>
       }
     });
   } catch (error) {
-    console.error(error);
-    throw new Error('Could not create link, please try again.');
+    throw error;
   }
 
   revalidatePath('/home/links');
@@ -156,7 +157,8 @@ export async function deleteLink(linkId: string): Promise<State> {
       }
     });
   } catch (error) {
-    throw error;
+    console.error(error);
+    throw new Error('Could not update link, please try again.');
   }
 
   revalidatePath('/home/links');

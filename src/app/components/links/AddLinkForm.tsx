@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback, useState } from 'react';
 import { useFormik } from 'formik';
 import {
   Box,
@@ -20,6 +20,8 @@ import LinkIcon from '@mui/icons-material/Link';
 import ClearIcon from '@mui/icons-material/Clear';
 import SubtitlesOutlinedIcon from '@mui/icons-material/SubtitlesOutlined';
 import ViewStreamOutlinedIcon from '@mui/icons-material/ViewStreamOutlined';
+import { useAppDispatch } from '@/store/hooks';
+import { showToast } from '@/store/toastSlice';
 
 export const StyledForm = styled((props: BoxProps) => (
   <Box
@@ -44,6 +46,7 @@ export const StyledForm = styled((props: BoxProps) => (
 
 const AddLinkForm = ({ onClose }: { onClose: () => void }) => {
   const [state, setState] = useState<State>({});
+  const dispatch = useAppDispatch();
 
   const formik = useFormik<Fields>({
     initialValues: {
@@ -52,8 +55,25 @@ const AddLinkForm = ({ onClose }: { onClose: () => void }) => {
       description: '',
       tags: []
     },
-    onSubmit: async (values) => {
-      setState(await createLink(values));
+    onSubmit: (values) => {
+      createLink(values).then((res) => {
+        if (res.success) {
+          dispatch(showToast({
+            severity: 'success',
+            message: 'Link created successfully.',
+            id: 'create-link-snackbar'
+          }));
+          onClose();
+        }
+        if (res.errors) setState(res);
+      }).catch((error) => {
+        dispatch(showToast({
+          severity: 'error',
+          message: 'Could not create the link, please try again.',
+          id: 'create-link-snackbar',
+          error
+        }));
+      });
     }
   });
 
@@ -75,10 +95,6 @@ const AddLinkForm = ({ onClose }: { onClose: () => void }) => {
     [state]
   );
 
-  useEffect(() => {
-    if (state.message === 'SUCCESS') onClose();
-  }, [state, onClose]);
-
   return (
     <StyledForm
       onSubmit={e => {
@@ -98,7 +114,7 @@ const AddLinkForm = ({ onClose }: { onClose: () => void }) => {
         required
         aria-required="true"
         multiline
-        rows={2}
+        rows={1}
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">

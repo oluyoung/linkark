@@ -10,6 +10,8 @@ import DialogTitle from '@mui/material/DialogTitle';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import { deleteLink } from '@/app/lib/actions/links.actions';
+import { useAppDispatch } from '@/store/hooks';
+import { showToast } from '@/store/toastSlice';
 
 interface Props {
   open: boolean;
@@ -20,13 +22,26 @@ interface Props {
 export default function DeleteLinkDialog({ open, id, onClose }: Props) {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const dispatch = useAppDispatch();
 
   const onDelete = () => {
     deleteLink(id).then((res) => {
       if (res.success) {
+        dispatch(showToast({
+          severity: 'success',
+          message: 'Link deleted successfully.',
+          id: 'delete-link-snackbar'
+        }));
         onClose();
       }
-    })
+    }).catch(error => {
+      dispatch(showToast({
+        severity: 'error',
+        message: 'Could not delete this link, please try again.',
+        id: 'delete-link-snackbar',
+        error
+      }));
+    });
   }
 
   return (

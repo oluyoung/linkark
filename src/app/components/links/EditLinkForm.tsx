@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback, useState } from 'react';
 import { useFormik } from 'formik';
 import {
   Button,
@@ -20,6 +20,8 @@ import SubtitlesOutlinedIcon from '@mui/icons-material/SubtitlesOutlined';
 import ViewStreamOutlinedIcon from '@mui/icons-material/ViewStreamOutlined';
 import { Link } from '@prisma/client';
 import { StyledForm } from './AddLinkForm';
+import { useAppDispatch } from '@/store/hooks';
+import { showToast } from '@/store/toastSlice';
 
 interface Props {
   open: boolean;
@@ -29,6 +31,7 @@ interface Props {
 
 const EditLinkForm = ({ open, onClose, link }: Props) => {
   const [state, setState] = useState<State>({});
+  const dispatch = useAppDispatch();
 
   const formik = useFormik<Fields>({
     initialValues: {
@@ -38,13 +41,26 @@ const EditLinkForm = ({ open, onClose, link }: Props) => {
       tags: []
     },
     onSubmit: async (values) => {
-      setState(await updateLink(link.id, values));
+      updateLink(link.id, values).then((res) => {
+        if (res.success) {
+          dispatch(showToast({
+            severity: 'success',
+            message: 'Link updated successfully.',
+            id: 'update-link-snackbar'
+          }));
+          onClose();
+        }
+        if (res.errors) setState(res);
+      }).catch((error) => {
+        dispatch(showToast({
+          severity: 'error',
+          message: 'Could not update this link, please try again.',
+          id: 'update-link-snackbar',
+          error
+        }));
+      });
     }
   });
-
-  useEffect(() => {
-    if (state.success) onClose();
-  }, [state, onClose]);
 
   const resetField = (field: string) => {
     formik.setValues((prev) => ({

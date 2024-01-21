@@ -3,9 +3,11 @@ import { Inter } from 'next/font/google';
 import { getServerSession } from 'next-auth';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 import { authOptions } from '@/app/api/auth/authOptions';
-import SessionProvider from './components/SessionProvider';
+import SessionProvider from '@/app/lib/providers/SessionProvider';
+import MuiThemeProvider from '@/app/lib/providers/MuiThemeProvider';
+import ReduxProvider from '@/app/lib/providers/reduxProvider';
 import Header from './components/Header';
-import MuiTheme from './components/MuiTheme';
+import Toast from './components/Toast';
 import './globals.css';
 
 export const inter = Inter({ subsets: ['latin'] });
@@ -27,10 +29,13 @@ export default async function RootLayout({
       <body className={inter.className}>
         <SessionProvider session={session}>
           <AppRouterCacheProvider>
-            <MuiTheme>
-              <Header />
-              {children}
-            </MuiTheme>
+            <ReduxProvider>
+              <MuiThemeProvider>
+                <Header />
+                {children}
+                <Toast />
+              </MuiThemeProvider>
+            </ReduxProvider>
           </AppRouterCacheProvider>
         </SessionProvider>
       </body>

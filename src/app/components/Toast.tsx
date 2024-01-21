@@ -1,72 +1,15 @@
-import React, { ReactNode, useState, useMemo } from 'react';
-import { Snackbar, IconButton, styled, Alert, AlertColor } from '@mui/material';
+'use client';
+
+import React from 'react';
+import { Snackbar, IconButton, Alert } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import CloseIcon from '@mui/icons-material/Close';
-
-export interface ToastProps {
-  /** Whether to show the toast or not. */
-  open: boolean;
-
-  /** The contents to appear within the toast. */
-  children: ReactNode;
-
-  /** Severity of the message. Affects the color of the toast. */
-  severity: AlertColor;
-
-  /** Whether the message should be hidden automatically.
-   * If true, it will hide after 8 seconds.
-   * If unset and severity is not error, autoHide is assumed to be true.
-   * Error messages will never autoHide unless explicitly passed a value of true. */
-  autoHide?: boolean;
-
-  /** An optional icon to appear at the start of the toast. */
-  icon?: ReactNode;
-
-  /** A callback that is called when the toast wants to close.
-   * It is expected that this will reset the open prop otherwise the toast will never close. */
-  handleClose?: () => void;
-
-  /** The ID attribute to apply to the alert. */
-  id?: string;
-}
-
-export const useToastInfo = () => {
-  const [toastInfo, setToastInfo] = useState<{
-    severity: AlertColor;
-    message?: string;
-  }>({
-    severity: 'error',
-    message: '',
-  });
-
-  const [open, setOpen] = useState(false);
-
-  const showToast = (
-    severity: AlertColor,
-    message?: string,
-    error?: Error
-  ) => {
-    setToastInfo({
-      severity,
-      message: message || 'An error has occurred.',
-    });
-    setOpen(true);
-
-    if (error) {
-      console.error(error);
-    }
-  };
-
-  const close = () => {
-    setOpen(false);
-  };
-
-  return useMemo(() => ({
-    ...toastInfo,
-    open,
-    close,
-    showToast,
-  }), [toastInfo, open]);
-};
+import { useAppSelector, useAppDispatch } from '@/store/hooks';
+import { close, selectToast } from '@/store/toastSlice';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import ReportProblemOutlinedIcon from '@mui/icons-material/ReportProblemOutlined';
 
 const DEFAULT_AUTO_HIDE_DURATION = 5000;
 
@@ -75,28 +18,31 @@ const StyledAlert = styled(Alert)(({ theme }) => ({
   alignItems: 'center',
 }));
 
+const SeverityIcons: {
+  success: React.ReactNode;
+  error: React.ReactNode;
+  info: React.ReactNode;
+  warning: React.ReactNode;
+} = {
+  success: <CheckCircleOutlineIcon color="success" />,
+  error: <CancelOutlinedIcon color="error" />,
+  info: <InfoOutlinedIcon color="info" />,
+  warning: <ReportProblemOutlinedIcon color="warning" />
+};
+
 /**
- * A wrapper around the Material UI SnackBar and Alert components.
- * Provides close button automatically.
+ * Toast notification
  */
-const Toast = ({
-  open,
-  children,
-  severity,
-  id,
-  autoHide,
-  icon,
-  handleClose,
-}: ToastProps) => {
-  const closeTooEarlySnack = (
+const Toast = () => {
+  const { open, message, severity, autoHide, icon, id } = useAppSelector(selectToast);
+  const dispatch = useAppDispatch();
+
+  const closeSnack = (
     event?: React.SyntheticEvent | Event,
     reason?: string
   ) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-
-    handleClose && handleClose();
+    if (reason === 'clickaway') return;
+    dispatch(close());
   };
 
   const hideDuration =
@@ -109,16 +55,16 @@ const Toast = ({
       open={open}
       anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       autoHideDuration={hideDuration}
-      onClose={closeTooEarlySnack}
+      onClose={closeSnack}
     >
       <StyledAlert
         id={id}
-        icon={icon}
+        icon={icon ? icon : SeverityIcons[severity]}
         severity={severity}
         action={
           <IconButton
             size="small"
-            onClick={closeTooEarlySnack}
+            onClick={closeSnack}
             aria-label="Close Snackbar"
             title="Close"
             id={`${id}-toast-close-btn`}
@@ -127,7 +73,7 @@ const Toast = ({
           </IconButton>
         }
       >
-        {children}
+        {message}
       </StyledAlert>
     </Snackbar>
   );
