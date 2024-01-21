@@ -5,7 +5,7 @@ import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 import { authOptions } from '@/app/api/auth/authOptions';
 import SessionProvider from '@/app/lib/providers/SessionProvider';
 import MuiThemeProvider from '@/app/lib/providers/MuiThemeProvider';
-import ReduxProvider from '@/app/lib/providers/reduxProvider';
+import ReduxProvider from '@/app/lib/providers/ReduxProvider';
 import Header from './components/Header';
 import Toast from './components/Toast';
 import './globals.css';
