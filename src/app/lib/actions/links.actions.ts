@@ -8,6 +8,7 @@ import { authOptions } from '@/app/api/auth/authOptions';
 import ogs, { SuccessResult } from 'open-graph-scraper';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
+import { unstable_noStore as noStore } from 'next/cache';
 
 interface StateErrors {
   url?: string[];
@@ -165,6 +166,54 @@ export async function deleteLink(linkId: string): Promise<State> {
   return {
     success: true
   };
+}
+
+export async function fetchLinks(query?: string): Promise<Link[]> {
+  noStore();
+
+  const session = await getServerSession(authOptions);
+
+  if (!session || !session.user || !session.user.id) return redirect('/auth/signin');
+
+  let links = [];
+  if (query) {
+    links = await searchLinks(query, session.user.id);
+  } else {
+    links = await prismaClient.link.findMany({
+      where: {
+        creatorId: session.user.id
+      }
+    });
+  }
+
+  return links;
+}
+
+export async function searchLinks(query: string, creatorId: string) {
+  let links = [];
+
+  try {
+    links = await prismaClient.link.findMany({
+      where: {
+        AND: [{
+          creatorId,
+          OR: [
+            { title: { contains: query } },
+            { description: { contains: query } },
+            { ogDescription: { contains: query } },
+            { ogTitle: { contains: query } },
+            { rawUrl: { contains: query } }
+          ]
+        }]
+      }
+    });
+  } catch (error) {
+    console.error(error);
+    throw new Error('Could not find any links with this query.');
+  }
+
+  revalidatePath('/home/links');
+  return links;
 }
 
 export async function fetchOgMeta(url: string): Promise<State | SuccessResult> {

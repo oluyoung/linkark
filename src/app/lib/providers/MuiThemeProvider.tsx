@@ -9,7 +9,7 @@ const inter = Inter({ subsets: ['latin'] });
 
 const theme = createTheme({
   typography: {
-    fontFamily: inter.className
+    fontFamily: inter.style.fontFamily
   }
 });
 
