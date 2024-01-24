@@ -35,11 +35,11 @@ export const navItems = [
     href: '/home/settings',
     Icon: SettingsOutlinedIcon,
   },
-  // {
-  //   title: 'Tags',
-  //   href: '/home/tags',
-  //   Icon: LocalOfferOutlinedIcon,
-  // },
+  {
+    title: 'Tags',
+    href: '/home/tags',
+    Icon: LocalOfferOutlinedIcon,
+  },
 ];
 
 function Nav() {
