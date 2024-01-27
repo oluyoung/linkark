@@ -9,7 +9,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
-import { deleteLink } from '@/app/lib/actions/links.actions';
+import { trashLink } from '@/app/lib/actions/links.actions';
 import { useAppDispatch } from '@/store/hooks';
 import { showToast } from '@/store/toastSlice';
 
@@ -25,7 +25,7 @@ export default function DeleteLinkDialog({ open, id, onClose }: Props) {
   const dispatch = useAppDispatch();
 
   const onDelete = () => {
-    deleteLink(id).then((res) => {
+    trashLink(id).then((res) => {
       if (res.success) {
         dispatch(showToast({
           severity: 'success',

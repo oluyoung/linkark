@@ -32,6 +32,13 @@ export interface State {
   success?: boolean;
 }
 
+export interface FetchLinkProps {
+  query?: string;
+  isDeleted?: boolean;
+  sort?: 'asc' | 'desc';
+  orderBy?: 'createdAt' | 'updatedAt';
+}
+
 const LinkSchema = z.object({
   title: z.string().optional(),
   description: z.string().optional(),
@@ -41,6 +48,11 @@ const LinkSchema = z.object({
   tags: z.array(z.string().cuid()).optional(), // use mui/chip to add tags and pass the cuids
 });
 
+/**
+ * Function to create a new link
+ * @param {Fields} values
+ * @returns {Promise<State>}
+ */
 export async function createLink(values: Fields): Promise<State> {
   const session = await getServerSession(authOptions);
 
@@ -93,6 +105,12 @@ export async function createLink(values: Fields): Promise<State> {
   };
 }
 
+/**
+ * Function to update a link
+ * @param {string} linkId
+ * @param {Fields} values
+ * @returns {Promise<State>}
+ */
 export async function updateLink(linkId: string, values: Fields): Promise<State> {
   const session = await getServerSession(authOptions);
 
@@ -145,6 +163,80 @@ export async function updateLink(linkId: string, values: Fields): Promise<State>
   };
 }
 
+/**
+ * Function to send a link to trash
+ * @param {string} linkId
+ * @returns {Promise<State>}
+ */
+export async function trashLink(linkId: string): Promise<State> {
+  const session = await getServerSession(authOptions);
+
+  if (!session || !session.user || !session.user.id) return redirect('/auth/signin');
+
+  try {
+    await prismaClient.link.update({
+      data: {
+        isDeleted: true
+      },
+      where: {
+        id: linkId,
+        creatorId: session.user.id
+      }
+    });
+  } catch (error) {
+    throw error;
+  }
+
+  revalidatePath('/home/links');
+  return {
+    success: true
+  };
+}
+
+/**
+ * Function to restore a link from trash
+ * @param {string} linkId
+ * @returns {Promise<State>}
+ */
+export async function restoreLink(linkId: string): Promise<State> {
+  const session = await getServerSession(authOptions);
+
+  if (!session || !session.user || !session.user.id) return redirect('/auth/signin');
+
+  try {
+    await prismaClient.link.update({
+      data: {
+        isDeleted: false
+      },
+      where: {
+        id: linkId,
+        creatorId: session.user.id
+      }
+    });
+  } catch (error) {
+    throw error;
+  }
+
+  revalidatePath('/home/trash');
+  return {
+    success: true
+  };
+}
+
+/**
+ * Function to fetch all trashed links
+ * @param {string} query
+ * @returns {Promise<Link[]>}
+ */
+export async function fetchTrashLinks(query?: string): Promise<Link[]> {
+  return await fetchLinks({ query, isDeleted: true, orderBy: 'updatedAt' });
+}
+
+/**
+ * Function to permanently delete a link
+ * @param {string} linkId
+ * @returns {Promise<State>}
+ */
 export async function deleteLink(linkId: string): Promise<State> {
   const session = await getServerSession(authOptions);
 
@@ -162,13 +254,23 @@ export async function deleteLink(linkId: string): Promise<State> {
     throw new Error('Could not update link, please try again.');
   }
 
-  revalidatePath('/home/links');
+  revalidatePath('/home/trash');
   return {
     success: true
   };
 }
 
-export async function fetchLinks(query?: string): Promise<Link[]> {
+/**
+ * Function to fetch links
+ * @param {FetchLinkProps}
+ * @returns {Promise<Link[]>}
+ */
+export async function fetchLinks({
+  query,
+  isDeleted = false,
+  sort = 'desc',
+  orderBy = 'createdAt'
+}: FetchLinkProps): Promise<Link[]> {
   noStore();
 
   const session = await getServerSession(authOptions);
@@ -176,20 +278,36 @@ export async function fetchLinks(query?: string): Promise<Link[]> {
   if (!session || !session.user || !session.user.id) return redirect('/auth/signin');
 
   let links = [];
-  if (query) {
-    links = await searchLinks(query, session.user.id);
-  } else {
-    links = await prismaClient.link.findMany({
-      where: {
-        creatorId: session.user.id
-      }
-    });
+
+  try {
+    if (query) {
+      links = await searchLinks(query, session.user.id, isDeleted);
+    } else {
+      links = await prismaClient.link.findMany({
+        where: {
+          creatorId: session.user.id,
+          isDeleted
+        },
+        orderBy: {
+          [orderBy]: sort
+        }
+      });
+    }
+  } catch (error) {
+    throw error;
   }
 
   return links;
 }
 
-export async function searchLinks(query: string, creatorId: string) {
+/**
+ * Function to fetch links based on a query
+ * @param {string} query
+ * @param {string} creatorId
+ * @param {boolean} isDeleted
+ * @returns {Promise<Link[]>}
+ */
+export async function searchLinks(query: string, creatorId: string, isDeleted = false): Promise<Link[]> {
   let links = [];
 
   try {
@@ -197,6 +315,7 @@ export async function searchLinks(query: string, creatorId: string) {
       where: {
         AND: [{
           creatorId,
+          isDeleted,
           OR: [
             { title: { contains: query } },
             { description: { contains: query } },
@@ -205,6 +324,9 @@ export async function searchLinks(query: string, creatorId: string) {
             { rawUrl: { contains: query } }
           ]
         }]
+      },
+      orderBy: {
+        updatedAt: 'desc'
       }
     });
   } catch (error) {
@@ -216,6 +338,11 @@ export async function searchLinks(query: string, creatorId: string) {
   return links;
 }
 
+/**
+ * Function to get the metadata for a link using open-graph-scraper
+ * @param {string} url
+ * @returns {Promise<State | SuccessResult>}
+ */
 export async function fetchOgMeta(url: string): Promise<State | SuccessResult> {
   const ogsResult = await ogs({ url }).catch(error => error);
   if (ogsResult.error) {
@@ -230,7 +357,12 @@ export async function fetchOgMeta(url: string): Promise<State | SuccessResult> {
   return ogsResult;
 }
 
-async function getLinkMetadata(url_: string): Promise<Omit<Link, 'id' | 'createdAt' | 'updatedAt' | 'title' | 'description' | 'creatorId'> | undefined> {
+/**
+ * Function to get the metadata for a link using open-graph-scraper
+ * @param {string} url_
+ * @returns {Promise<Partial<Link>>}
+ */
+async function getLinkMetadata(url_: string): Promise<Omit<Link, 'id' | 'createdAt' | 'updatedAt' | 'title' | 'description' | 'creatorId' | 'isDeleted'> | undefined> {
   try {
     const url = new URL(url_);
 

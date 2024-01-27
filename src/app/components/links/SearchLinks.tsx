@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { TextField, InputAdornment, IconButton } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { SearchOutlined, Clear } from '@mui/icons-material';
@@ -11,12 +11,11 @@ const StyledSearchField = styled(TextField)((({ theme }) => ({
   '> .MuiInputBase-root': {
     backgroundColor: theme.palette.common.white,
     borderRadius: '50px',
-    boxShadow: theme.shadows[1],
     border: 0
   }
 })));
 
-function SearchInput() {
+const SearchLinks = ({ placeholder }: { placeholder?: string }) => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
@@ -40,12 +39,17 @@ function SearchInput() {
     inputRef.current && (inputRef.current.value = '');
   }
 
+  useEffect(() => {
+    clear(); // clear input on mount
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
-    <div className="flex flex-col flex-nowrap items-center pt-10 w-full" id="search-bar">
-      <div className="max-w-screen-sm w-full overflow-x-hidden py-4 px-4">
+    <div className="flex flex-col flex-nowrap items-center mt-10 w-full" id="search-bar">
+      <div className="max-w-screen-sm w-full overflow-x-hidden">
         <StyledSearchField
           fullWidth
-          placeholder="Search links..."
+          placeholder={placeholder || 'Search links...'}
           id="search-field"
           label={null}
           variant="outlined"
@@ -73,4 +77,4 @@ function SearchInput() {
   );
 }
 
-export default SearchInput;
+export default SearchLinks;

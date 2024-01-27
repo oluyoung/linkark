@@ -50,6 +50,7 @@ function Nav({ open, onOpen, onClose }: NavProps) {
                 component={Link}
                 title={item.title}
                 selected={pathname.startsWith(item.href)}
+                disabled={item.disabled}
                 sx={({ spacing, palette }) => ({
                   py: spacing(1.5),
                   '&.Mui-selected': {

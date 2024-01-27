@@ -59,6 +59,7 @@ model Link {
   ogUrl String?
   query String?
   rawUrl String
+  isDeleted Boolean? @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   lists List[]

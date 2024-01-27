@@ -26,19 +26,21 @@ export const navItems = [
     Icon: LinkIcon,
   },
   {
-    title: 'Trash',
-    href: '/home/trash',
-    Icon: DeleteForeverOutlinedIcon,
+    title: 'Tags',
+    href: '/home/tags',
+    Icon: LocalOfferOutlinedIcon,
+    disabled: true
   },
   {
     title: 'Settings',
     href: '/home/settings',
     Icon: SettingsOutlinedIcon,
+    disabled: true
   },
   {
-    title: 'Tags',
-    href: '/home/tags',
-    Icon: LocalOfferOutlinedIcon,
+    title: 'Trash',
+    href: '/home/trash',
+    Icon: DeleteForeverOutlinedIcon,
   },
 ];
 
@@ -73,6 +75,7 @@ function Nav() {
                 component={Link}
                 title={item.title}
                 selected={pathname.startsWith(item.href)}
+                disabled={item.disabled}
                 sx={({ spacing, palette }) => ({
                   py: spacing(1.5),
                   '&.Mui-selected': {
