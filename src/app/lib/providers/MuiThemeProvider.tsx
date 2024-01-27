@@ -9,16 +9,12 @@ const inter = Inter({ subsets: ['latin'] });
 
 const theme = createTheme({
   typography: {
-    fontFamily: inter.style.fontFamily
-  }
+    fontFamily: inter.style.fontFamily,
+  },
 });
 
 function MuiTheme({ children }: { children: ReactNode }) {
-  return (
-    <ThemeProvider theme={theme}>
-      {children}
-    </ThemeProvider>
-  );
+  return <ThemeProvider theme={theme}>{children}</ThemeProvider>;
 }
 
 export default MuiTheme;

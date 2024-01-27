@@ -1,28 +1,28 @@
 'use client';
 
 import ConfirmDialog from '@/app/components/ConfirmDialog';
-import { trashLink } from '@/app/lib/actions/links.actions';
 import { useAppDispatch } from '@/store/hooks';
 import { showToast } from '@/store/toastSlice';
+import { restoreLink } from '@/app/lib/actions/links.actions';
 
 interface Props {
-  open: boolean;
   id: string;
+  open: boolean;
   onClose: () => void;
 }
 
-export default function DeleteLinkDialog({ open, id, onClose }: Props) {
+export default function RestoreDialog({ id, open, onClose }: Props) {
   const dispatch = useAppDispatch();
 
-  const onDelete = () => {
-    trashLink(id)
+  const onRestore = () => {
+    restoreLink(id)
       .then((res) => {
         if (res.success) {
           dispatch(
             showToast({
               severity: 'success',
-              message: 'Link moved to trash successfully.',
-              id: 'trash-link-snackbar',
+              message: 'Link restored successfully.',
+              id: 'restore-link-snackbar',
             })
           );
           onClose();
@@ -32,9 +32,9 @@ export default function DeleteLinkDialog({ open, id, onClose }: Props) {
         dispatch(
           showToast({
             severity: 'error',
-            message: 'Could not move link to trash, please try again.',
+            message: 'Could not restore this link, please try again.',
+            id: 'restore-link-snackbar',
             error,
-            id: 'trash-link-snackbar',
           })
         );
       });
@@ -42,12 +42,12 @@ export default function DeleteLinkDialog({ open, id, onClose }: Props) {
 
   return (
     <ConfirmDialog
-      title="Move link to trash"
-      message="Are you sure you want to move this link to trash?"
-      ariaId="trash-link"
+      title="Restore link"
+      message="Are you sure you want to restore this link?"
+      ariaId="restore-link"
       open={open}
       onClose={onClose}
-      onSuccess={onDelete}
+      onSuccess={onRestore}
     />
   );
 }

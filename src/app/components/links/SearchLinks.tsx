@@ -7,13 +7,13 @@ import { SearchOutlined, Clear } from '@mui/icons-material';
 import { useDebouncedCallback } from 'use-debounce';
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 
-const StyledSearchField = styled(TextField)((({ theme }) => ({
+const StyledSearchField = styled(TextField)(({ theme }) => ({
   '> .MuiInputBase-root': {
     backgroundColor: theme.palette.common.white,
     borderRadius: '50px',
-    border: 0
-  }
-})));
+    border: 0,
+  },
+}));
 
 const SearchLinks = ({ placeholder }: { placeholder?: string }) => {
   const searchParams = useSearchParams();
@@ -21,31 +21,36 @@ const SearchLinks = ({ placeholder }: { placeholder?: string }) => {
   const { replace } = useRouter();
   const inputRef = React.useRef<HTMLInputElement>(null);
 
-  const handleSearch = useDebouncedCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    const term = event.target.value;
-    console.log(`Searching... ${term}`);
+  const handleSearch = useDebouncedCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const term = event.target.value;
+      console.log(`Searching... ${term}`);
 
-    const params = new URLSearchParams(searchParams);
-    if (term) params.set('query', term);
-    else params.delete('query');
+      const params = new URLSearchParams(searchParams);
+      if (term) params.set('query', term);
+      else params.delete('query');
 
-    replace(`${pathname}?${params.toString()}`);
-  });
+      replace(`${pathname}?${params.toString()}`);
+    }
+  );
 
   const clear = () => {
     const params = new URLSearchParams(searchParams);
     params.delete('query');
     replace(`${pathname}?${params.toString()}`);
     inputRef.current && (inputRef.current.value = '');
-  }
+  };
 
   useEffect(() => {
     clear(); // clear input on mount
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <div className="flex flex-col flex-nowrap items-center mt-10 w-full" id="search-bar">
+    <div
+      className="flex flex-col flex-nowrap items-center mt-10 w-full"
+      id="search-bar"
+    >
       <div className="max-w-screen-sm w-full overflow-x-hidden">
         <StyledSearchField
           fullWidth
@@ -69,12 +74,12 @@ const SearchLinks = ({ placeholder }: { placeholder?: string }) => {
                   <Clear />
                 </IconButton>
               </InputAdornment>
-            ) : null
+            ) : null,
           }}
         />
       </div>
     </div>
   );
-}
+};
 
 export default SearchLinks;

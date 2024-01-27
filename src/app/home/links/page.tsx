@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 };
 
 export default async function page({
-  searchParams
+  searchParams,
 }: {
   searchParams?: {
     query?: string;

@@ -1,10 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import {
-  Fab,
-  Modal,
-} from '@mui/material';
+import { Fab, Modal } from '@mui/material';
 import AddLinkForm from './AddLinkForm';
 
 function AddLinkButton() {

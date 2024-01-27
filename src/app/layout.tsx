@@ -8,6 +8,7 @@ import MuiThemeProvider from '@/app/lib/providers/MuiThemeProvider';
 import ReduxProvider from '@/app/lib/providers/ReduxProvider';
 import Header from './components/Header';
 import Toast from './components/Toast';
+import clsx from 'clsx';
 import './globals.css';
 
 export const inter = Inter({ subsets: ['latin'] });
@@ -26,7 +27,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={clsx(inter.className, 'bg-gray-100')}>
         <SessionProvider session={session}>
           <AppRouterCacheProvider>
             <ReduxProvider>

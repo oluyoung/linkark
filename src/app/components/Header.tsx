@@ -36,7 +36,12 @@ function Header() {
     };
 
   return (
-    <header className={clsx('flex justify-center', { 'bg-black': isLanding })}>
+    <header
+      className={clsx('flex justify-center', {
+        'bg-black': isLanding,
+        'bg-white': !isLanding,
+      })}
+    >
       {smScreenWidthMatches ? (
         <>
           <IconButton onClick={toggleDrawer(true)}>
@@ -49,7 +54,9 @@ function Header() {
           />
         </>
       ) : null}
-      <div className={clsx('flex justify-between items-center px-6 py-2 w-full')}>
+      <div
+        className={clsx('flex justify-between items-center px-6 py-2 w-full')}
+      >
         <Logo shade={isLanding ? 'light' : 'dark'} />
         <div className="flex space-x-4">
           <SignIn isLoggedIn={isLoggedIn} />

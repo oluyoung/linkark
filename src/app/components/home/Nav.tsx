@@ -29,13 +29,13 @@ export const navItems = [
     title: 'Tags',
     href: '/home/tags',
     Icon: LocalOfferOutlinedIcon,
-    disabled: true
+    disabled: true,
   },
   {
     title: 'Settings',
     href: '/home/settings',
     Icon: SettingsOutlinedIcon,
-    disabled: true
+    disabled: true,
   },
   {
     title: 'Trash',

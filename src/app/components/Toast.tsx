@@ -24,17 +24,18 @@ const SeverityIcons: {
   info: React.ReactNode;
   warning: React.ReactNode;
 } = {
-  success: <CheckCircleOutlineIcon color="success" />,
-  error: <CancelOutlinedIcon color="error" />,
-  info: <InfoOutlinedIcon color="info" />,
-  warning: <ReportProblemOutlinedIcon color="warning" />
+  success: <CheckCircleOutlineIcon color="success" fontSize="small" />,
+  error: <CancelOutlinedIcon color="error" fontSize="small" />,
+  info: <InfoOutlinedIcon color="info" fontSize="small" />,
+  warning: <ReportProblemOutlinedIcon color="warning" fontSize="small" />,
 };
 
 /**
  * Toast notification
  */
 const Toast = () => {
-  const { open, message, severity, autoHide, icon, id } = useAppSelector(selectToast);
+  const { open, message, severity, autoHide, icon, id } =
+    useAppSelector(selectToast);
   const dispatch = useAppDispatch();
 
   const closeSnack = (
@@ -46,7 +47,7 @@ const Toast = () => {
   };
 
   const hideDuration =
-    autoHide === true || (autoHide === undefined && severity !== 'error')
+    !!autoHide || (autoHide === undefined && severity !== 'error')
       ? DEFAULT_AUTO_HIDE_DURATION
       : null;
 
@@ -63,13 +64,12 @@ const Toast = () => {
         severity={severity}
         action={
           <IconButton
-            size="small"
             onClick={closeSnack}
             aria-label="Close Snackbar"
             title="Close"
             id={`${id}-toast-close-btn`}
           >
-            <CloseIcon />
+            <CloseIcon fontSize="small" />
           </IconButton>
         }
       >

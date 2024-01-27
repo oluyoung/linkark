@@ -80,7 +80,7 @@ function MoreMenuButton({ link }: { link: Link }) {
   const closeEditLinkModal = () => {
     setEditModalOpen(false);
     closeMenu();
-  }
+  };
 
   const openDeleteLinkDialogModal = useCallback(() => {
     setDeleteDialogOpenOpen(true);
@@ -90,7 +90,7 @@ function MoreMenuButton({ link }: { link: Link }) {
   const closeDeleteLinkDialogModal = () => {
     setDeleteDialogOpenOpen(false);
     closeMenu();
-  }
+  };
 
   const copyUrlToClipboard = useCallback(() => {
     setCopyOpen(true);
@@ -100,27 +100,30 @@ function MoreMenuButton({ link }: { link: Link }) {
   const closeCopyUrlToClipboard = () => {
     setCopyOpen(true);
     closeMenu();
-  }
+  };
 
-  const menuItems = useMemo(() => ([
-    {
-      Icon: EditIcon,
-      text: 'Edit',
-      onClick: openEditLinkModal
-    },
-    {
-      Icon: ContentCopyIcon,
-      text: 'Copy',
-      onClick: copyUrlToClipboard
-    },
-    {
-      Icon: DeleteIcon,
-      text: 'Delete',
-      noDivider: true,
-      onClick: openDeleteLinkDialogModal
-    },
-  ]), [openEditLinkModal, copyUrlToClipboard, openDeleteLinkDialogModal]);
-  
+  const menuItems = useMemo(
+    () => [
+      {
+        Icon: EditIcon,
+        text: 'Edit',
+        onClick: openEditLinkModal,
+      },
+      {
+        Icon: ContentCopyIcon,
+        text: 'Copy',
+        onClick: copyUrlToClipboard,
+      },
+      {
+        Icon: DeleteIcon,
+        text: 'Delete',
+        noDivider: true,
+        onClick: openDeleteLinkDialogModal,
+      },
+    ],
+    [openEditLinkModal, copyUrlToClipboard, openDeleteLinkDialogModal]
+  );
+
   return (
     <>
       <IconButton
@@ -162,9 +165,26 @@ function MoreMenuButton({ link }: { link: Link }) {
           );
         })}
       </StyledMenu>
-      {editModalOpen && <EditLinkForm open={editModalOpen} onClose={closeEditLinkModal} link={link} />}
-      {deleteDialogOpen && <DeleteLinkDialog open={deleteDialogOpen} onClose={closeDeleteLinkDialogModal} id={link.id} />}
-      {copyOpen && <CopyUrlToClipboard onClose={closeCopyUrlToClipboard} url={link.rawUrl} />}
+      {editModalOpen && (
+        <EditLinkForm
+          open={editModalOpen}
+          onClose={closeEditLinkModal}
+          link={link}
+        />
+      )}
+      {deleteDialogOpen && (
+        <DeleteLinkDialog
+          open={deleteDialogOpen}
+          onClose={closeDeleteLinkDialogModal}
+          id={link.id}
+        />
+      )}
+      {copyOpen && (
+        <CopyUrlToClipboard
+          onClose={closeCopyUrlToClipboard}
+          url={link.rawUrl}
+        />
+      )}
     </>
   );
 }

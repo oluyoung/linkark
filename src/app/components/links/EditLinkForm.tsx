@@ -7,13 +7,9 @@ import {
   IconButton,
   TextField,
   InputAdornment,
-  Modal
+  Modal,
 } from '@mui/material';
-import {
-  updateLink,
-  State,
-  Fields
-} from '@/app/lib/actions/links.actions';
+import { updateLink, State, Fields } from '@/app/lib/actions/links.actions';
 import LinkIcon from '@mui/icons-material/Link';
 import ClearIcon from '@mui/icons-material/Clear';
 import SubtitlesOutlinedIcon from '@mui/icons-material/SubtitlesOutlined';
@@ -25,7 +21,7 @@ import { showToast } from '@/store/toastSlice';
 
 interface Props {
   open: boolean;
-  link: Link
+  link: Link;
   onClose: () => void;
 }
 
@@ -38,36 +34,42 @@ const EditLinkForm = ({ open, onClose, link }: Props) => {
       url: link.rawUrl,
       title: link.title || link.ogTitle || '',
       description: link.description || link.ogDescription || '',
-      tags: []
+      tags: [],
     },
     onSubmit: async (values) => {
-      updateLink(link.id, values).then((res) => {
-        if (res.success) {
-          dispatch(showToast({
-            severity: 'success',
-            message: 'Link updated successfully.',
-            id: 'update-link-snackbar'
-          }));
-          onClose();
-        }
-        if (res.errors) setState(res);
-      }).catch((error) => {
-        dispatch(showToast({
-          severity: 'error',
-          message: 'Could not update this link, please try again.',
-          id: 'update-link-snackbar',
-          error
-        }));
-      });
-    }
+      updateLink(link.id, values)
+        .then((res) => {
+          if (res.success) {
+            dispatch(
+              showToast({
+                severity: 'success',
+                message: 'Link updated successfully.',
+                id: 'update-link-snackbar',
+              })
+            );
+            onClose();
+          }
+          if (res.errors) setState(res);
+        })
+        .catch((error) => {
+          dispatch(
+            showToast({
+              severity: 'error',
+              message: 'Could not update this link, please try again.',
+              id: 'update-link-snackbar',
+              error,
+            })
+          );
+        });
+    },
   });
 
   const resetField = (field: string) => {
     formik.setValues((prev) => ({
       ...prev,
-      [field]: field === 'tag' ? [] : ''
+      [field]: field === 'tag' ? [] : '',
     }));
-  }
+  };
 
   const getFirstError = useCallback(
     (field: string) =>
@@ -89,7 +91,7 @@ const EditLinkForm = ({ open, onClose, link }: Props) => {
     >
       <div className="contents">
         <StyledForm
-          onSubmit={e => {
+          onSubmit={(e) => {
             e.preventDefault();
             formik.submitForm();
           }}
@@ -118,12 +120,12 @@ const EditLinkForm = ({ open, onClose, link }: Props) => {
                     <ClearIcon />
                   </IconButton>
                 </InputAdornment>
-              )
+              ),
             }}
             error={!!getFirstError('url')}
             helperText={getFirstError('url')}
             sx={{
-              mb: 4
+              mb: 4,
             }}
           />
 
@@ -149,10 +151,10 @@ const EditLinkForm = ({ open, onClose, link }: Props) => {
                     <ClearIcon />
                   </IconButton>
                 </InputAdornment>
-              )
+              ),
             }}
             sx={{
-              mb: 4
+              mb: 4,
             }}
           />
 
@@ -180,20 +182,20 @@ const EditLinkForm = ({ open, onClose, link }: Props) => {
                     <ClearIcon />
                   </IconButton>
                 </InputAdornment>
-              )
+              ),
             }}
           />
 
           <div className="mt-6 flex justify-end gap-4">
-            <Button onClick={onClose}>
-              Cancel
+            <Button onClick={onClose}>Cancel</Button>
+            <Button type="submit" disabled={!formik.dirty}>
+              Update Link
             </Button>
-            <Button type="submit" disabled={!formik.dirty}>Update Link</Button>
           </div>
         </StyledForm>
       </div>
     </Modal>
   );
-}
+};
 
 export default EditLinkForm;

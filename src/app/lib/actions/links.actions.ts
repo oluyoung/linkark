@@ -16,15 +16,15 @@ interface StateErrors {
   description?: string[];
   tags?: string[];
   [key: number]: string[];
-};
+}
 
 export interface Fields {
   url: string;
   title: string;
   description: string;
   tags: string[];
-  [key: string]: string |string[] | undefined;
-};
+  [key: string]: string | string[] | undefined;
+}
 
 export interface State {
   errors?: StateErrors;
@@ -56,21 +56,22 @@ const LinkSchema = z.object({
 export async function createLink(values: Fields): Promise<State> {
   const session = await getServerSession(authOptions);
 
-  if (!session || !session.user || !session.user.id) return redirect('/auth/signin');
+  if (!session || !session.user || !session.user.id)
+    return redirect('/auth/signin');
 
   if (!values.title && values.description) {
     return {
       errors: {
-        title: ['There must be a title with a description.']
-      }
+        title: ['There must be a title with a description.'],
+      },
     };
   }
 
-  const validatedFields =  LinkSchema.safeParse(values);
+  const validatedFields = LinkSchema.safeParse(values);
 
   if (!validatedFields.success) {
     return {
-      errors: validatedFields.error.flatten().fieldErrors
+      errors: validatedFields.error.flatten().fieldErrors,
     };
   }
 
@@ -81,8 +82,8 @@ export async function createLink(values: Fields): Promise<State> {
     if (!meta) {
       return {
         errors: {
-          url: ['This URL does not exist.']
-        }
+          url: ['This URL does not exist.'],
+        },
       };
     }
 
@@ -91,8 +92,8 @@ export async function createLink(values: Fields): Promise<State> {
         ...meta,
         title,
         description,
-        creatorId: session.user.id
-      }
+        creatorId: session.user.id,
+      },
     });
   } catch (error) {
     console.error(error);
@@ -101,7 +102,7 @@ export async function createLink(values: Fields): Promise<State> {
 
   revalidatePath('/home/links');
   return {
-    success: true
+    success: true,
   };
 }
 
@@ -111,24 +112,28 @@ export async function createLink(values: Fields): Promise<State> {
  * @param {Fields} values
  * @returns {Promise<State>}
  */
-export async function updateLink(linkId: string, values: Fields): Promise<State> {
+export async function updateLink(
+  linkId: string,
+  values: Fields
+): Promise<State> {
   const session = await getServerSession(authOptions);
 
-  if (!session || !session.user || !session.user.id) return redirect('/auth/signin');
+  if (!session || !session.user || !session.user.id)
+    return redirect('/auth/signin');
 
   if (!values.title && values.description) {
     return {
       errors: {
-        title: ['There must be a title with a description.']
-      }
+        title: ['There must be a title with a description.'],
+      },
     };
   }
 
-  const validatedFields =  LinkSchema.safeParse(values);
+  const validatedFields = LinkSchema.safeParse(values);
 
   if (!validatedFields.success) {
     return {
-      errors: validatedFields.error.flatten().fieldErrors
+      errors: validatedFields.error.flatten().fieldErrors,
     };
   }
 
@@ -136,11 +141,12 @@ export async function updateLink(linkId: string, values: Fields): Promise<State>
 
   try {
     const meta = await getLinkMetadata(url);
-    if (!meta) return {
-      errors: {
-        url: ['This URL does not exist.']
-      }
-    };
+    if (!meta)
+      return {
+        errors: {
+          url: ['This URL does not exist.'],
+        },
+      };
 
     await prismaClient.link.update({
       data: {
@@ -150,8 +156,8 @@ export async function updateLink(linkId: string, values: Fields): Promise<State>
       },
       where: {
         id: linkId,
-        creatorId: session.user.id
-      }
+        creatorId: session.user.id,
+      },
     });
   } catch (error) {
     throw error;
@@ -159,7 +165,7 @@ export async function updateLink(linkId: string, values: Fields): Promise<State>
 
   revalidatePath('/home/links');
   return {
-    success: true
+    success: true,
   };
 }
 
@@ -171,17 +177,18 @@ export async function updateLink(linkId: string, values: Fields): Promise<State>
 export async function trashLink(linkId: string): Promise<State> {
   const session = await getServerSession(authOptions);
 
-  if (!session || !session.user || !session.user.id) return redirect('/auth/signin');
+  if (!session || !session.user || !session.user.id)
+    return redirect('/auth/signin');
 
   try {
     await prismaClient.link.update({
       data: {
-        isDeleted: true
+        isDeleted: true,
       },
       where: {
         id: linkId,
-        creatorId: session.user.id
-      }
+        creatorId: session.user.id,
+      },
     });
   } catch (error) {
     throw error;
@@ -189,7 +196,7 @@ export async function trashLink(linkId: string): Promise<State> {
 
   revalidatePath('/home/links');
   return {
-    success: true
+    success: true,
   };
 }
 
@@ -201,17 +208,18 @@ export async function trashLink(linkId: string): Promise<State> {
 export async function restoreLink(linkId: string): Promise<State> {
   const session = await getServerSession(authOptions);
 
-  if (!session || !session.user || !session.user.id) return redirect('/auth/signin');
+  if (!session || !session.user || !session.user.id)
+    return redirect('/auth/signin');
 
   try {
     await prismaClient.link.update({
       data: {
-        isDeleted: false
+        isDeleted: false,
       },
       where: {
         id: linkId,
-        creatorId: session.user.id
-      }
+        creatorId: session.user.id,
+      },
     });
   } catch (error) {
     throw error;
@@ -219,7 +227,7 @@ export async function restoreLink(linkId: string): Promise<State> {
 
   revalidatePath('/home/trash');
   return {
-    success: true
+    success: true,
   };
 }
 
@@ -240,14 +248,15 @@ export async function fetchTrashLinks(query?: string): Promise<Link[]> {
 export async function deleteLink(linkId: string): Promise<State> {
   const session = await getServerSession(authOptions);
 
-  if (!session || !session.user || !session.user.id) return redirect('/auth/signin');
+  if (!session || !session.user || !session.user.id)
+    return redirect('/auth/signin');
 
   try {
     await prismaClient.link.delete({
       where: {
         id: linkId,
-        creatorId: session.user.id
-      }
+        creatorId: session.user.id,
+      },
     });
   } catch (error) {
     console.error(error);
@@ -256,7 +265,7 @@ export async function deleteLink(linkId: string): Promise<State> {
 
   revalidatePath('/home/trash');
   return {
-    success: true
+    success: true,
   };
 }
 
@@ -269,13 +278,14 @@ export async function fetchLinks({
   query,
   isDeleted = false,
   sort = 'desc',
-  orderBy = 'createdAt'
+  orderBy = 'createdAt',
 }: FetchLinkProps): Promise<Link[]> {
   noStore();
 
   const session = await getServerSession(authOptions);
 
-  if (!session || !session.user || !session.user.id) return redirect('/auth/signin');
+  if (!session || !session.user || !session.user.id)
+    return redirect('/auth/signin');
 
   let links = [];
 
@@ -286,11 +296,11 @@ export async function fetchLinks({
       links = await prismaClient.link.findMany({
         where: {
           creatorId: session.user.id,
-          isDeleted
+          isDeleted,
         },
         orderBy: {
-          [orderBy]: sort
-        }
+          [orderBy]: sort,
+        },
       });
     }
   } catch (error) {
@@ -307,27 +317,33 @@ export async function fetchLinks({
  * @param {boolean} isDeleted
  * @returns {Promise<Link[]>}
  */
-export async function searchLinks(query: string, creatorId: string, isDeleted = false): Promise<Link[]> {
+export async function searchLinks(
+  query: string,
+  creatorId: string,
+  isDeleted = false
+): Promise<Link[]> {
   let links = [];
 
   try {
     links = await prismaClient.link.findMany({
       where: {
-        AND: [{
-          creatorId,
-          isDeleted,
-          OR: [
-            { title: { contains: query } },
-            { description: { contains: query } },
-            { ogDescription: { contains: query } },
-            { ogTitle: { contains: query } },
-            { rawUrl: { contains: query } }
-          ]
-        }]
+        AND: [
+          {
+            creatorId,
+            isDeleted,
+            OR: [
+              { title: { contains: query } },
+              { description: { contains: query } },
+              { ogDescription: { contains: query } },
+              { ogTitle: { contains: query } },
+              { rawUrl: { contains: query } },
+            ],
+          },
+        ],
       },
       orderBy: {
-        updatedAt: 'desc'
-      }
+        updatedAt: 'desc',
+      },
     });
   } catch (error) {
     console.error(error);
@@ -344,13 +360,13 @@ export async function searchLinks(query: string, creatorId: string, isDeleted = 
  * @returns {Promise<State | SuccessResult>}
  */
 export async function fetchOgMeta(url: string): Promise<State | SuccessResult> {
-  const ogsResult = await ogs({ url }).catch(error => error);
+  const ogsResult = await ogs({ url }).catch((error) => error);
   if (ogsResult.error) {
     if (ogsResult.result.error === 'Page not found') {
       return {
         errors: {
-          url: ['This URL does not exist']
-        }
+          url: ['This URL does not exist'],
+        },
       };
     }
   }
@@ -362,24 +378,41 @@ export async function fetchOgMeta(url: string): Promise<State | SuccessResult> {
  * @param {string} url_
  * @returns {Promise<Partial<Link>>}
  */
-async function getLinkMetadata(url_: string): Promise<Omit<Link, 'id' | 'createdAt' | 'updatedAt' | 'title' | 'description' | 'creatorId' | 'isDeleted'> | undefined> {
+async function getLinkMetadata(
+  url_: string
+): Promise<
+  | Omit<
+      Link,
+      | 'id'
+      | 'createdAt'
+      | 'updatedAt'
+      | 'title'
+      | 'description'
+      | 'creatorId'
+      | 'isDeleted'
+    >
+  | undefined
+> {
   try {
     const url = new URL(url_);
 
     // this is written this away so errors fail silently
-    const ogsResult = await ogs({ url: url_ }).then((res) => res).catch(error => error);
+    const ogsResult = await ogs({ url: url_ })
+      .then((res) => res)
+      .catch((error) => error);
 
     let ogTitle, ogType, ogUrl, ogDescription;
 
     if (ogsResult) {
       if (ogsResult.error) {
         // Only care if the url does not exist
-        if (ogsResult.result.error === 'Page not found') throw new Error('This URL does not exist');
-     } else {
+        if (ogsResult.result.error === 'Page not found')
+          throw new Error('This URL does not exist');
+      } else {
         ogTitle = ogsResult.result.ogTitle;
         ogType = ogsResult.result.ogType;
-        ogUrl = ogsResult.result.ogUrl,
-        ogDescription = ogsResult.result.ogDescription;
+        (ogUrl = ogsResult.result.ogUrl),
+          (ogDescription = ogsResult.result.ogDescription);
       }
     }
 
@@ -392,7 +425,7 @@ async function getLinkMetadata(url_: string): Promise<Omit<Link, 'id' | 'created
       ogTitle,
       ogDescription,
       ogType,
-      ogUrl
+      ogUrl,
     };
   } catch (error) {
     console.error(error);
