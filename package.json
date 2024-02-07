@@ -9,7 +9,8 @@
     "lint": "next lint",
     "eslint": "eslint '*/**/*.{js,jsx,ts,tsx}' --quiet",
     "eslint:fix": "eslint '*/**/*.{js,jsx,ts,tsx}' --quiet --fix",
-    "format": "prettier --write '*/**/*.{js,jsx,ts,tsx,json,css,md}'"
+    "format": "prettier --write '*/**/*.{js,jsx,ts,tsx,json,css,md}'",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@emotion/cache": "^11.11.0",
@@ -20,6 +21,7 @@
     "@mui/material-nextjs": "^5.15.3",
     "@prisma/client": "^5.7.1",
     "@reduxjs/toolkit": "^2.0.1",
+    "@vercel/postgres": "^0.7.2",
     "clsx": "^2.1.0",
     "date-fns": "^3.2.0",
     "formik": "^2.4.5",

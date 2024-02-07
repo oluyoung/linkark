@@ -6,14 +6,15 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:../.db/db.sqlite"
+  provider = "postgresql"
+  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
 model User {
   id String @id @default(uuid())
   name String
-  email String
+  email String @unique
   emailVerified DateTime?
   createdAt DateTime @default(now())
   links Link[]
@@ -22,7 +23,6 @@ model User {
   subcribedLists List[] @relation("subscriber")
   accounts Account[]
 
-  @@unique([email])
   @@map("user")
 }
 
@@ -43,7 +43,6 @@ model Account {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
-  @@map("accounts")
 }
 
 model Link {
@@ -55,7 +54,7 @@ model Link {
   description String?
   ogTitle String? // used if no title
   ogDescription String? // used if no description
-  ogType String? // can be used to display image if product or sth like it or fun icons to denote the type, ?and can also be used to group products?
+  ogType String? // can be used to display image if product or sth like it or fun icons to denote the type? and can also be used to group products?
   ogUrl String?
   query String?
   rawUrl String
