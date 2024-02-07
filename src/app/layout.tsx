@@ -14,7 +14,7 @@ import './globals.css';
 export const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'LinkMe',
+  title: 'LinkArk',
   description: 'Save & Store Your Links',
 };
 

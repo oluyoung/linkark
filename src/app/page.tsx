@@ -59,8 +59,8 @@ export default async function Home() {
         </div>
         <div className="flex justify-center items-center flex-col gap-4 mt-4">
           <FeedbackForm />
-          <a className="text-blue-400" href="mailto:contact@linkme.com">
-            contact@linkme.com{' '}
+          <a className="text-blue-400" href="mailto:contact@linkark.solutions">
+            contact@linkark.solutions{' '}
           </a>
         </div>
         <div className="flex flex-wrap justify-center items-center gap-4 mt-8">

@@ -6,7 +6,7 @@ import LinksSkeleton from '@/app/components/links/LinksSkeleton';
 import SearchLinks from '@/app/components/links/SearchLinks';
 
 export const metadata: Metadata = {
-  title: 'Links | LinkMe',
+  title: 'Links | LinkArk',
 };
 
 export default async function page({

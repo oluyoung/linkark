@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Home | LinkMe',
+  title: 'Home | LinkArk',
 };
 
 async function page() {
