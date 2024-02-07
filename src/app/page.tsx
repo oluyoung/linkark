@@ -14,11 +14,10 @@ export default async function Home() {
       <div className="w-100 text-center py-16 bg-black flex justify-center">
         <div className="px-4 container">
           <h1 className="text-4xl font-semibold text-white">
-            Simply dummy text of the printing and typesetting industry
+            Unlock the Power of Link Organization with LinkArk
           </h1>
           <p className="text-gray-600 mt-4 text-white">
-            It is a long established fact that a reader will be distracted by
-            the readable content
+            Offering a user-friendly platform for storing and sharing links, ensuring you never lose track again
           </p>
           {/* <button className="bg-blue-600 text-white px-6 py-2 rounded-full mt-6">Create Account</button> */}
         </div>
@@ -65,7 +64,7 @@ export default async function Home() {
         </div>
         <div className="flex flex-wrap justify-center items-center gap-4 mt-8">
           <p className="text-gray-500 text-sm sm:order-3 sm:w-100">
-            © Copyright Blancpoint Ltd 2023. All Rights Reserved.
+            © Copyright Blancpoint Ltd 2024. All Rights Reserved.
           </p>
           <a className="text-gray-500 text-sm sm:order-1" href="#">
             Terms &amp; Condition
