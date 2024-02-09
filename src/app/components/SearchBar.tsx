@@ -15,7 +15,7 @@ const StyledSearchField = styled(TextField)(({ theme }) => ({
   },
 }));
 
-const SearchLinks = ({ placeholder }: { placeholder?: string }) => {
+const SearchBar = ({ placeholder }: { placeholder?: string }) => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
@@ -24,7 +24,6 @@ const SearchLinks = ({ placeholder }: { placeholder?: string }) => {
   const handleSearch = useDebouncedCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const term = event.target.value;
-      console.log(`Searching... ${term}`);
 
       const params = new URLSearchParams(searchParams);
       if (term) params.set('query', term);
@@ -42,7 +41,7 @@ const SearchLinks = ({ placeholder }: { placeholder?: string }) => {
   };
 
   useEffect(() => {
-    clear(); // clear input on mount
+    clear();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -82,4 +81,4 @@ const SearchLinks = ({ placeholder }: { placeholder?: string }) => {
   );
 };
 
-export default SearchLinks;
+export default SearchBar;

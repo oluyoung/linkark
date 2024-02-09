@@ -1,6 +1,7 @@
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import { fetchTrashLinks } from '@/app/lib/actions/links.actions';
-import EmptyTrash from './EmptyTrash';
 import DeletedLink from './DeletedLink';
+import EmptyContent from '@/app/components/EmptyContent';
 
 async function DeletedLinksList({ query }: { query: string }) {
   const links = await fetchTrashLinks(query);
@@ -18,7 +19,14 @@ async function DeletedLinksList({ query }: { query: string }) {
       </div>
     </div>
   ) : (
-    <EmptyTrash query={query} />
+    <EmptyContent
+      query={query}
+      id="empty-trash"
+      Icon={DeleteOutlinedIcon}
+      noItemText="No links in trash"
+      noMatchedQueryText={`There are no links in trash that match: ${query}`}
+      iconClass="text-red-500"
+    />
   );
 }
 

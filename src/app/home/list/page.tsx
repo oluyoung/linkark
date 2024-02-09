@@ -6,7 +6,7 @@ import LinksSkeleton from '@/app/components/links/LinksSkeleton';
 import SearchBar from '@/app/components/SearchBar';
 
 export const metadata: Metadata = {
-  title: 'Links | LinkArk',
+  title: 'Lists | LinkArk',
 };
 
 export default async function page({
@@ -20,7 +20,7 @@ export default async function page({
 
   return (
     <>
-      <SearchBar />
+      <SearchBar placeholder="Search lists..." />
       <Suspense key={query} fallback={<LinksSkeleton />}>
         <LinksList query={query} />
       </Suspense>
