@@ -1,7 +1,6 @@
 import { Metadata } from 'next';
 import { Suspense } from 'react';
-import AddLinkButton from '@/app/components/links/AddLinkButton';
-import LinksList from '@/app/components/links/LinksList';
+import ListsList from '@/app/components/lists/ListsList';
 import LinksSkeleton from '@/app/components/links/LinksSkeleton';
 import SearchBar from '@/app/components/SearchBar';
 
@@ -22,9 +21,8 @@ export default async function page({
     <>
       <SearchBar placeholder="Search lists..." />
       <Suspense key={query} fallback={<LinksSkeleton />}>
-        <LinksList query={query} />
+        <ListsList query={query} />
       </Suspense>
-      <AddLinkButton />
     </>
   );
 }

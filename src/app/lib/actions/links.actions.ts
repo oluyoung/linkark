@@ -9,6 +9,7 @@ import ogs, { SuccessResult } from 'open-graph-scraper';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { unstable_noStore as noStore } from 'next/cache';
+import { createHash } from 'node:crypto';
 
 interface StateErrors {
   url?: string[];
@@ -394,6 +395,7 @@ async function getLinkMetadata(
   | undefined
 > {
   try {
+    const hash = createHash('sha512');
     const url = new URL(url_);
 
     // this is written this away so errors fail silently
@@ -422,6 +424,7 @@ async function getLinkMetadata(
       path: url.pathname,
       query: url.search,
       rawUrl: url.href,
+      rawUrlHash: hash.update(url.href).digest('hex'),
       ogTitle,
       ogDescription,
       ogType,

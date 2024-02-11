@@ -1,61 +1,64 @@
-import { Link as LinkModel } from '@prisma/client';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+'use client';
+import { ListWithUser } from '@/app/lib/actions/list.actions';
+import { Chip, IconButton } from '@mui/material';
+import FaceIcon from '@mui/icons-material/Face';
+import RssFeedIcon from '@mui/icons-material/RssFeed';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import LockOpenIcon from '@mui/icons-material/LockOpen';
+import LockIcon from '@mui/icons-material/Lock';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { format } from 'date-fns';
 import clsx from 'clsx';
 
-function Link({ link }: { link: LinkModel }) {
-  const hasTitle = !!(link.title || link.ogTitle);
-  const hasDescription = !!(link.description || link.ogDescription);
+export default function List({ list }: { list: ListWithUser }) {
+  const hasTitle = list.name;
+  const hasDescription = list.name && list.description;
 
   return (
     <div className="bg-white rounded-lg p-4 w-full card-shadow mb-4">
-      <div
-        className={clsx('flex items-center justify-between', {
-          'h-[70px]': hasTitle,
-          'h-[50px]': !hasTitle,
-        })}
-      >
+      <div className={clsx('flex items-center justify-between')}>
         <div className="flex items-center h-full">
           <span className="h-4 w-4 bg-blue-500 inline-block rounded-full mr-3"></span>
           <div
             className={clsx('text-wrap max-w-96 h-full flex flex-col', {
               'justify-between': hasTitle && hasDescription,
-              'justify-center':
-                (!hasTitle && !hasDescription) || !hasDescription,
+              'justify-center': !hasDescription
             })}
           >
-            <div className="w-full">
+            <div className={clsx('w-full', {'mb-3': hasDescription})}>
               {hasTitle ? (
-                <p className="text-sm truncate mb-0.5">
-                  {link.title || link.ogTitle}
+                <p className={clsx('text-sm truncate', { 'mb-1': hasDescription })}>
+                  {list.name}
                 </p>
               ) : null}
-              {hasTitle && hasDescription ? (
-                <p className="text-sm text-gray-500 truncate mb-0.5">
-                  {link.description || link.ogDescription}
+              {hasDescription ? (
+                <p className="text-sm text-gray-500 truncate">
+                  {list.description}
                 </p>
               ) : null}
             </div>
-            <a
-              className="text-sm truncate inline-block max-w-96 text-blue-500"
-              href={link.rawUrl}
-              target="_blank"
-            >
-              <OpenInNewIcon fontSize="inherit" />{' '}
-              <span className="underline">
-                {hasTitle ? 'Open' : link.rawUrl}
+            <div className="flex items-center">
+              <span className="inline-block mr-2">
+                {list.isPublic ? <LockOpenIcon fontSize="small" /> : <LockIcon fontSize="small" />}
               </span>
-            </a>
+              <span className="inline-block mr-4">
+                <Chip icon={<FaceIcon />} label={list.creator.name} variant="outlined" size="small" />
+              </span>
+              <span className="inline-block mr-4">
+                <Chip icon={<RssFeedIcon />} label={40} variant="outlined" size="small" />
+              </span>
+              <span className="inline-block">
+                <Chip icon={<AccessTimeIcon />} label={format(list.createdAt, 'dd MMM yy')} variant="outlined" size="small" />
+              </span>
+            </div>
           </div>
         </div>
-        <div className="flex flex-col items-end justify-between h-full">
-          <p className="text-gray-400 text-sm">
-            {format(link.createdAt, 'dd MMM yy')}
-          </p>
+        <div className="flex flex-col items-center justify-center h-full">
+          <IconButton onClick={() => {}} size="large">
+            <ChevronRightIcon fontSize="large" />
+          </IconButton>
         </div>
       </div>
     </div>
   );
 }
-
-export default Link;

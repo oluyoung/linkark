@@ -6,9 +6,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
-  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+  provider = "mysql"
+  url = env("MYSQL_URL") // uses connection pooling
 }
 
 model User {
@@ -19,8 +18,8 @@ model User {
   createdAt DateTime @default(now())
   links Link[]
   lists List[] @relation("creator")
-  editingLists List[] @relation("editor")
-  subcribedLists List[] @relation("subscriber")
+  editingLists ListEditors[]
+  subcribedLists ListSubscribers[]
   accounts Account[]
 
   @@map("user")
@@ -49,35 +48,69 @@ model Link {
   id String @id @default(cuid())
   hostname String
   origin String
-  path String
+  path String @db.TinyText
   title String?
-  description String?
+  description String? @db.Text
   ogTitle String? // used if no title
-  ogDescription String? // used if no description
+  ogDescription String? @db.Text // used if no description
   ogType String? // can be used to display image if product or sth like it or fun icons to denote the type? and can also be used to group products?
-  ogUrl String?
-  query String?
-  rawUrl String
+  ogUrl String? @db.Text
+  query String? @db.Text
+  rawUrl String @db.Text
+  rawUrlHash String
   isDeleted Boolean? @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  lists List[]
+  list ListLinks[]
   creator User @relation(fields: [creatorId], references: [id])
   creatorId String
 
-  @@unique([origin, path, query])
+  @@unique([rawUrlHash, creatorId])
   @@index([hostname, origin])
 }
 
 model List {
   id String @id @default(cuid())
   name String
-  public Boolean @default(false)
-  links Link[]
-  editors User[] @relation("editor")
-  subscribers User[] @relation("subscriber")
+  description String? @db.Text
+  isPublic Boolean @default(false)
+  links ListLinks[]
+  editors ListEditors[]
+  subscribers ListSubscribers[]
   creator User @relation("creator", fields: [creatorId], references: [id])
   creatorId String
   createdAt DateTime                                                                                                                                                                                                                                                                                                             @default(now())
   updatedAt DateTime @updatedAt
+
+  @@unique([name, creatorId, isPublic])
+}
+
+model ListLinks {
+  id String @id @default(cuid())
+  link Link @relation(fields: [linkId], references: [id])
+  linkId String
+  list   List @relation(fields: [listId], references: [id])
+  listId String
+
+  @@index([linkId, listId])
+}
+
+model ListEditors {
+  id String @id @default(cuid())
+  editor User @relation(fields: [editorId], references: [id])
+  editorId String
+  list   List @relation(fields: [listId], references: [id])
+  listId String
+
+  @@index([editorId, listId])
+}
+
+model ListSubscribers {
+  id String @id @default(cuid())
+  subscriber User @relation(fields: [subscriberId], references: [id])
+  subscriberId String
+  list   List @relation(fields: [listId], references: [id])
+  listId String
+
+  @@index([subscriberId, listId])
 }
