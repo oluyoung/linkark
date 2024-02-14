@@ -1,6 +1,5 @@
 'use server';
 
-import z from 'zod';
 import prismaClient from '@/app/db/prisma-client';
 import { List, User } from '@prisma/client';
 import { getServerSession } from 'next-auth';
@@ -8,6 +7,7 @@ import { authOptions } from '@/app/api/auth/authOptions';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { unstable_noStore as noStore } from 'next/cache';
+import { ListSchema } from './schemas';
 
 export type ListWithUser = List & { creator: User };
 
@@ -25,10 +25,7 @@ export interface Fields {
   name: string;
   description: string;
   isPublic: boolean;
-  links: string[];
-  editors: string[];
-  subscribers: string[];
-  [key: string]: string | boolean | string[] | undefined;
+  [key: string]: string | boolean | undefined;
 }
 
 export interface State {
@@ -42,12 +39,6 @@ export interface FetchListProps {
   sort?: 'asc' | 'desc';
   orderBy?: 'createdAt' | 'updatedAt';
 }
-
-const ListSchema = z.object({
-  name: z.string(),
-  description: z.string().optional(),
-  isPublic: z.boolean().default(false)
-});
 
 /**
  * Function to create a new link

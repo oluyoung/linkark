@@ -8,18 +8,19 @@ import {
   IconButton,
   TextField,
   InputAdornment,
+  FormControlLabel,
+  Checkbox,
 } from '@mui/material';
 import { styled } from '@mui/material';
 import { BoxProps } from '@mui/material/Box';
-import { createLink, State, Fields } from '@/app/lib/actions/links.actions';
-import LinkIcon from '@mui/icons-material/Link';
+import { createList, State, Fields } from '@/app/lib/actions/list.actions';
 import ClearIcon from '@mui/icons-material/Clear';
 import SubtitlesOutlinedIcon from '@mui/icons-material/SubtitlesOutlined';
 import ViewStreamOutlinedIcon from '@mui/icons-material/ViewStreamOutlined';
 import { useAppDispatch } from '@/store/hooks';
 import { showToast } from '@/store/toastSlice';
+import { ListSchema } from '@/app/lib/actions/schemas';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
-import { LinkSchema } from '@/app/lib/actions/schemas';
 
 export const StyledForm = styled((props: BoxProps) => (
   <Box component="form" noValidate autoComplete="off" {...props} />
@@ -37,27 +38,26 @@ export const StyledForm = styled((props: BoxProps) => (
   '& > :not(style)': { m: 1 },
 }));
 
-const AddLinkForm = ({ onClose }: { onClose: () => void }) => {
+const AddListForm = ({ onClose }: { onClose: () => void }) => {
   const [state, setState] = useState<State>({});
   const dispatch = useAppDispatch();
 
   const formik = useFormik<Fields>({
     initialValues: {
-      url: '',
-      title: '',
+      name: '',
       description: '',
-      tags: [],
+      isPublic: false,
     },
-    validationSchema: toFormikValidationSchema(LinkSchema),
+    validationSchema: toFormikValidationSchema(ListSchema),
     onSubmit: (values) => {
-      createLink(values)
+      createList(values)
         .then((res) => {
           if (res.success) {
             dispatch(
               showToast({
                 severity: 'success',
-                message: 'Link created successfully.',
-                id: 'create-link-snackbar',
+                message: 'List created successfully.',
+                id: 'create-list-snackbar',
               })
             );
             onClose();
@@ -68,8 +68,8 @@ const AddLinkForm = ({ onClose }: { onClose: () => void }) => {
           dispatch(
             showToast({
               severity: 'error',
-              message: 'Could not create the link, please try again.',
-              id: 'create-link-snackbar',
+              message: 'Could not create the list, please try again.',
+              id: 'create-list-snackbar',
               error,
             })
           );
@@ -80,7 +80,7 @@ const AddLinkForm = ({ onClose }: { onClose: () => void }) => {
   const resetField = (field: string) => {
     formik.setValues((prev) => ({
       ...prev,
-      [field]: field === 'tag' ? [] : '',
+      [field]: '',
     }));
   };
 
@@ -107,48 +107,15 @@ const AddLinkForm = ({ onClose }: { onClose: () => void }) => {
     >
       <TextField
         fullWidth
-        id="url-field"
-        label="Link"
-        type="url"
-        name="url"
+        name="name"
+        id="name-field"
+        label="Name"
         variant="outlined"
-        value={formik.values.url}
+        error={!!getFirstError('name')}
+        helperText={getFirstError('name')}
+        value={formik.values.name}
         onChange={formik.handleChange}
         required
-        aria-required="true"
-        multiline
-        rows={1}
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <LinkIcon />
-            </InputAdornment>
-          ),
-          endAdornment: (
-            <InputAdornment position="end">
-              <IconButton onClick={() => resetField('url')}>
-                <ClearIcon />
-              </IconButton>
-            </InputAdornment>
-          ),
-        }}
-        error={!!getFirstError('url')}
-        helperText={getFirstError('url')}
-        sx={{
-          mb: 4,
-        }}
-      />
-
-      <TextField
-        fullWidth
-        name="title"
-        id="title-field"
-        label="Title"
-        variant="outlined"
-        error={!!getFirstError('title')}
-        helperText={getFirstError('title')}
-        value={formik.values.title}
-        onChange={formik.handleChange}
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
@@ -157,7 +124,7 @@ const AddLinkForm = ({ onClose }: { onClose: () => void }) => {
           ),
           endAdornment: (
             <InputAdornment position="end">
-              <IconButton onClick={() => resetField('title')}>
+              <IconButton onClick={() => resetField('name')}>
                 <ClearIcon />
               </IconButton>
             </InputAdornment>
@@ -194,16 +161,32 @@ const AddLinkForm = ({ onClose }: { onClose: () => void }) => {
             </InputAdornment>
           ),
         }}
+        sx={{
+          mb: 2,
+        }}
+      />
+
+      <FormControlLabel
+        control={
+          <Checkbox
+            checked={formik.values.isPublic}
+            onChange={formik.handleChange}
+            inputProps={{ 'aria-label': 'list-isPublic' }}
+            id="list-isPublic"
+            name="isPublic"
+          />
+        }
+        label="Share list with public"
       />
 
       <div className="mt-6 flex justify-end gap-4">
         <Button onClick={onClose}>Cancel</Button>
         <Button type="submit" disabled={!formik.dirty}>
-          Create Link
+          Create List
         </Button>
       </div>
     </StyledForm>
   );
 };
 
-export default AddLinkForm;
+export default AddListForm;

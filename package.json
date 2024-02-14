@@ -32,7 +32,8 @@
     "react-dom": "^18",
     "react-redux": "^9.1.0",
     "use-debounce": "^10.0.0",
-    "zod": "^3.22.4"
+    "zod": "^3.22.4",
+    "zod-formik-adapter": "^1.2.0"
   },
   "devDependencies": {
     "@auth/prisma-adapter": "^1.0.14",

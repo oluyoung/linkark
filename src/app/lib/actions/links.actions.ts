@@ -1,6 +1,5 @@
 'use server';
 
-import z from 'zod';
 import prismaClient from '@/app/db/prisma-client';
 import { Link } from '@prisma/client';
 import { getServerSession } from 'next-auth';
@@ -10,6 +9,7 @@ import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { unstable_noStore as noStore } from 'next/cache';
 import { createHash } from 'node:crypto';
+import { LinkSchema } from './schemas';
 
 interface StateErrors {
   url?: string[];
@@ -39,15 +39,6 @@ export interface FetchLinkProps {
   sort?: 'asc' | 'desc';
   orderBy?: 'createdAt' | 'updatedAt';
 }
-
-const LinkSchema = z.object({
-  title: z.string().optional(),
-  description: z.string().optional(),
-  url: z.string().url({
-    message: 'Please enter a valid url',
-  }),
-  tags: z.array(z.string().cuid()).optional(), // use mui/chip to add tags and pass the cuids
-});
 
 /**
  * Function to create a new link
