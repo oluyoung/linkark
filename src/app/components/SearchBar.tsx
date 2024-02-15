@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { TextField, InputAdornment, IconButton } from '@mui/material';
+import { TextField, InputAdornment, IconButton, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { SearchOutlined, Clear } from '@mui/icons-material';
 import { useDebouncedCallback } from 'use-debounce';

@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { Suspense } from 'react';
 import AddLinkButton from '@/app/components/links/AddLinkButton';
-import LinksList from '@/app/components/links/LinksList';
+import LinksList from '@/app/components/lists/LinksList';
 import LinksSkeleton from '@/app/components/links/LinksSkeleton';
 import SearchBar from '@/app/components/SearchBar';
 

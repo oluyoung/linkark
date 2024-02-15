@@ -1,7 +1,7 @@
 'use server';
 
 import prismaClient from '@/app/db/prisma-client';
-import { List, User } from '@prisma/client';
+import { List, User, ListLink, Link } from '@prisma/client';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/authOptions';
 import { redirect } from 'next/navigation';
@@ -10,6 +10,8 @@ import { unstable_noStore as noStore } from 'next/cache';
 import { ListSchema } from './schemas';
 
 export type ListWithUser = List & { creator: User };
+export type ListLinkWithLink = ListLink & { link: Link };
+export type ListWithLinks = List & { links: ListLinksWithLink[] };
 
 interface StateErrors {
   name?: string[];
@@ -115,6 +117,32 @@ export async function fetchLists({
     });
 
     return lists;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function fetchList({ id }: { id: string }) {
+  const session = await getServerSession(authOptions);
+
+  if (!session || !session.user || !session.user.id)
+    return redirect('/auth/signin');
+
+  try {
+    const list = await prismaClient.list.findFirstOrThrow({
+      where: {
+        id,
+        creatorId: session.user.id
+      },
+      include: {
+        links: {
+          include: {
+            link: true
+          }
+        }
+      }
+    });
+    return { list, listLinks: list.links };
   } catch (error) {
     throw error;
   }

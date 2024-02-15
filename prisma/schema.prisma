@@ -18,8 +18,8 @@ model User {
   createdAt DateTime @default(now())
   links Link[]
   lists List[] @relation("creator")
-  editingLists ListEditors[]
-  subcribedLists ListSubscribers[]
+  editingLists ListEditor[]
+  subcribedLists ListSubscriber[]
   accounts Account[]
 
   @@map("user")
@@ -61,7 +61,7 @@ model Link {
   isDeleted Boolean? @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  list ListLinks[]
+  list ListLink[]
   creator User @relation(fields: [creatorId], references: [id])
   creatorId String
 
@@ -74,9 +74,9 @@ model List {
   name String
   description String? @db.Text
   isPublic Boolean @default(false)
-  links ListLinks[]
-  editors ListEditors[]
-  subscribers ListSubscribers[]
+  links ListLink[]
+  editors ListEditor[]
+  subscribers ListSubscriber[]
   creator User @relation("creator", fields: [creatorId], references: [id])
   creatorId String
   createdAt DateTime                                                                                                                                                                                                                                                                                                             @default(now())
@@ -85,7 +85,7 @@ model List {
   @@unique([name, creatorId, isPublic])
 }
 
-model ListLinks {
+model ListLink {
   id String @id @default(cuid())
   link Link @relation(fields: [linkId], references: [id])
   linkId String
@@ -95,7 +95,7 @@ model ListLinks {
   @@index([linkId, listId])
 }
 
-model ListEditors {
+model ListEditor {
   id String @id @default(cuid())
   editor User @relation(fields: [editorId], references: [id])
   editorId String
@@ -105,7 +105,7 @@ model ListEditors {
   @@index([editorId, listId])
 }
 
-model ListSubscribers {
+model ListSubscriber {
   id String @id @default(cuid())
   subscriber User @relation(fields: [subscriberId], references: [id])
   subscriberId String

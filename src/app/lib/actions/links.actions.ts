@@ -38,6 +38,7 @@ export interface FetchLinkProps {
   isDeleted?: boolean;
   sort?: 'asc' | 'desc';
   orderBy?: 'createdAt' | 'updatedAt';
+  isListCall?: boolean;
 }
 
 /**
@@ -271,8 +272,9 @@ export async function fetchLinks({
   isDeleted = false,
   sort = 'desc',
   orderBy = 'createdAt',
+  isListCall = false
 }: FetchLinkProps): Promise<Link[]> {
-  noStore();
+  if (!isListCall) noStore();
 
   const session = await getServerSession(authOptions);
 

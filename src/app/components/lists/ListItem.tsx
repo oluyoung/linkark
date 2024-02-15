@@ -8,6 +8,7 @@ import LockOpenIcon from '@mui/icons-material/LockOpen';
 import LockIcon from '@mui/icons-material/Lock';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { format } from 'date-fns';
+import Link from 'next/link';
 import clsx from 'clsx';
 
 export default function List({ list }: { list: ListWithUser }) {
@@ -27,7 +28,7 @@ export default function List({ list }: { list: ListWithUser }) {
           >
             <div className={clsx('w-full', {'mb-3': hasDescription})}>
               {hasTitle ? (
-                <p className={clsx('text-sm truncate', { 'mb-1': hasDescription })}>
+                <p className={clsx('text-sm truncate mb-1')}>
                   {list.name}
                 </p>
               ) : null}
@@ -54,7 +55,7 @@ export default function List({ list }: { list: ListWithUser }) {
           </div>
         </div>
         <div className="flex flex-col items-center justify-center h-full">
-          <IconButton onClick={() => {}} size="large">
+          <IconButton href={`list/${list.id}`} LinkComponent={Link} size="large">
             <ChevronRightIcon fontSize="large" />
           </IconButton>
         </div>
