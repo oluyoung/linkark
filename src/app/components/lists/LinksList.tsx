@@ -23,7 +23,7 @@ async function LinksList({ query, links }: { query?: string; links?: ListLinkWit
     </div>
   ) : (
     <EmptyContent
-      query={query}
+      query={query || ''}
       id="empty-links"
       Icon={LinkIcon}
       noItemText="No links saved yet"

@@ -13,7 +13,7 @@ import DeleteLinkDialog from '@/app/components/links/DeleteLinkDialog';
 import { Link } from '@prisma/client';
 import CopyUrlToClipboard from './CopyUrlToClipboard';
 
-const StyledMenu = styled((props: MenuProps) => (
+export const StyledMenu = styled((props: MenuProps) => (
   <Menu
     elevation={0}
     anchorOrigin={{

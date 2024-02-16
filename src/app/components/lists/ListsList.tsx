@@ -3,7 +3,7 @@ import EmptyContent from '@/app/components/EmptyContent';
 import ListIcon from '@mui/icons-material/List';
 import ListItem from './ListItem';
 
-async function ListsItems({ query }: { query: string }) {
+async function ListItems({ query }: { query: string }) {
   const lists = await fetchLists({ query });
 
   return lists.length ? (
@@ -29,4 +29,4 @@ async function ListsItems({ query }: { query: string }) {
   );
 }
 
-export default ListsItems;
+export default ListItems;

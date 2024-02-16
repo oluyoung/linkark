@@ -7,6 +7,7 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import LockIcon from '@mui/icons-material/Lock';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import MoreMenuButton from './MoreMenuButton';
 import { format } from 'date-fns';
 import Link from 'next/link';
 import clsx from 'clsx';
@@ -50,6 +51,9 @@ export default function List({ list }: { list: ListWithUser }) {
               </span>
               <span className="inline-block">
                 <Chip icon={<AccessTimeIcon />} label={format(list.createdAt, 'dd MMM yy')} variant="outlined" size="small" />
+              </span>
+              <span className="inline-block">
+                <MoreMenuButton list={list} />
               </span>
             </div>
           </div>
