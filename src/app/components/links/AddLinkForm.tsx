@@ -30,7 +30,6 @@ export const StyledForm = styled((props: BoxProps<'form'>) => (
   transform: 'translate(-50%, -50%)',
   width: 640,
   backgroundColor: theme.palette.common.white,
-  border: '2px solid #000',
   boxShadow: theme.shadows[24],
   padding: theme.spacing(6, 4, 4),
   borderRadius: 5,
