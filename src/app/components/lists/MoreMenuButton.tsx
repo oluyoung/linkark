@@ -22,10 +22,16 @@ function MoreMenuButton({ list }: { list: List }) {
 
   const closeMenu = () => setAnchorEl(null);
 
-  const toggleModal = useCallback((setStateFn: React.Dispatch<React.SetStateAction<boolean>>, value: boolean) => {
-    setStateFn(value);
-    closeMenu();
-  }, []);
+  const toggleModal = useCallback(
+    (
+      setStateFn: React.Dispatch<React.SetStateAction<boolean>>,
+      value: boolean
+    ) => {
+      setStateFn(value);
+      closeMenu();
+    },
+    []
+  );
 
   const menuItems = useMemo(
     () => [

@@ -19,7 +19,9 @@ function AddListButton() {
         onClick={handleOpen}
       >
         CREATE LIST
-        <span className="ml-2 inline-flex items-center"><AddIcon fontSize="small" /></span>
+        <span className="ml-2 inline-flex items-center">
+          <AddIcon fontSize="small" />
+        </span>
       </Fab>
       {/** duplicate the form to be used in the edit link bit as well. */}
       <Modal

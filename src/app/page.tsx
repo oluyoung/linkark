@@ -17,7 +17,8 @@ export default async function Home() {
             Unlock the Power of Link Organization with LinkArk
           </h1>
           <p className="text-gray-600 mt-4 text-white">
-            Offering a user-friendly platform for storing and sharing links, ensuring you never lose track again
+            Offering a user-friendly platform for storing and sharing links,
+            ensuring you never lose track again
           </p>
           {/* <button className="bg-blue-600 text-white px-6 py-2 rounded-full mt-6">Create Account</button> */}
         </div>

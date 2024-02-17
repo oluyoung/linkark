@@ -10,7 +10,12 @@ import {
   FormControlLabel,
   Checkbox,
 } from '@mui/material';
-import { createList,updateList, State, Fields } from '@/app/lib/actions/list.actions';
+import {
+  createList,
+  updateList,
+  State,
+  Fields,
+} from '@/app/lib/actions/list.actions';
 import ClearIcon from '@mui/icons-material/Clear';
 import SubtitlesOutlinedIcon from '@mui/icons-material/SubtitlesOutlined';
 import ViewStreamOutlinedIcon from '@mui/icons-material/ViewStreamOutlined';
@@ -21,7 +26,15 @@ import { toFormikValidationSchema } from 'zod-formik-adapter';
 import { StyledForm } from '../links/AddLinkForm';
 import { List } from '@prisma/client';
 
-const ListForm = ({ createMode, list, onClose }: { createMode: boolean; list: List, onClose: () => void }) => {
+const ListForm = ({
+  createMode,
+  list,
+  onClose,
+}: {
+  createMode: boolean;
+  list: List;
+  onClose: () => void;
+}) => {
   const [state, setState] = useState<State>({});
   const dispatch = useAppDispatch();
 

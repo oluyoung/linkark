@@ -3,8 +3,7 @@ import { Typography, Breadcrumbs } from '@mui/material';
 import { List } from '@prisma/client';
 import NextLink from 'next/link';
 
-export default function ListBreadCrumbs ({ list }: { list: List; }) {
-
+export default function ListBreadCrumbs({ list }: { list: List }) {
   return (
     <Breadcrumbs separator="›" aria-label="breadcrumb">
       <NextLink key={1} href="/home/lists">
@@ -14,5 +13,5 @@ export default function ListBreadCrumbs ({ list }: { list: List; }) {
         {list.name}
       </Typography>
     </Breadcrumbs>
-  )
+  );
 }

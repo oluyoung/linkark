@@ -21,7 +21,7 @@ import { showToast } from '@/store/toastSlice';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 import { LinkSchema } from '@/app/lib/actions/schemas';
 
-export const StyledForm = styled((props: BoxProps) => (
+export const StyledForm = styled((props: BoxProps<'form'>) => (
   <Box component="form" noValidate autoComplete="off" {...props} />
 ))(({ theme }) => ({
   position: 'absolute',

@@ -41,6 +41,11 @@ export interface FetchLinkProps {
   isListCall?: boolean;
 }
 
+export type LinkAsAutocompleteOption = Pick<
+  Link,
+  'id' | 'title' | 'ogTitle' | 'rawUrl' | 'rawUrlHash'
+>;
+
 /**
  * Function to create a new link
  */
@@ -257,7 +262,7 @@ export async function fetchLinks({
   isDeleted = false,
   sort = 'desc',
   orderBy = 'createdAt',
-  isListCall = false
+  isListCall = false,
 }: FetchLinkProps): Promise<Link[]> {
   if (!isListCall) noStore();
 
@@ -287,6 +292,36 @@ export async function fetchLinks({
   }
 
   return links;
+}
+
+/**
+ * Function to fetch links for Autocomplete options
+ */
+export async function fetchLinksAsAutocompleteOptions(): Promise<
+  LinkAsAutocompleteOption[]
+> {
+  const session = await getServerSession(authOptions);
+
+  if (!session || !session.user || !session.user.id)
+    return redirect('/auth/signin');
+
+  try {
+    return await prismaClient.link.findMany({
+      where: {
+        creatorId: session.user.id,
+        isDeleted: false,
+      },
+      select: {
+        id: true,
+        title: true,
+        ogTitle: true,
+        rawUrl: true,
+        rawUrlHash: true,
+      },
+    });
+  } catch (error) {
+    throw error;
+  }
 }
 
 /**

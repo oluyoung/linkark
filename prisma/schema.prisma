@@ -87,11 +87,12 @@ model List {
 
 model ListLink {
   id String @id @default(cuid())
-  link Link @relation(fields: [linkId], references: [id])
+  link Link @relation(fields: [linkId], references: [id], onDelete: Cascade)
   linkId String
-  list   List @relation(fields: [listId], references: [id])
+  list   List @relation(fields: [listId], references: [id], onDelete: Cascade)
   listId String
 
+  @@unique([linkId, listId])
   @@index([linkId, listId])
 }
 
@@ -102,6 +103,7 @@ model ListEditor {
   list   List @relation(fields: [listId], references: [id])
   listId String
 
+  @@unique([editorId, listId])
   @@index([editorId, listId])
 }
 
@@ -112,5 +114,6 @@ model ListSubscriber {
   list   List @relation(fields: [listId], references: [id])
   listId String
 
+  @@unique([subscriberId, listId])
   @@index([subscriberId, listId])
 }

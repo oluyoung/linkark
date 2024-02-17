@@ -7,7 +7,9 @@ import { authOptions } from '@/app/api/auth/authOptions';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { unstable_noStore as noStore } from 'next/cache';
-import { ListSchema } from './schemas';
+import { createHash } from 'node:crypto';
+import { ListSchema, MultiLinkSchema } from './schemas';
+import { LinkAsAutocompleteOption } from './links.actions';
 
 export type ListWithUser = List & { creator: User };
 export type ListLinkWithLink = ListLink & { link: Link };
@@ -85,7 +87,7 @@ export async function createList(values: Fields): Promise<State> {
         name,
         description,
         isPublic,
-        creatorId
+        creatorId,
       },
     });
   } catch (error) {
@@ -102,7 +104,10 @@ export async function createList(values: Fields): Promise<State> {
 /**
  * Function to update a new list
  */
-export async function updateList(values: Fields, listId: string): Promise<State> {
+export async function updateList(
+  values: Fields,
+  listId: string
+): Promise<State> {
   const creatorId = await getSessionIdOrRedirect();
 
   const { name, description, isPublic } = validatedFields(values);
@@ -116,8 +121,8 @@ export async function updateList(values: Fields, listId: string): Promise<State>
       },
       where: {
         id: listId,
-        creatorId
-      }
+        creatorId,
+      },
     });
   } catch (error) {
     console.error(error);
@@ -145,13 +150,13 @@ export async function fetchLists({
   try {
     const lists = await prismaClient.list.findMany({
       where: {
-        creatorId
+        creatorId,
       },
       include: {
-        creator: true
+        creator: true,
       },
       orderBy: {
-        [orderBy]: sort
+        [orderBy]: sort,
       },
     });
 
@@ -161,24 +166,35 @@ export async function fetchLists({
   }
 }
 
-export async function fetchList({ id }: { id: string }) {
+/**
+ * Function to fetch a single list with its child links
+ */
+export async function fetchList({
+  id,
+}: {
+  id: string;
+}): Promise<ListWithLinks> {
   const creatorId = await getSessionIdOrRedirect();
 
   try {
-    const list = await prismaClient.list.findFirstOrThrow({
+    return await prismaClient.list.findFirstOrThrow({
       where: {
         id,
-        creatorId
+        creatorId,
       },
       include: {
         links: {
+          where: {
+            link: {
+              isDeleted: false,
+            },
+          },
           include: {
-            link: true
-          }
-        }
-      }
+            link: true,
+          },
+        },
+      },
     });
-    return { list, listLinks: list.links };
   } catch (error) {
     throw error;
   }
@@ -194,7 +210,7 @@ export async function deleteList(listId: string): Promise<State> {
     await prismaClient.list.delete({
       where: {
         id: listId,
-        creatorId
+        creatorId,
       },
     });
   } catch (error) {
@@ -206,4 +222,66 @@ export async function deleteList(listId: string): Promise<State> {
   return {
     success: true,
   };
+}
+
+/**
+ * Function to add multiple links to a list
+ */
+export async function addListLinks(
+  listId: string,
+  links: Partial<LinkAsAutocompleteOption>[]
+) {
+  const hash = createHash('sha512');
+  const creatorId = await getSessionIdOrRedirect();
+
+  const validatedFields = MultiLinkSchema.safeParse(links);
+
+  if (!validatedFields.success) {
+    throw {
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  const links_ = validatedFields.data;
+
+  const conc = links_.map((l) => {
+    const uri = new URL(l.rawUrl);
+    hash.update(l.rawUrl);
+
+    return {
+      link: {
+        connectOrCreate: {
+          where: { id: l.id || '' },
+          create: {
+            creatorId,
+            rawUrl: l.rawUrl,
+            rawUrlHash: l.rawUrlHash || hash.digest('hex'),
+            hostname: uri.hostname,
+            origin: uri.origin,
+            path: uri.pathname,
+            query: uri.search,
+          },
+        },
+      },
+    };
+  });
+
+  try {
+    await prismaClient.list.update({
+      data: {
+        links: {
+          create: conc,
+        },
+      },
+      where: {
+        id: listId,
+        creatorId,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+
+  revalidatePath(`/home/list/${listId}`);
 }

@@ -24,14 +24,12 @@ export default function List({ list }: { list: ListWithUser }) {
           <div
             className={clsx('text-wrap max-w-96 h-full flex flex-col', {
               'justify-between': hasTitle && hasDescription,
-              'justify-center': !hasDescription
+              'justify-center': !hasDescription,
             })}
           >
-            <div className={clsx('w-full', {'mb-3': hasDescription})}>
+            <div className={clsx('w-full', { 'mb-3': hasDescription })}>
               {hasTitle ? (
-                <p className={clsx('text-sm truncate mb-1')}>
-                  {list.name}
-                </p>
+                <p className={clsx('text-sm truncate mb-1')}>{list.name}</p>
               ) : null}
               {hasDescription ? (
                 <p className="text-sm text-gray-500 truncate">
@@ -41,16 +39,35 @@ export default function List({ list }: { list: ListWithUser }) {
             </div>
             <div className="flex items-center">
               <span className="inline-block mr-2">
-                {list.isPublic ? <LockOpenIcon fontSize="small" /> : <LockIcon fontSize="small" />}
+                {list.isPublic ? (
+                  <LockOpenIcon fontSize="small" />
+                ) : (
+                  <LockIcon fontSize="small" />
+                )}
               </span>
               <span className="inline-block mr-4">
-                <Chip icon={<FaceIcon />} label={list.creator.name} variant="outlined" size="small" />
+                <Chip
+                  icon={<FaceIcon />}
+                  label={list.creator.name}
+                  variant="outlined"
+                  size="small"
+                />
               </span>
               <span className="inline-block mr-4">
-                <Chip icon={<RssFeedIcon />} label={40} variant="outlined" size="small" />
+                <Chip
+                  icon={<RssFeedIcon />}
+                  label={40}
+                  variant="outlined"
+                  size="small"
+                />
               </span>
               <span className="inline-block">
-                <Chip icon={<AccessTimeIcon />} label={format(list.createdAt, 'dd MMM yy')} variant="outlined" size="small" />
+                <Chip
+                  icon={<AccessTimeIcon />}
+                  label={format(list.createdAt, 'dd MMM yy')}
+                  variant="outlined"
+                  size="small"
+                />
               </span>
               <span className="inline-block">
                 <MoreMenuButton list={list} />
@@ -59,7 +76,11 @@ export default function List({ list }: { list: ListWithUser }) {
           </div>
         </div>
         <div className="flex flex-col items-center justify-center h-full">
-          <IconButton href={`list/${list.id}`} LinkComponent={Link} size="large">
+          <IconButton
+            href={`list/${list.id}`}
+            LinkComponent={Link}
+            size="large"
+          >
             <ChevronRightIcon fontSize="large" />
           </IconButton>
         </div>

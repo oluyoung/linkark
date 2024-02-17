@@ -4,8 +4,14 @@ import EmptyContent from '@/app/components/EmptyContent';
 import LinkItem from '../links/Link';
 import { ListLinkWithLink } from '@/app/lib/actions/list.actions';
 
-async function LinksList({ query, links }: { query?: string; links?: ListLinkWithLink[] }) {
-  const fetchedLinks = links || await fetchLinks({ query });
+async function LinksList({
+  query,
+  links,
+}: {
+  query?: string;
+  links?: ListLinkWithLink[];
+}) {
+  const fetchedLinks = links || (await fetchLinks({ query }));
 
   return fetchedLinks.length ? (
     <div
@@ -17,8 +23,7 @@ async function LinksList({ query, links }: { query?: string; links?: ListLinkWit
         {fetchedLinks.map((link) => {
           const linkItem = 'link' in link ? link.link : link;
           return <LinkItem key={link.id} link={linkItem} />;
-        }
-        )}
+        })}
       </div>
     </div>
   ) : (
