@@ -7,31 +7,20 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ListForm from '@/app/components/lists/ListForm';
-import DeleteLinkDialog from '@/app/components/links/DeleteLinkDialog';
+import DeleteListDialog from '@/app/components/lists/DeleteListDialog';
 import { StyledMenu } from '@/app/components/links/MoreMenuButton';
 
 function MoreMenuButton({ list }: { list: List }) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpenOpen] = useState(false);
-  const open = Boolean(anchorEl);
+  const menuOpen = Boolean(anchorEl);
 
-  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
+  const openMenu = (event: MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
   const closeMenu = () => setAnchorEl(null);
-
-
-  const openDeleteListDialogModal = useCallback(() => {
-    setDeleteDialogOpenOpen(true);
-    closeMenu();
-  }, []);
-
-  const closeDeleteListDialogModal = () => {
-    setDeleteDialogOpenOpen(false);
-    closeMenu();
-  };
 
   const toggleModal = useCallback((setStateFn: React.Dispatch<React.SetStateAction<boolean>>, value: boolean) => {
     setStateFn(value);
@@ -59,17 +48,17 @@ function MoreMenuButton({ list }: { list: List }) {
     <>
       <IconButton
         id="more-menu-button"
-        aria-controls={open ? 'more-menu' : undefined}
+        aria-controls={menuOpen ? 'more-menu' : undefined}
         aria-haspopup="true"
-        aria-expanded={open ? 'true' : undefined}
-        onClick={handleClick}
+        aria-expanded={menuOpen ? 'true' : undefined}
+        onClick={openMenu}
       >
         <MoreHorizIcon />
       </IconButton>
       <StyledMenu
         id="more-menu"
         anchorEl={anchorEl}
-        open={open}
+        open={menuOpen}
         onClose={closeMenu}
         MenuListProps={{
           'aria-labelledby': 'more-menu-button',
@@ -112,13 +101,14 @@ function MoreMenuButton({ list }: { list: List }) {
           </div>
         </Modal>
       )}
-      {/* {deleteDialogOpen && (
-        <DeleteLinkDialog
+      {deleteDialogOpen && (
+        <DeleteListDialog
           open={deleteDialogOpen}
-          onClose={closeDeleteListDialogModal}
-          id={link.id}
+          onClose={() => toggleModal(setDeleteDialogOpenOpen, false)}
+          name={list.name}
+          id={list.id}
         />
-      )} */}
+      )}
     </>
   );
 }

@@ -49,7 +49,7 @@ export const toastSlice = createSlice({
       if (action.payload.id) state.id = action.payload.id;
       if (action.payload.icon) state.icon = action.payload.icon;
       if (action.payload.error) console.error(action.payload.error);
-    },
+    }
   },
 });
 

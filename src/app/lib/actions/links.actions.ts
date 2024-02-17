@@ -43,8 +43,6 @@ export interface FetchLinkProps {
 
 /**
  * Function to create a new link
- * @param {Fields} values
- * @returns {Promise<State>}
  */
 export async function createLink(values: Fields): Promise<State> {
   const session = await getServerSession(authOptions);
@@ -101,9 +99,6 @@ export async function createLink(values: Fields): Promise<State> {
 
 /**
  * Function to update a link
- * @param {string} linkId
- * @param {Fields} values
- * @returns {Promise<State>}
  */
 export async function updateLink(
   linkId: string,
@@ -164,8 +159,6 @@ export async function updateLink(
 
 /**
  * Function to send a link to trash
- * @param {string} linkId
- * @returns {Promise<State>}
  */
 export async function trashLink(linkId: string): Promise<State> {
   const session = await getServerSession(authOptions);
@@ -195,8 +188,6 @@ export async function trashLink(linkId: string): Promise<State> {
 
 /**
  * Function to restore a link from trash
- * @param {string} linkId
- * @returns {Promise<State>}
  */
 export async function restoreLink(linkId: string): Promise<State> {
   const session = await getServerSession(authOptions);
@@ -226,8 +217,6 @@ export async function restoreLink(linkId: string): Promise<State> {
 
 /**
  * Function to fetch all trashed links
- * @param {string} query
- * @returns {Promise<Link[]>}
  */
 export async function fetchTrashLinks(query?: string): Promise<Link[]> {
   return await fetchLinks({ query, isDeleted: true, orderBy: 'updatedAt' });
@@ -235,8 +224,6 @@ export async function fetchTrashLinks(query?: string): Promise<Link[]> {
 
 /**
  * Function to permanently delete a link
- * @param {string} linkId
- * @returns {Promise<State>}
  */
 export async function deleteLink(linkId: string): Promise<State> {
   const session = await getServerSession(authOptions);
@@ -264,8 +251,6 @@ export async function deleteLink(linkId: string): Promise<State> {
 
 /**
  * Function to fetch links
- * @param {FetchLinkProps}
- * @returns {Promise<Link[]>}
  */
 export async function fetchLinks({
   query,
@@ -306,10 +291,6 @@ export async function fetchLinks({
 
 /**
  * Function to fetch links based on a query
- * @param {string} query
- * @param {string} creatorId
- * @param {boolean} isDeleted
- * @returns {Promise<Link[]>}
  */
 export async function searchLinks(
   query: string,
@@ -350,8 +331,6 @@ export async function searchLinks(
 
 /**
  * Function to get the metadata for a link using open-graph-scraper
- * @param {string} url
- * @returns {Promise<State | SuccessResult>}
  */
 export async function fetchOgMeta(url: string): Promise<State | SuccessResult> {
   const ogsResult = await ogs({ url }).catch((error) => error);
@@ -369,8 +348,6 @@ export async function fetchOgMeta(url: string): Promise<State | SuccessResult> {
 
 /**
  * Function to get the metadata for a link using open-graph-scraper
- * @param {string} url_
- * @returns {Promise<Partial<Link>>}
  */
 async function getLinkMetadata(
   url_: string

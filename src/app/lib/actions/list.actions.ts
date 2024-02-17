@@ -42,17 +42,18 @@ export interface FetchListProps {
   orderBy?: 'createdAt' | 'updatedAt';
 }
 
-/**
- * Function to create a new list
- */
-export async function createList(values: Fields): Promise<State> {
+async function getSessionIdOrRedirect(): Promise<string> {
   const session = await getServerSession(authOptions);
 
   if (!session || !session.user || !session.user.id)
     return redirect('/auth/signin');
 
+  return session.user.id;
+}
+
+function validatedFields(values: Fields) {
   if (!values.name && values.description) {
-    return {
+    throw {
       errors: {
         name: ['There must be a name with a description.'],
       },
@@ -62,12 +63,21 @@ export async function createList(values: Fields): Promise<State> {
   const validatedFields = ListSchema.safeParse(values);
 
   if (!validatedFields.success) {
-    return {
+    throw {
       errors: validatedFields.error.flatten().fieldErrors,
     };
   }
 
-  const { name, description, isPublic } = validatedFields.data;
+  return validatedFields.data;
+}
+
+/**
+ * Function to create a new list
+ */
+export async function createList(values: Fields): Promise<State> {
+  const creatorId = await getSessionIdOrRedirect();
+
+  const { name, description, isPublic } = validatedFields(values);
 
   try {
     await prismaClient.list.create({
@@ -75,15 +85,15 @@ export async function createList(values: Fields): Promise<State> {
         name,
         description,
         isPublic,
-        creatorId: session.user.id,
+        creatorId
       },
     });
   } catch (error) {
     console.error(error);
-    throw new Error('Could not create link, please try again.');
+    throw new Error('Could not create list, please try again.');
   }
 
-  revalidatePath('/home/links');
+  revalidatePath('/home/lists');
   return {
     success: true,
   };
@@ -93,28 +103,9 @@ export async function createList(values: Fields): Promise<State> {
  * Function to update a new list
  */
 export async function updateList(values: Fields, listId: string): Promise<State> {
-  const session = await getServerSession(authOptions);
+  const creatorId = await getSessionIdOrRedirect();
 
-  if (!session || !session.user || !session.user.id)
-    return redirect('/auth/signin');
-
-  if (!values.name && values.description) {
-    return {
-      errors: {
-        name: ['There must be a name with a description.'],
-      },
-    };
-  }
-
-  const validatedFields = ListSchema.safeParse(values);
-
-  if (!validatedFields.success) {
-    return {
-      errors: validatedFields.error.flatten().fieldErrors,
-    };
-  }
-
-  const { name, description, isPublic } = validatedFields.data;
+  const { name, description, isPublic } = validatedFields(values);
 
   try {
     await prismaClient.list.update({
@@ -125,22 +116,23 @@ export async function updateList(values: Fields, listId: string): Promise<State>
       },
       where: {
         id: listId,
-        creatorId: session.user.id,
+        creatorId
       }
     });
   } catch (error) {
     console.error(error);
-    throw new Error('Could not create link, please try again.');
+    // if ('errors' in error) return error;
+    throw new Error('Could not update list, please try again.');
   }
 
-  revalidatePath('/home/links');
+  revalidatePath('/home/lists');
   return {
     success: true,
   };
 }
 
 /**
- * Function to fetch links
+ * Function to fetch lists
  */
 export async function fetchLists({
   sort = 'desc',
@@ -148,15 +140,12 @@ export async function fetchLists({
 }: FetchListProps): Promise<ListWithUser[]> {
   noStore();
 
-  const session = await getServerSession(authOptions);
-
-  if (!session || !session.user || !session.user.id)
-    return redirect('/auth/signin');
+  const creatorId = await getSessionIdOrRedirect();
 
   try {
     const lists = await prismaClient.list.findMany({
       where: {
-        creatorId: session.user.id
+        creatorId
       },
       include: {
         creator: true
@@ -173,16 +162,13 @@ export async function fetchLists({
 }
 
 export async function fetchList({ id }: { id: string }) {
-  const session = await getServerSession(authOptions);
-
-  if (!session || !session.user || !session.user.id)
-    return redirect('/auth/signin');
+  const creatorId = await getSessionIdOrRedirect();
 
   try {
     const list = await prismaClient.list.findFirstOrThrow({
       where: {
         id,
-        creatorId: session.user.id
+        creatorId
       },
       include: {
         links: {
@@ -196,4 +182,28 @@ export async function fetchList({ id }: { id: string }) {
   } catch (error) {
     throw error;
   }
+}
+
+/**
+ * Function to permanently delete a list
+ */
+export async function deleteList(listId: string): Promise<State> {
+  const creatorId = await getSessionIdOrRedirect();
+
+  try {
+    await prismaClient.list.delete({
+      where: {
+        id: listId,
+        creatorId
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    throw new Error('Could not delete list, please try again.');
+  }
+
+  revalidatePath('/home/lists');
+  return {
+    success: true,
+  };
 }
