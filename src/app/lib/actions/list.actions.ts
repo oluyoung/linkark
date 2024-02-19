@@ -244,7 +244,7 @@ export async function addListLinks(
 
   const links_ = validatedFields.data;
 
-  const conc = links_.map((l) => {
+  const connectedOrCreatedLinks = links_.map((l) => {
     const uri = new URL(l.rawUrl);
     hash.update(l.rawUrl);
 
@@ -270,7 +270,7 @@ export async function addListLinks(
     await prismaClient.list.update({
       data: {
         links: {
-          create: conc,
+          create: connectedOrCreatedLinks,
         },
       },
       where: {
@@ -278,6 +278,29 @@ export async function addListLinks(
         creatorId,
       },
     });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+
+  revalidatePath(`/home/list/${listId}`);
+}
+
+export async function removeListLinks(
+  listId: string,
+  linkIds: string[]
+) {
+  try {
+    await prismaClient.$transaction([
+      prismaClient.listLink.deleteMany({
+        where: {
+          linkId: {
+            in: linkIds
+          },
+          listId
+        },
+      })
+    ]);
   } catch (error) {
     console.error(error);
     throw error;

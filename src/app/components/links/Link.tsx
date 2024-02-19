@@ -4,7 +4,7 @@ import { format } from 'date-fns';
 import clsx from 'clsx';
 import MoreMenuButton from './MoreMenuButton';
 
-function Link({ link }: { link: LinkModel }) {
+function Link({ link, listId }: { link: LinkModel, listId?: string }) {
   const hasTitle = !!(link.title || link.ogTitle);
   const hasDescription = !!(link.description || link.ogDescription);
 
@@ -53,7 +53,7 @@ function Link({ link }: { link: LinkModel }) {
           <p className="text-gray-400 text-sm">
             {format(link.createdAt, 'dd MMM yy')}
           </p>
-          <MoreMenuButton link={link} />
+          <MoreMenuButton link={link} listId={listId} />
         </div>
       </div>
     </div>

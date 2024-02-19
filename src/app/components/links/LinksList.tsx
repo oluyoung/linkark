@@ -1,15 +1,17 @@
 import LinkIcon from '@mui/icons-material/Link';
 import { fetchLinks } from '@/app/lib/actions/links.actions';
 import EmptyContent from '@/app/components/EmptyContent';
-import LinkItem from '../links/Link';
+import LinkItem from './Link';
 import { ListLinkWithLink } from '@/app/lib/actions/list.actions';
 
 async function LinksList({
   query,
-  links,
+  links = [],
+  listId,
 }: {
   query?: string;
   links?: ListLinkWithLink[];
+  listId?: string
 }) {
   const fetchedLinks = links || (await fetchLinks({ query }));
 
@@ -22,7 +24,7 @@ async function LinksList({
       <div className="max-w-screen-sm w-full overflow-x-hidden py-4">
         {fetchedLinks.map((link) => {
           const linkItem = 'link' in link ? link.link : link;
-          return <LinkItem key={link.id} link={linkItem} />;
+          return <LinkItem key={link.id} link={linkItem} listId={listId} />;
         })}
       </div>
     </div>

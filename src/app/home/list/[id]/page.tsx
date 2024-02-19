@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import { Suspense } from 'react';
-import LinksList from '@/app/components/lists/LinksList';
+import ListLinks from '@/app/components/links/LinksList';
 import LinksSkeleton from '@/app/components/links/LinksSkeleton';
 import { Stack, Typography } from '@mui/material';
 import { List as ListModel, Link as LinkModel } from '@prisma/client';
@@ -37,7 +37,7 @@ export default async function page({ params }: PageProps) {
       </Stack>
       {links.length ? <SearchBar placeholder="" /> : null}
       <Suspense fallback={<LinksSkeleton />}>
-        <LinksList links={links} />
+        <ListLinks links={links} listId={list.id} />
       </Suspense>
       <AddListLinksButton list={list} links={allLinks} />
     </>

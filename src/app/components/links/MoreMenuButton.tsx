@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useCallback, MouseEvent } from 'react';
+import React, { useState, useCallback, MouseEvent } from 'react';
 import { IconButton, Divider, Menu, MenuItem } from '@mui/material';
 import { styled, alpha } from '@mui/material';
 import { MenuProps } from '@mui/material/Menu';
@@ -10,7 +10,9 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditLinkForm from '@/app/components/links/EditLinkForm';
 import DeleteLinkDialog from '@/app/components/links/DeleteLinkDialog';
+import RemoveListLinksDialog from '@/app/components/lists/RemoveListLinksDialog';
 import { Link } from '@prisma/client';
+import DoDisturbOnOutlinedIcon from '@mui/icons-material/DoDisturbOnOutlined';
 import CopyUrlToClipboard from './CopyUrlToClipboard';
 
 export const StyledMenu = styled((props: MenuProps) => (
@@ -59,10 +61,11 @@ export const StyledMenu = styled((props: MenuProps) => (
   },
 }));
 
-function MoreMenuButton({ link }: { link: Link }) {
+function MoreMenuButton({ link, listId }: { link: Link, listId?: string }) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpenOpen] = useState(false);
+  const [removeListLinksDialogOpen, setRemoveDialogOpen] = useState(false);
   const [copyOpen, setCopyOpen] = useState(false);
   const open = Boolean(anchorEl);
 
@@ -102,27 +105,46 @@ function MoreMenuButton({ link }: { link: Link }) {
     closeMenu();
   };
 
-  const menuItems = useMemo(
-    () => [
-      {
-        Icon: EditIcon,
-        text: 'Edit',
-        onClick: openEditLinkModal,
-      },
-      {
-        Icon: ContentCopyIcon,
-        text: 'Copy',
-        onClick: copyUrlToClipboard,
-      },
-      {
-        Icon: DeleteIcon,
-        text: 'Delete',
-        noDivider: true,
-        onClick: openDeleteLinkDialogModal,
-      },
-    ],
-    [openEditLinkModal, copyUrlToClipboard, openDeleteLinkDialogModal]
+  const toggleModal = useCallback(
+    (
+      setStateFn: React.Dispatch<React.SetStateAction<boolean>>,
+      value: boolean
+    ) => {
+      setStateFn(value);
+      closeMenu();
+    },
+    []
   );
+
+  const menuItems = [
+    {
+      Icon: EditIcon,
+      text: 'Edit',
+      noDivider: false,
+      onClick: openEditLinkModal,
+    },
+    {
+      Icon: ContentCopyIcon,
+      text: 'Copy',
+      onClick: copyUrlToClipboard,
+    }
+  ];
+
+  if (listId) {
+    menuItems.push({
+      Icon: DoDisturbOnOutlinedIcon,
+      text: 'Remove From List',
+      noDivider: true,
+      onClick: () => toggleModal(setRemoveDialogOpen, true),
+    })
+  }
+
+  menuItems.push({
+    Icon: DeleteIcon,
+    text: 'Move to Trash',
+    noDivider: true,
+    onClick: openDeleteLinkDialogModal,
+  });
 
   return (
     <>
@@ -165,26 +187,34 @@ function MoreMenuButton({ link }: { link: Link }) {
           );
         })}
       </StyledMenu>
-      {editModalOpen && (
+      {editModalOpen ? (
         <EditLinkForm
           open={editModalOpen}
           onClose={closeEditLinkModal}
           link={link}
         />
-      )}
-      {deleteDialogOpen && (
+      ) : null}
+      {deleteDialogOpen ? (
         <DeleteLinkDialog
           open={deleteDialogOpen}
           onClose={closeDeleteLinkDialogModal}
           id={link.id}
         />
-      )}
-      {copyOpen && (
+      ) : null}
+      {copyOpen ? (
         <CopyUrlToClipboard
           onClose={closeCopyUrlToClipboard}
           url={link.rawUrl}
         />
-      )}
+      ) : null}
+      {listId && removeListLinksDialogOpen ? (
+        <RemoveListLinksDialog
+          open={removeListLinksDialogOpen}
+          onClose={() => toggleModal(setRemoveDialogOpen, false)}
+          listId={listId}
+          linkId={link.id}
+        />
+      ) : null}
     </>
   );
 }
