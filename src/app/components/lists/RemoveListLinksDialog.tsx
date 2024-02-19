@@ -12,7 +12,12 @@ interface Props {
   onClose: () => void;
 }
 
-export default function RemoveListLinkDialog({ open, listId, linkId, onClose }: Props) {
+export default function RemoveListLinkDialog({
+  open,
+  listId,
+  linkId,
+  onClose,
+}: Props) {
   const dispatch = useAppDispatch();
 
   const onRemove = () => {

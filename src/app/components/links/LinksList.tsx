@@ -11,7 +11,7 @@ async function LinksList({
 }: {
   query?: string;
   links?: ListLinkWithLink[];
-  listId?: string
+  listId?: string;
 }) {
   const fetchedLinks = links || (await fetchLinks({ query }));
 

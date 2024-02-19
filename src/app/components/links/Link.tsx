@@ -4,7 +4,7 @@ import { format } from 'date-fns';
 import clsx from 'clsx';
 import MoreMenuButton from './MoreMenuButton';
 
-function Link({ link, listId }: { link: LinkModel, listId?: string }) {
+function Link({ link, listId }: { link: LinkModel; listId?: string }) {
   const hasTitle = !!(link.title || link.ogTitle);
   const hasDescription = !!(link.description || link.ogDescription);
 

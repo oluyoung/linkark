@@ -61,10 +61,10 @@ export const StyledMenu = styled((props: MenuProps) => (
   },
 }));
 
-function MoreMenuButton({ link, listId }: { link: Link, listId?: string }) {
+function MoreMenuButton({ link, listId }: { link: Link; listId?: string }) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
-  const [deleteDialogOpen, setDeleteDialogOpenOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [removeListLinksDialogOpen, setRemoveDialogOpen] = useState(false);
   const [copyOpen, setCopyOpen] = useState(false);
   const open = Boolean(anchorEl);
@@ -74,36 +74,6 @@ function MoreMenuButton({ link, listId }: { link: Link, listId?: string }) {
   };
 
   const closeMenu = () => setAnchorEl(null);
-
-  const openEditLinkModal = useCallback(() => {
-    setEditModalOpen(true);
-    closeMenu();
-  }, []);
-
-  const closeEditLinkModal = () => {
-    setEditModalOpen(false);
-    closeMenu();
-  };
-
-  const openDeleteLinkDialogModal = useCallback(() => {
-    setDeleteDialogOpenOpen(true);
-    closeMenu();
-  }, []);
-
-  const closeDeleteLinkDialogModal = () => {
-    setDeleteDialogOpenOpen(false);
-    closeMenu();
-  };
-
-  const copyUrlToClipboard = useCallback(() => {
-    setCopyOpen(true);
-    closeMenu();
-  }, []);
-
-  const closeCopyUrlToClipboard = () => {
-    setCopyOpen(true);
-    closeMenu();
-  };
 
   const toggleModal = useCallback(
     (
@@ -121,13 +91,13 @@ function MoreMenuButton({ link, listId }: { link: Link, listId?: string }) {
       Icon: EditIcon,
       text: 'Edit',
       noDivider: false,
-      onClick: openEditLinkModal,
+      onClick: () => toggleModal(setEditModalOpen, true),
     },
     {
       Icon: ContentCopyIcon,
       text: 'Copy',
-      onClick: copyUrlToClipboard,
-    }
+      onClick: () => toggleModal(setCopyOpen, true),
+    },
   ];
 
   if (listId) {
@@ -136,14 +106,14 @@ function MoreMenuButton({ link, listId }: { link: Link, listId?: string }) {
       text: 'Remove From List',
       noDivider: true,
       onClick: () => toggleModal(setRemoveDialogOpen, true),
-    })
+    });
   }
 
   menuItems.push({
     Icon: DeleteIcon,
     text: 'Move to Trash',
     noDivider: true,
-    onClick: openDeleteLinkDialogModal,
+    onClick: () => toggleModal(setDeleteDialogOpen, true),
   });
 
   return (
@@ -190,20 +160,20 @@ function MoreMenuButton({ link, listId }: { link: Link, listId?: string }) {
       {editModalOpen ? (
         <EditLinkForm
           open={editModalOpen}
-          onClose={closeEditLinkModal}
+          onClose={() => toggleModal(setEditModalOpen, false)}
           link={link}
         />
       ) : null}
       {deleteDialogOpen ? (
         <DeleteLinkDialog
           open={deleteDialogOpen}
-          onClose={closeDeleteLinkDialogModal}
+          onClose={() => toggleModal(setDeleteDialogOpen, false)}
           id={link.id}
         />
       ) : null}
       {copyOpen ? (
         <CopyUrlToClipboard
-          onClose={closeCopyUrlToClipboard}
+          onClose={() => toggleModal(setCopyOpen, false)}
           url={link.rawUrl}
         />
       ) : null}

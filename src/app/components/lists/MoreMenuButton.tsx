@@ -13,7 +13,7 @@ import { StyledMenu } from '@/app/components/links/MoreMenuButton';
 function MoreMenuButton({ list }: { list: List }) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
-  const [deleteDialogOpen, setDeleteDialogOpenOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const menuOpen = Boolean(anchorEl);
 
   const openMenu = (event: MouseEvent<HTMLButtonElement>) => {
@@ -44,7 +44,7 @@ function MoreMenuButton({ list }: { list: List }) {
         Icon: DeleteIcon,
         text: 'Delete',
         noDivider: true,
-        onClick: () => toggleModal(setDeleteDialogOpenOpen, true),
+        onClick: () => toggleModal(setDeleteDialogOpen, true),
       },
     ],
     [toggleModal]
@@ -110,7 +110,7 @@ function MoreMenuButton({ list }: { list: List }) {
       {deleteDialogOpen && (
         <DeleteListDialog
           open={deleteDialogOpen}
-          onClose={() => toggleModal(setDeleteDialogOpenOpen, false)}
+          onClose={() => toggleModal(setDeleteDialogOpen, false)}
           name={list.name}
           id={list.id}
         />

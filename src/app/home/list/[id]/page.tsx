@@ -3,7 +3,6 @@ import { Suspense } from 'react';
 import ListLinks from '@/app/components/links/LinksList';
 import LinksSkeleton from '@/app/components/links/LinksSkeleton';
 import { Stack, Typography } from '@mui/material';
-import { List as ListModel, Link as LinkModel } from '@prisma/client';
 import { fetchList } from '@/app/lib/actions/list.actions';
 import ListBreadCrumbs from '@/app/components/lists/BreadCrumbs';
 import SearchBar from '@/app/components/SearchBar';
@@ -14,13 +13,7 @@ export const metadata: Metadata = {
   title: 'Links | LinkArk',
 };
 
-interface PageProps {
-  params: { id: string };
-  list: ListModel;
-  links: LinkModel[];
-}
-
-export default async function page({ params }: PageProps) {
+export default async function page({ params }: { params: { id: string } }) {
   const { links, ...list } = await fetchList({ id: params?.id as string });
   const allLinks = await fetchLinksAsAutocompleteOptions();
 

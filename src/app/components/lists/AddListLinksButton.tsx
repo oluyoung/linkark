@@ -73,9 +73,10 @@ function AddListLinksButton({
     setUrls(newUrls);
   };
 
-  const hasOnlyValidUrls = useMemo(() => urls.every(
-    (url) => urlSchema.safeParse(url.rawUrl).success
-  ), [urls]);
+  const hasOnlyValidUrls = useMemo(
+    () => urls.every((url) => urlSchema.safeParse(url.rawUrl).success),
+    [urls]
+  );
 
   const addField = useCallback(() => {
     if (hasOnlyValidUrls && urls.length <= 10)
@@ -89,7 +90,7 @@ function AddListLinksButton({
 
     if (!validatedFields.success) {
       const errors = validatedFields.error.flatten().fieldErrors;
-      console.log(errors)
+      console.log(errors);
       const firstErrors = Object.entries(errors).reduce((acc, [k, e]) => {
         e && e.length && (acc[Number(k)] = e[0]);
         return acc;
@@ -182,7 +183,10 @@ function AddListLinksButton({
                     )}
                   />
                   {urls.length > 1 ? (
-                    <IconButton onClick={() => deleteField(index)} sx={{ marginLeft: 1 }}>
+                    <IconButton
+                      onClick={() => deleteField(index)}
+                      sx={{ marginLeft: 1 }}
+                    >
                       <DoDisturbOnOutlinedIcon />
                     </IconButton>
                   ) : null}

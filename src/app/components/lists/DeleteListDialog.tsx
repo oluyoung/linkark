@@ -17,17 +17,15 @@ export default function DeleteListDialog({ open, name, id, onClose }: Props) {
 
   const onDelete = () => {
     deleteList(id)
-      .then((res) => {
-        if (res.success) {
-          dispatch(
-            showToast({
-              severity: 'success',
-              message: 'List was deleted successfully.',
-              id: 'delete-list-snackbar',
-            })
-          );
-          onClose();
-        }
+      .then(() => {
+        dispatch(
+          showToast({
+            severity: 'success',
+            message: 'List was deleted successfully.',
+            id: 'delete-list-snackbar',
+          })
+        );
+        onClose();
       })
       .catch((error) => {
         dispatch(
@@ -44,7 +42,7 @@ export default function DeleteListDialog({ open, name, id, onClose }: Props) {
   return (
     <ConfirmDialog
       title={`Delete ${name}`}
-      message="Are you sure you want to delete ${name} permanently?"
+      message="Are you sure you want to delete the list permanently?"
       ariaId="delete-list"
       open={open}
       onClose={onClose}

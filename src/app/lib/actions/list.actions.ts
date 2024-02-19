@@ -203,7 +203,7 @@ export async function fetchList({
 /**
  * Function to permanently delete a list
  */
-export async function deleteList(listId: string): Promise<State> {
+export async function deleteList(listId: string) {
   const creatorId = await getSessionIdOrRedirect();
 
   try {
@@ -219,9 +219,6 @@ export async function deleteList(listId: string): Promise<State> {
   }
 
   revalidatePath('/home/lists');
-  return {
-    success: true,
-  };
 }
 
 /**
@@ -286,20 +283,17 @@ export async function addListLinks(
   revalidatePath(`/home/list/${listId}`);
 }
 
-export async function removeListLinks(
-  listId: string,
-  linkIds: string[]
-) {
+export async function removeListLinks(listId: string, linkIds: string[]) {
   try {
     await prismaClient.$transaction([
       prismaClient.listLink.deleteMany({
         where: {
           linkId: {
-            in: linkIds
+            in: linkIds,
           },
-          listId
+          listId,
         },
-      })
+      }),
     ]);
   } catch (error) {
     console.error(error);
