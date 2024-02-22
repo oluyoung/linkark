@@ -50,20 +50,18 @@ const AddLinkForm = ({ onClose }: { onClose: () => void }) => {
     validationSchema: toFormikValidationSchema(LinkSchema),
     onSubmit: (values) => {
       createLink(values)
-        .then((res) => {
-          if (res.success) {
-            dispatch(
-              showToast({
-                severity: 'success',
-                message: 'Link created successfully.',
-                id: 'create-link-snackbar',
-              })
-            );
-            onClose();
-          }
-          if (res.errors) setState(res);
+        .then(() => {
+          dispatch(
+            showToast({
+              severity: 'success',
+              message: 'Link created successfully.',
+              id: 'create-link-snackbar',
+            })
+          );
+          onClose();
         })
         .catch((error) => {
+          if ('errors' in error) setState(error);
           dispatch(
             showToast({
               severity: 'error',

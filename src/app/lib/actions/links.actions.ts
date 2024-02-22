@@ -7,9 +7,20 @@ import { authOptions } from '@/app/api/auth/authOptions';
 import ogs, { SuccessResult } from 'open-graph-scraper';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
+import { headers } from 'next/headers';
 import { unstable_noStore as noStore } from 'next/cache';
-import { createHash } from 'node:crypto';
 import { LinkSchema } from './schemas';
+
+export type LinkMeta = Omit<
+  Link,
+  | 'id'
+  | 'createdAt'
+  | 'updatedAt'
+  | 'title'
+  | 'description'
+  | 'creatorId'
+  | 'isDeleted'
+>;
 
 interface StateErrors {
   url?: string[];
@@ -41,22 +52,22 @@ export interface FetchLinkProps {
   isListCall?: boolean;
 }
 
-export type LinkAsAutocompleteOption = Pick<
+export type LinkAsAutocompleteOption = Partial<Pick<
   Link,
   'id' | 'title' | 'ogTitle' | 'rawUrl' | 'rawUrlHash'
->;
+> & { isOption?: boolean; inputValue?: string; }>;
 
 /**
  * Function to create a new link
  */
-export async function createLink(values: Fields): Promise<State> {
+export async function createLink(values: Fields) {
   const session = await getServerSession(authOptions);
 
   if (!session || !session.user || !session.user.id)
     return redirect('/auth/signin');
 
   if (!values.title && values.description) {
-    return {
+    throw {
       errors: {
         title: ['There must be a title with a description.'],
       },
@@ -66,7 +77,7 @@ export async function createLink(values: Fields): Promise<State> {
   const validatedFields = LinkSchema.safeParse(values);
 
   if (!validatedFields.success) {
-    return {
+    throw {
       errors: validatedFields.error.flatten().fieldErrors,
     };
   }
@@ -76,7 +87,7 @@ export async function createLink(values: Fields): Promise<State> {
   try {
     const meta = await getLinkMetadata(url);
     if (!meta) {
-      return {
+      throw {
         errors: {
           url: ['This URL does not exist.'],
         },
@@ -97,9 +108,6 @@ export async function createLink(values: Fields): Promise<State> {
   }
 
   revalidatePath('/home/links');
-  return {
-    success: true,
-  };
 }
 
 /**
@@ -385,56 +393,14 @@ export async function fetchOgMeta(url: string): Promise<State | SuccessResult> {
  * Function to get the metadata for a link using open-graph-scraper
  */
 async function getLinkMetadata(
-  url_: string
-): Promise<
-  | Omit<
-      Link,
-      | 'id'
-      | 'createdAt'
-      | 'updatedAt'
-      | 'title'
-      | 'description'
-      | 'creatorId'
-      | 'isDeleted'
-    >
-  | undefined
-> {
+  uri: string
+): Promise<LinkMeta | undefined> {
   try {
-    const hash = createHash('sha512');
-    const url = new URL(url_);
-
-    // this is written this away so errors fail silently
-    const ogsResult = await ogs({ url: url_ })
-      .then((res) => res)
-      .catch((error) => error);
-
-    let ogTitle, ogType, ogUrl, ogDescription;
-
-    if (ogsResult) {
-      if (ogsResult.error) {
-        // Only care if the url does not exist
-        if (ogsResult.result.error === 'Page not found')
-          throw new Error('This URL does not exist');
-      } else {
-        ogTitle = ogsResult.result.ogTitle;
-        ogType = ogsResult.result.ogType;
-        (ogUrl = ogsResult.result.ogUrl),
-          (ogDescription = ogsResult.result.ogDescription);
-      }
-    }
-
-    return {
-      origin: url.origin,
-      hostname: url.hostname,
-      path: url.pathname,
-      query: url.search,
-      rawUrl: url.href,
-      rawUrlHash: hash.update(url.href).digest('hex'),
-      ogTitle,
-      ogDescription,
-      ogType,
-      ogUrl,
-    };
+    return await fetch('http://localhost:3000/api/ogs', {
+      method: 'POST',
+      headers: headers(),
+      body: JSON.stringify({ uri })
+    }).then((res) => res.json());
   } catch (error) {
     console.error(error);
   }

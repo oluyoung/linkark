@@ -47,7 +47,7 @@ const Toast = () => {
   };
 
   const hideDuration =
-    !!autoHide || (autoHide === undefined && severity !== 'error')
+    !!autoHide || autoHide === undefined
       ? DEFAULT_AUTO_HIDE_DURATION
       : null;
 

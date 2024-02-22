@@ -7,7 +7,6 @@ import { authOptions } from '@/app/api/auth/authOptions';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { unstable_noStore as noStore } from 'next/cache';
-import { createHash } from 'node:crypto';
 import { ListSchema, MultiLinkSchema } from './schemas';
 import { LinkAsAutocompleteOption } from './links.actions';
 
@@ -228,7 +227,6 @@ export async function addListLinks(
   listId: string,
   links: Partial<LinkAsAutocompleteOption>[]
 ) {
-  const hash = createHash('sha512');
   const creatorId = await getSessionIdOrRedirect();
 
   const validatedFields = MultiLinkSchema.safeParse(links);
@@ -241,22 +239,16 @@ export async function addListLinks(
 
   const links_ = validatedFields.data;
 
-  const connectedOrCreatedLinks = links_.map((l) => {
-    const uri = new URL(l.rawUrl);
-    hash.update(l.rawUrl);
+  console.log(links_)
 
+  const connectedOrCreatedLinks = links_.map((l) => {
     return {
       link: {
         connectOrCreate: {
           where: { id: l.id || '' },
           create: {
+            ...l,
             creatorId,
-            rawUrl: l.rawUrl,
-            rawUrlHash: l.rawUrlHash || hash.digest('hex'),
-            hostname: uri.hostname,
-            origin: uri.origin,
-            path: uri.pathname,
-            query: uri.search,
           },
         },
       },

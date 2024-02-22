@@ -10,7 +10,15 @@ export const MultiLinkSchema = z.array(
   z.object({
     id: z.string().cuid().optional(),
     rawUrl: z.string().url(),
-    rawUrlHash: z.string().optional(),
+    rawUrlHash: z.string(),
+    origin: z.string(),
+    hostname: z.string(),
+    path: z.string(),
+    query: z.string().optional(),
+    ogTitle: z.string().optional(),
+    ogDescription: z.string().optional(),
+    ogType: z.string().optional(),
+    ogUrl: z.string().optional(),
   })
 );
 
