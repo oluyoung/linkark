@@ -14,11 +14,11 @@ export const MultiLinkSchema = z.array(
     origin: z.string(),
     hostname: z.string(),
     path: z.string(),
-    query: z.string().optional(),
-    ogTitle: z.string().optional(),
-    ogDescription: z.string().optional(),
-    ogType: z.string().optional(),
-    ogUrl: z.string().optional(),
+    query: z.string().nullable().optional(),
+    ogTitle: z.string().nullable().optional(),
+    ogDescription: z.string().nullable().optional(),
+    ogType: z.string().nullable().optional(),
+    ogUrl: z.string().nullable().optional(),
   })
 );
 

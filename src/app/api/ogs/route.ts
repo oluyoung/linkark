@@ -9,7 +9,7 @@ import { LinkMeta } from '@/app/lib/actions/links.actions';
  - this should happen on blur
 */
 export async function POST(req: NextRequest) {
-  const { uri } = await req.json() as { uri: string };
+  const { uri } = (await req.json()) as { uri: string };
 
   const hash = createHash('sha512');
   const url = new URL(uri);

@@ -47,9 +47,7 @@ const Toast = () => {
   };
 
   const hideDuration =
-    !!autoHide || autoHide === undefined
-      ? DEFAULT_AUTO_HIDE_DURATION
-      : null;
+    !!autoHide || autoHide === undefined ? DEFAULT_AUTO_HIDE_DURATION : null;
 
   return (
     <Snackbar

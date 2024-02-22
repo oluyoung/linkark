@@ -239,8 +239,6 @@ export async function addListLinks(
 
   const links_ = validatedFields.data;
 
-  console.log(links_)
-
   const connectedOrCreatedLinks = links_.map((l) => {
     return {
       link: {

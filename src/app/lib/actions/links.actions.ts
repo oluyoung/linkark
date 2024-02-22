@@ -7,7 +7,6 @@ import { authOptions } from '@/app/api/auth/authOptions';
 import ogs, { SuccessResult } from 'open-graph-scraper';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
-import { headers } from 'next/headers';
 import { unstable_noStore as noStore } from 'next/cache';
 import { LinkSchema } from './schemas';
 
@@ -52,10 +51,18 @@ export interface FetchLinkProps {
   isListCall?: boolean;
 }
 
-export type LinkAsAutocompleteOption = Partial<Pick<
-  Link,
-  'id' | 'title' | 'ogTitle' | 'rawUrl' | 'rawUrlHash'
-> & { isOption?: boolean; inputValue?: string; }>;
+export type LinkAsAutocompleteOption = Partial<
+  Pick<
+    Link,
+    | 'id'
+    | 'title'
+    | 'ogTitle'
+    | 'rawUrl'
+    | 'rawUrlHash'
+    | 'description'
+    | 'ogDescription'
+  > & { isOption?: boolean; inputValue?: string }
+>;
 
 /**
  * Function to create a new link
@@ -247,22 +254,22 @@ export async function deleteLink(linkId: string): Promise<State> {
   try {
     const link = prismaClient.link.findFirstOrThrow({
       where: {
-        id: linkId
+        id: linkId,
       },
       select: {
-        list: true
-      }
+        list: true,
+      },
     });
 
-    const listIds = (await link.list()).map(l => l.listId);
+    const listIds = (await link.list()).map((l) => l.listId);
 
     await prismaClient.$transaction([
       prismaClient.listLink.deleteMany({
         where: {
           linkId,
           listId: {
-            in: listIds
-          }
+            in: listIds,
+          },
         },
       }),
       prismaClient.link.delete({
@@ -270,7 +277,7 @@ export async function deleteLink(linkId: string): Promise<State> {
           id: linkId,
           creatorId: session.user.id,
         },
-      })
+      }),
     ]);
   } catch (error) {
     console.error(error);
@@ -339,14 +346,7 @@ export async function fetchLinksAsAutocompleteOptions(): Promise<
       where: {
         creatorId: session.user.id,
         isDeleted: false,
-      },
-      select: {
-        id: true,
-        title: true,
-        ogTitle: true,
-        rawUrl: true,
-        rawUrlHash: true,
-      },
+      }
     });
   } catch (error) {
     throw error;
@@ -413,14 +413,11 @@ export async function fetchOgMeta(url: string): Promise<State | SuccessResult> {
 /**
  * Function to get the metadata for a link using open-graph-scraper
  */
-async function getLinkMetadata(
-  uri: string
-): Promise<LinkMeta | undefined> {
+async function getLinkMetadata(uri: string): Promise<LinkMeta | undefined> {
   try {
     return await fetch('http://localhost:3000/api/ogs', {
       method: 'POST',
-      headers: headers(),
-      body: JSON.stringify({ uri })
+      body: JSON.stringify({ uri }),
     }).then((res) => res.json());
   } catch (error) {
     console.error(error);

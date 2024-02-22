@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "eslint": "eslint '*/**/*.{js,jsx,ts,tsx}' --quiet",
+    "eslint": "eslint '*/**/*.{js,jsx,ts,tsx}'",
     "eslint:fix": "eslint '*/**/*.{js,jsx,ts,tsx}' --quiet --fix",
     "format": "prettier --write '*/**/*.{js,jsx,ts,tsx,json,css,md}'",
     "postinstall": "prisma generate"

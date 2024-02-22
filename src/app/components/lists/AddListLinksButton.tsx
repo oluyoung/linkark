@@ -33,7 +33,12 @@ function AddListLinksButton({
         ADD LINKS
         <span className="ml-2">+</span>
       </Fab>
-      <AddListLinksForm open={open} onClose={handleClose} list={list} links={links} />
+      <AddListLinksForm
+        open={open}
+        onClose={handleClose}
+        list={list}
+        links={links}
+      />
     </div>
   );
 }

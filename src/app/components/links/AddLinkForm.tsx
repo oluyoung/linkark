@@ -121,13 +121,13 @@ const AddLinkForm = ({ onClose }: { onClose: () => void }) => {
               <LinkIcon />
             </InputAdornment>
           ),
-          endAdornment: (
+          endAdornment: formik.values.url ? (
             <InputAdornment position="end">
               <IconButton onClick={() => resetField('url')}>
                 <ClearIcon />
               </IconButton>
             </InputAdornment>
-          ),
+          ) : null,
         }}
         error={!!getFirstError('url')}
         helperText={getFirstError('url')}
@@ -152,13 +152,13 @@ const AddLinkForm = ({ onClose }: { onClose: () => void }) => {
               <ViewStreamOutlinedIcon />
             </InputAdornment>
           ),
-          endAdornment: (
+          endAdornment: formik.values.title ? (
             <InputAdornment position="end">
               <IconButton onClick={() => resetField('title')}>
                 <ClearIcon />
               </IconButton>
             </InputAdornment>
-          ),
+          ) : null,
         }}
         sx={{
           mb: 4,
@@ -183,13 +183,13 @@ const AddLinkForm = ({ onClose }: { onClose: () => void }) => {
               <SubtitlesOutlinedIcon />
             </InputAdornment>
           ),
-          endAdornment: (
+          endAdornment: formik.values.description ? (
             <InputAdornment position="end">
               <IconButton onClick={() => resetField('description')}>
                 <ClearIcon />
               </IconButton>
             </InputAdornment>
-          ),
+          ) : null,
         }}
       />
 
