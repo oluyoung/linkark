@@ -245,15 +245,36 @@ export async function deleteLink(linkId: string): Promise<State> {
     return redirect('/auth/signin');
 
   try {
-    await prismaClient.link.delete({
+    const link = prismaClient.link.findFirstOrThrow({
       where: {
-        id: linkId,
-        creatorId: session.user.id,
+        id: linkId
       },
+      select: {
+        list: true
+      }
     });
+
+    const listIds = (await link.list()).map(l => l.listId);
+
+    await prismaClient.$transaction([
+      prismaClient.listLink.deleteMany({
+        where: {
+          linkId,
+          listId: {
+            in: listIds
+          }
+        },
+      }),
+      prismaClient.link.delete({
+        where: {
+          id: linkId,
+          creatorId: session.user.id,
+        },
+      })
+    ]);
   } catch (error) {
     console.error(error);
-    throw new Error('Could not update link, please try again.');
+    throw new Error('Could not delete link, please try again.');
   }
 
   revalidatePath('/home/trash');
