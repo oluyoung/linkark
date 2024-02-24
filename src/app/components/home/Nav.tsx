@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -15,15 +16,21 @@ import LinkIcon from '@mui/icons-material/Link';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined';
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import { headerHeight } from '@/app/components/Header';
 
 export const drawerWidth = 250;
 
 export const navItems = [
   {
-    title: 'All Links',
+    title: 'Links',
     href: '/home/links',
     Icon: LinkIcon,
+  },
+  {
+    title: 'Lists',
+    href: '/home/lists',
+    Icon: FormatListBulletedIcon,
   },
   {
     title: 'Tags',
@@ -47,12 +54,13 @@ export const navItems = [
 function Nav() {
   const pathname = usePathname();
   const smScreenWidthMatches = useMediaQuery('(max-width:1024px)');
+  const [open, setOpen] = useState(false);
 
   return (
     <Drawer
       anchor="left"
-      open={!smScreenWidthMatches}
-      onClose={() => {}}
+      open={open || !smScreenWidthMatches}
+      onClose={() => setOpen(false)}
       variant="permanent"
       sx={{
         display: !smScreenWidthMatches ? 'block' : 'none',
@@ -76,6 +84,7 @@ function Nav() {
                 title={item.title}
                 selected={pathname.startsWith(item.href)}
                 disabled={item.disabled}
+                onClick={() => setOpen(false)}
                 sx={({ spacing, palette }) => ({
                   py: spacing(1.5),
                   '&.Mui-selected': {

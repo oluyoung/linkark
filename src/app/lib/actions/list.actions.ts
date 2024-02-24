@@ -2,17 +2,14 @@
 
 import prismaClient from '@/app/db/prisma-client';
 import { List, User, ListLink, Link } from '@prisma/client';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/authOptions';
-import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { unstable_noStore as noStore } from 'next/cache';
 import { ListSchema, MultiLinkSchema } from './schemas';
-import { LinkAsAutocompleteOption } from './links.actions';
+import { LinkAsAutocompleteOption, getIdOrRedirect } from './links.actions';
 
 export type ListWithUser = List & { creator: User };
 export type ListLinkWithLink = ListLink & { link: Link };
-export type ListWithLinks = List & { links: ListLinkWithLink[] };
+export type ListWithLinks = ListWithUser & { links: ListLinkWithLink[] };
 
 interface StateErrors {
   name?: string[];
@@ -43,15 +40,6 @@ export interface FetchListProps {
   orderBy?: 'createdAt' | 'updatedAt';
 }
 
-async function getSessionIdOrRedirect(): Promise<string> {
-  const session = await getServerSession(authOptions);
-
-  if (!session || !session.user || !session.user.id)
-    return redirect('/auth/signin');
-
-  return session.user.id;
-}
-
 function validatedFields(values: Fields) {
   if (!values.name && values.description) {
     throw {
@@ -75,8 +63,8 @@ function validatedFields(values: Fields) {
 /**
  * Function to create a new list
  */
-export async function createList(values: Fields): Promise<State> {
-  const creatorId = await getSessionIdOrRedirect();
+export async function createList(values: Fields) {
+  const creatorId = await getIdOrRedirect();
 
   const { name, description, isPublic } = validatedFields(values);
 
@@ -95,9 +83,6 @@ export async function createList(values: Fields): Promise<State> {
   }
 
   revalidatePath('/home/lists');
-  return {
-    success: true,
-  };
 }
 
 /**
@@ -106,8 +91,10 @@ export async function createList(values: Fields): Promise<State> {
 export async function updateList(
   values: Fields,
   listId: string
-): Promise<State> {
-  const creatorId = await getSessionIdOrRedirect();
+) {
+  if (!listId) return;
+
+  const creatorId = await getIdOrRedirect();
 
   const { name, description, isPublic } = validatedFields(values);
 
@@ -125,14 +112,12 @@ export async function updateList(
     });
   } catch (error) {
     console.error(error);
-    // if ('errors' in error) return error;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if ('errors' in (error as any)) throw error;
     throw new Error('Could not update list, please try again.');
   }
 
   revalidatePath('/home/lists');
-  return {
-    success: true,
-  };
 }
 
 /**
@@ -144,7 +129,7 @@ export async function fetchLists({
 }: FetchListProps): Promise<ListWithUser[]> {
   noStore();
 
-  const creatorId = await getSessionIdOrRedirect();
+  const creatorId = await getIdOrRedirect();
 
   try {
     const lists = await prismaClient.list.findMany({
@@ -173,7 +158,7 @@ export async function fetchList({
 }: {
   id: string;
 }): Promise<ListWithLinks> {
-  const creatorId = await getSessionIdOrRedirect();
+  const creatorId = await getIdOrRedirect();
 
   try {
     return await prismaClient.list.findFirstOrThrow({
@@ -192,6 +177,7 @@ export async function fetchList({
             link: true,
           },
         },
+        creator: true
       },
     });
   } catch (error) {
@@ -203,7 +189,7 @@ export async function fetchList({
  * Function to permanently delete a list
  */
 export async function deleteList(listId: string) {
-  const creatorId = await getSessionIdOrRedirect();
+  const creatorId = await getIdOrRedirect();
 
   try {
     await prismaClient.list.delete({
@@ -227,7 +213,7 @@ export async function addListLinks(
   listId: string,
   links: Partial<LinkAsAutocompleteOption>[]
 ) {
-  const creatorId = await getSessionIdOrRedirect();
+  const creatorId = await getIdOrRedirect();
 
   const validatedFields = MultiLinkSchema.safeParse(links);
 

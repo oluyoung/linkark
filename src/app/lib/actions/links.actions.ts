@@ -64,14 +64,20 @@ export type LinkAsAutocompleteOption = Partial<
   > & { isOption?: boolean; inputValue?: string }
 >;
 
-/**
- * Function to create a new link
- */
-export async function createLink(values: Fields) {
+export async function getIdOrRedirect(): Promise<string> {
   const session = await getServerSession(authOptions);
 
   if (!session || !session.user || !session.user.id)
     return redirect('/auth/signin');
+
+  return session.user.id;
+}
+
+/**
+ * Function to create a new link
+ */
+export async function createLink(values: Fields) {
+  const creatorId = await getIdOrRedirect();
 
   if (!values.title && values.description) {
     throw {
@@ -106,7 +112,7 @@ export async function createLink(values: Fields) {
         ...meta,
         title,
         description,
-        creatorId: session.user.id,
+        creatorId
       },
     });
   } catch (error) {
@@ -124,10 +130,7 @@ export async function updateLink(
   linkId: string,
   values: Fields
 ): Promise<State> {
-  const session = await getServerSession(authOptions);
-
-  if (!session || !session.user || !session.user.id)
-    return redirect('/auth/signin');
+  const creatorId = await getIdOrRedirect();
 
   if (!values.title && values.description) {
     return {
@@ -164,7 +167,7 @@ export async function updateLink(
       },
       where: {
         id: linkId,
-        creatorId: session.user.id,
+        creatorId
       },
     });
   } catch (error) {
@@ -181,10 +184,7 @@ export async function updateLink(
  * Function to send a link to trash
  */
 export async function trashLink(linkId: string): Promise<State> {
-  const session = await getServerSession(authOptions);
-
-  if (!session || !session.user || !session.user.id)
-    return redirect('/auth/signin');
+  const creatorId = await getIdOrRedirect();
 
   try {
     await prismaClient.link.update({
@@ -193,7 +193,7 @@ export async function trashLink(linkId: string): Promise<State> {
       },
       where: {
         id: linkId,
-        creatorId: session.user.id,
+        creatorId
       },
     });
   } catch (error) {
@@ -210,10 +210,7 @@ export async function trashLink(linkId: string): Promise<State> {
  * Function to restore a link from trash
  */
 export async function restoreLink(linkId: string): Promise<State> {
-  const session = await getServerSession(authOptions);
-
-  if (!session || !session.user || !session.user.id)
-    return redirect('/auth/signin');
+  const creatorId = await getIdOrRedirect();
 
   try {
     await prismaClient.link.update({
@@ -222,7 +219,7 @@ export async function restoreLink(linkId: string): Promise<State> {
       },
       where: {
         id: linkId,
-        creatorId: session.user.id,
+        creatorId
       },
     });
   } catch (error) {
@@ -246,10 +243,7 @@ export async function fetchTrashLinks(query?: string): Promise<Link[]> {
  * Function to permanently delete a link
  */
 export async function deleteLink(linkId: string): Promise<State> {
-  const session = await getServerSession(authOptions);
-
-  if (!session || !session.user || !session.user.id)
-    return redirect('/auth/signin');
+  const creatorId = await getIdOrRedirect();
 
   try {
     const link = prismaClient.link.findFirstOrThrow({
@@ -275,9 +269,8 @@ export async function deleteLink(linkId: string): Promise<State> {
       prismaClient.link.delete({
         where: {
           id: linkId,
-          creatorId: session.user.id,
-        },
-      }),
+          creatorId
+      }})
     ]);
   } catch (error) {
     console.error(error);
@@ -301,20 +294,17 @@ export async function fetchLinks({
 }: FetchLinkProps): Promise<Link[]> {
   noStore();
 
-  const session = await getServerSession(authOptions);
-
-  if (!session || !session.user || !session.user.id)
-    return redirect('/auth/signin');
+  const creatorId = await getIdOrRedirect();
 
   let links = [];
 
   try {
     if (query) {
-      links = await searchLinks(query, session.user.id, isDeleted);
+      links = await searchLinks(query, creatorId, isDeleted);
     } else {
       links = await prismaClient.link.findMany({
         where: {
-          creatorId: session.user.id,
+          creatorId,
           isDeleted,
         },
         orderBy: {
@@ -336,17 +326,14 @@ export async function fetchLinksAsAutocompleteOptions(links?: ListLinkWithLink[]
   LinkAsAutocompleteOption[]
 > {
   noStore();
-  const session = await getServerSession(authOptions);
-
-  if (!session || !session.user || !session.user.id)
-    return redirect('/auth/signin');
+  const creatorId = await getIdOrRedirect();
 
   const listLinksIds = (links || []).map(l => l.id);
 
   try {
     return await prismaClient.link.findMany({
       where: {
-        creatorId: session.user.id,
+        creatorId,
         isDeleted: false,
         AND: {
           id: {

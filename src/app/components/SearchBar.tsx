@@ -6,6 +6,8 @@ import { styled } from '@mui/material/styles';
 import { SearchOutlined, Clear } from '@mui/icons-material';
 import { useDebouncedCallback } from 'use-debounce';
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
+import { useMediaQuery } from '@mui/material';
+import clsx from 'clsx';
 
 const StyledSearchField = styled(TextField)(({ theme }) => ({
   '> .MuiInputBase-root': {
@@ -20,6 +22,7 @@ const SearchBar = ({ placeholder }: { placeholder?: string }) => {
   const pathname = usePathname();
   const { replace } = useRouter();
   const inputRef = React.useRef<HTMLInputElement>(null);
+  const isMobile = useMediaQuery('(max-width:1024px)');
 
   const handleSearch = useDebouncedCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,7 +50,7 @@ const SearchBar = ({ placeholder }: { placeholder?: string }) => {
 
   return (
     <div
-      className="flex flex-col flex-nowrap items-center mt-10 w-full"
+      className={clsx('flex flex-col flex-nowrap items-center mt-10 w-full', { 'mt-4': isMobile, 'mt-16': !isMobile })}
       id="search-bar"
     >
       <div className="max-w-screen-sm w-full overflow-x-hidden">

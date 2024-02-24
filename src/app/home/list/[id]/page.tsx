@@ -3,9 +3,9 @@ import { Suspense } from 'react';
 import ListLinks from '@/app/components/links/LinksList';
 import LinksSkeleton from '@/app/components/links/LinksSkeleton';
 import { fetchList } from '@/app/lib/actions/list.actions';
-import AddListLinksButton from '@/app/components/lists/AddListLinksButton';
+import AddListLinksButton from '@/app/components/list/AddListLinksButton';
 import { fetchLinksAsAutocompleteOptions } from '@/app/lib/actions/links.actions';
-import SearchFab from '@/app/components/lists/SearchFab';
+import SearchFab from '@/app/components/list/SearchFab';
 import ListTitle from '@/app/components/lists/ListTitle';
 
 export const metadata: Metadata = {

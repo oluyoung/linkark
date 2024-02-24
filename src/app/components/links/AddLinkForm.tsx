@@ -8,6 +8,7 @@ import {
   IconButton,
   TextField,
   InputAdornment,
+  Typography
 } from '@mui/material';
 import { styled } from '@mui/material';
 import { BoxProps } from '@mui/material/Box';
@@ -28,10 +29,12 @@ export const StyledForm = styled((props: BoxProps<'form'>) => (
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
+  maxWidth: '90%',
   width: 640,
   backgroundColor: theme.palette.common.white,
   boxShadow: theme.shadows[24],
-  padding: theme.spacing(6, 4, 4),
+  padding: theme.spacing(2, 2),
+  marginBottom: theme.spacing(4),
   borderRadius: 5,
   '& > :not(style)': { m: 1 },
 }));
@@ -102,6 +105,7 @@ const AddLinkForm = ({ onClose }: { onClose: () => void }) => {
         formik.submitForm();
       }}
     >
+      <Typography component="h1" variant="h6" mb={2}>Add a new link</Typography>
       <TextField
         fullWidth
         id="url-field"

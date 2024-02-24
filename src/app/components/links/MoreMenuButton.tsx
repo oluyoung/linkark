@@ -10,7 +10,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditLinkForm from '@/app/components/links/EditLinkForm';
 import DeleteLinkDialog from '@/app/components/links/DeleteLinkDialog';
-import RemoveListLinksDialog from '@/app/components/lists/RemoveListLinksDialog';
+import RemoveListLinksDialog from '@/app/components/list/RemoveListLinksDialog';
 import { Link } from '@prisma/client';
 import DoDisturbOnOutlinedIcon from '@mui/icons-material/DoDisturbOnOutlined';
 import CopyUrlToClipboard from './CopyUrlToClipboard';

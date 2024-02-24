@@ -12,6 +12,7 @@ import {
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { drawerWidth, navItems } from '../home/Nav';
+import React from 'react';
 
 interface NavProps {
   open: boolean;
@@ -51,6 +52,7 @@ function Nav({ open, onOpen, onClose }: NavProps) {
                 title={item.title}
                 selected={pathname.startsWith(item.href)}
                 disabled={item.disabled}
+                onClick={onClose}
                 sx={({ spacing, palette }) => ({
                   py: spacing(1.5),
                   '&.Mui-selected': {

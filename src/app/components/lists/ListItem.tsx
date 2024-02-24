@@ -1,4 +1,5 @@
 'use client';
+
 import { ListWithUser } from '@/app/lib/actions/list.actions';
 import { Chip, IconButton } from '@mui/material';
 import FaceIcon from '@mui/icons-material/Face';
@@ -11,24 +12,29 @@ import MoreMenuButton from './MoreMenuButton';
 import { format } from 'date-fns';
 import Link from 'next/link';
 import clsx from 'clsx';
+import { useMediaQuery } from '@mui/material';
 
 export default function List({ list }: { list: ListWithUser }) {
+  const isMobile = useMediaQuery('(max-width:1024px)');
+  const isSm = useMediaQuery('(max-width:480px)');
   const hasTitle = list.name;
-  const hasDescription = list.name && list.description;
+  const hasDescription = list.name && list.description && !isSm;
 
   return (
     <div className="bg-white rounded-lg p-4 w-full card-shadow mb-4">
       <div className={clsx('flex items-center justify-between')}>
         <div className="flex items-center h-full">
           <div
-            className={clsx('text-wrap max-w-96 h-full flex flex-col', {
+            className={clsx('text-wrap h-full flex flex-col', {
+              'max-w-96': !isSm,
+              'max-w-72': isSm,
               'justify-between': hasTitle && hasDescription,
               'justify-center': !hasDescription,
             })}
           >
             <div className={clsx('w-full', { 'mb-3': hasDescription })}>
               {hasTitle ? (
-                <p className={clsx('text-sm truncate mb-1')}>{list.name}</p>
+                <p className={clsx('text-sm mb-1')}>{list.name}</p>
               ) : null}
               {hasDescription ? (
                 <p className="text-sm text-gray-500 truncate">
@@ -44,7 +50,7 @@ export default function List({ list }: { list: ListWithUser }) {
                   <LockIcon fontSize="small" />
                 )}
               </span>
-              <span className="inline-block mr-4">
+              <span className="inline-block mr-2">
                 <Chip
                   icon={<FaceIcon />}
                   label={list.creator.name}
@@ -52,25 +58,27 @@ export default function List({ list }: { list: ListWithUser }) {
                   size="small"
                 />
               </span>
-              <span className="inline-block mr-4">
-                <Chip
-                  icon={<RssFeedIcon />}
-                  label={40}
-                  variant="outlined"
-                  size="small"
-                />
-              </span>
-              <span className="inline-block">
-                <Chip
-                  icon={<AccessTimeIcon />}
-                  label={format(list.createdAt, 'dd MMM yy')}
-                  variant="outlined"
-                  size="small"
-                />
-              </span>
-              <span className="inline-block">
-                <MoreMenuButton list={list} />
-              </span>
+              {!isMobile ? (
+                  <>
+                    <span className="inline-block ml-2 mr-2">
+                      <Chip
+                        icon={<RssFeedIcon />}
+                        label={40}
+                        variant="outlined"
+                        size="small"
+                      />
+                    </span>
+                    <span className="inline-block ml-2">
+                      <Chip
+                        icon={<AccessTimeIcon />}
+                        label={format(list.createdAt, 'dd MMM yy')}
+                        variant="outlined"
+                        size="small"
+                      />
+                    </span>
+                  </>
+                ) : null}
+              <MoreMenuButton list={list} />
             </div>
           </div>
         </div>

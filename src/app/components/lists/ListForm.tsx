@@ -9,6 +9,7 @@ import {
   InputAdornment,
   FormControlLabel,
   Checkbox,
+  Typography,
 } from '@mui/material';
 import {
   createList,
@@ -25,6 +26,7 @@ import { ListSchema } from '@/app/lib/actions/schemas';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 import { StyledForm } from '../links/AddLinkForm';
 import { List } from '@prisma/client';
+import { grey } from '@mui/material/colors';
 
 const ListForm = ({
   createMode,
@@ -32,7 +34,7 @@ const ListForm = ({
   onClose,
 }: {
   createMode: boolean;
-  list: List;
+  list?: List;
   onClose: () => void;
 }) => {
   const [state, setState] = useState<State>({});
@@ -40,32 +42,30 @@ const ListForm = ({
 
   const formik = useFormik<Fields>({
     initialValues: {
-      name: list.name || '',
-      description: list.description || '',
-      isPublic: list.isPublic || false,
+      name: list?.name || '',
+      description: list?.description || '',
+      isPublic: list?.isPublic || false,
     },
     validationSchema: toFormikValidationSchema(ListSchema),
     onSubmit: (values) => {
-      (createMode ? createList(values) : updateList(values, list.id))
-        .then((res) => {
-          if (res.success) {
-            dispatch(
-              showToast({
-                severity: 'success',
-                message: 'List created successfully.',
-                id: 'create-list-snackbar',
-              })
-            );
-          }
-          if (res.errors) setState(res);
+      (createMode ? createList(values) : updateList(values, list?.id || ''))
+        .then(() => {
+          dispatch(
+            showToast({
+              severity: 'success',
+              message: `List ${createMode ? 'created' : 'updated'} successfully.`,
+              id: `${createMode ? 'create' : 'update'}-list-snackbar`,
+            })
+          );
           onClose && onClose();
         })
         .catch((error) => {
+          if (error.errors) setState(error.errors);
           dispatch(
             showToast({
               severity: 'error',
-              message: 'Could not create the list, please try again.',
-              id: 'create-list-snackbar',
+              message: `Could not ${createMode ? 'create' : 'update'} the list, please try again.`,
+              id: `${createMode ? 'create' : 'update'}-list-snackbar`,
               error,
             })
           );
@@ -101,6 +101,7 @@ const ListForm = ({
         formik.submitForm();
       }}
     >
+      <Typography component="h1" variant="h6" mb={2}>{createMode ? 'Add a new' : 'Edit'} list</Typography>
       <TextField
         fullWidth
         name="name"
@@ -112,6 +113,7 @@ const ListForm = ({
         value={formik.values.name}
         onChange={formik.handleChange}
         required
+        size="small"
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
@@ -142,6 +144,7 @@ const ListForm = ({
         helperText={getFirstError('description')}
         multiline
         rows={4}
+        size="small"
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
@@ -168,6 +171,12 @@ const ListForm = ({
             inputProps={{ 'aria-label': 'list-isPublic' }}
             id="list-isPublic"
             name="isPublic"
+            sx={{
+              color: grey[600],
+              '&.Mui-checked': {
+                color: grey[800],
+              },
+            }}
           />
         }
         label="Share list with public"

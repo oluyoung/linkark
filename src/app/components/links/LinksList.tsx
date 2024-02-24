@@ -3,11 +3,11 @@ import { fetchLinks } from '@/app/lib/actions/links.actions';
 import EmptyContent from '@/app/components/EmptyContent';
 import LinkItem from './Link';
 import { ListLinkWithLink } from '@/app/lib/actions/list.actions';
-import LinksListWrap from './LinksListWrap';
+import ListWrap from './ListWrap';
 
 async function LinksList({
   query,
-  links = [],
+  links,
   listId,
 }: {
   query?: string;
@@ -17,14 +17,14 @@ async function LinksList({
   const fetchedLinks = links || (await fetchLinks({ query }));
 
   return fetchedLinks.length ? (
-    <LinksListWrap>
-      <div className="max-w-screen-sm w-full overflow-x-hidden py-4">
+    <ListWrap id="links">
+      <div className="max-w-screen-sm w-full overflow-x-hidden p-0">
         {fetchedLinks.map((link) => {
           const linkItem = 'link' in link ? link.link : link;
           return <LinkItem key={link.id} link={linkItem} listId={listId} />;
         })}
       </div>
-    </LinksListWrap>
+    </ListWrap>
   ) : (
     <EmptyContent
       query={query || ''}
