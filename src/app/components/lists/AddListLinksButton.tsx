@@ -5,14 +5,18 @@ import { Fab } from '@mui/material';
 import { LinkAsAutocompleteOption } from '@/app/lib/actions/links.actions';
 import { List } from '@prisma/client';
 import AddListLinksForm from './AddListLinksForm';
+import PlusIcon from '@mui/icons-material/Add';
+import { useMediaQuery } from '@mui/material';
 
 function AddListLinksButton({
   list,
-  links,
+  links
 }: {
   list: List;
   links: readonly LinkAsAutocompleteOption[];
 }) {
+  const isMobile = useMediaQuery('(max-width:1024px)');
+
   const [open, setOpen] = useState(false);
 
   const handleOpen = () => setOpen(true);
@@ -25,13 +29,13 @@ function AddListLinksButton({
   return (
     <div className="contents">
       <Fab
-        variant="extended"
+        variant={!isMobile ? 'extended' : 'circular'}
         color="primary"
         className="!fixed bottom-6 right-6"
         onClick={handleOpen}
       >
-        ADD LINKS
-        <span className="ml-2">+</span>
+        {!isMobile ? 'ADD LINKS' : null}
+        <PlusIcon sx={{ ml: !isMobile ? 1 : 0 }} />
       </Fab>
       <AddListLinksForm
         open={open}

@@ -24,6 +24,7 @@ import DoDisturbOnOutlinedIcon from '@mui/icons-material/DoDisturbOnOutlined';
 import LinkIcon from '@mui/icons-material/Link';
 import ClearIcon from '@mui/icons-material/Clear';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ViewStreamOutlinedIcon from '@mui/icons-material/ViewStreamOutlined';
 import { MultiLinkSchema } from '@/app/lib/actions/schemas';
 import { List } from '@prisma/client';
 import z from 'zod';
@@ -162,9 +163,8 @@ function AddListLinksForm({ open, onClose, list, links }: Props) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); 
 
-    
     const validatedFields = MultiLinkSchema.safeParse(urls);
-    
+
     if (!validatedFields.success) {
       const errors = validatedFields.error.flatten().fieldErrors;
       console.log(validatedFields.error)
@@ -196,11 +196,10 @@ function AddListLinksForm({ open, onClose, list, links }: Props) {
       aria-describedby="create-link-modal-description"
     >
       <div className="contents">
-        <Typography>Add new links to {list.name}</Typography>
         <StyledForm onSubmit={handleSubmit}>
+          <Typography sx={{ marginBottom: 2 }}>Add new links to <em>{list.name}</em></Typography>
           {urls.map((url, index) => {
             const NAME = `url${index}`;
-            console.log;
             return (
               <Box
                 key={index}
@@ -224,6 +223,10 @@ function AddListLinksForm({ open, onClose, list, links }: Props) {
                     aria-controls={`${NAME}-content`}
                     sx={{
                       p: 0,
+                      '&.Mui-focusVisible': {
+                        backgroundColor: 'transparent',
+                        cursor: 'default'
+                      },
                       '& > .MuiAccordionSummary-content.Mui-expanded': {
                         m: 0,
                       },
@@ -235,6 +238,7 @@ function AddListLinksForm({ open, onClose, list, links }: Props) {
                       options={links}
                       openOnFocus
                       freeSolo
+                      size="small"
                       getOptionKey={(option) =>
                         (option as LinkAsAutocompleteOption).id as string
                       }
@@ -321,6 +325,7 @@ function AddListLinksForm({ open, onClose, list, links }: Props) {
                       <Stack>
                         <TextField
                           fullWidth
+                          size="small"
                           id="title-field"
                           label="Title"
                           type="title"
@@ -333,7 +338,7 @@ function AddListLinksForm({ open, onClose, list, links }: Props) {
                           InputProps={{
                             startAdornment: (
                               <InputAdornment position="start">
-                                <LinkIcon />
+                                <LinkIcon fontSize="small" />
                               </InputAdornment>
                             ),
                             endAdornment:
@@ -357,6 +362,7 @@ function AddListLinksForm({ open, onClose, list, links }: Props) {
                         />
                         <TextField
                           fullWidth
+                          size="small"
                           id="description-field"
                           label="Description"
                           type="description"
@@ -375,7 +381,7 @@ function AddListLinksForm({ open, onClose, list, links }: Props) {
                           InputProps={{
                             startAdornment: (
                               <InputAdornment position="start">
-                                <LinkIcon />
+                                <ViewStreamOutlinedIcon fontSize="small" />
                               </InputAdornment>
                             ),
                             endAdornment:

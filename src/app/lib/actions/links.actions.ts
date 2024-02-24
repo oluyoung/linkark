@@ -9,6 +9,7 @@ import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { unstable_noStore as noStore } from 'next/cache';
 import { LinkSchema } from './schemas';
+import { ListLinkWithLink } from './list.actions';
 
 export type LinkMeta = Omit<
   Link,
@@ -48,7 +49,6 @@ export interface FetchLinkProps {
   isDeleted?: boolean;
   sort?: 'asc' | 'desc';
   orderBy?: 'createdAt' | 'updatedAt';
-  isListCall?: boolean;
 }
 
 export type LinkAsAutocompleteOption = Partial<
@@ -297,10 +297,9 @@ export async function fetchLinks({
   query,
   isDeleted = false,
   sort = 'desc',
-  orderBy = 'createdAt',
-  isListCall = false,
+  orderBy = 'createdAt'
 }: FetchLinkProps): Promise<Link[]> {
-  if (!isListCall) noStore();
+  noStore();
 
   const session = await getServerSession(authOptions);
 
@@ -333,19 +332,27 @@ export async function fetchLinks({
 /**
  * Function to fetch links for Autocomplete options
  */
-export async function fetchLinksAsAutocompleteOptions(): Promise<
+export async function fetchLinksAsAutocompleteOptions(links?: ListLinkWithLink[]): Promise<
   LinkAsAutocompleteOption[]
 > {
+  noStore();
   const session = await getServerSession(authOptions);
 
   if (!session || !session.user || !session.user.id)
     return redirect('/auth/signin');
+
+  const listLinksIds = (links || []).map(l => l.id);
 
   try {
     return await prismaClient.link.findMany({
       where: {
         creatorId: session.user.id,
         isDeleted: false,
+        AND: {
+          id: {
+            notIn: listLinksIds
+          }
+        }
       }
     });
   } catch (error) {

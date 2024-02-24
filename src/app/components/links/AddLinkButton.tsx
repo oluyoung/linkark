@@ -3,8 +3,12 @@
 import { useState } from 'react';
 import { Fab, Modal } from '@mui/material';
 import AddLinkForm from './AddLinkForm';
+import { useMediaQuery } from '@mui/material';
+import PlusIcon from '@mui/icons-material/Add';
 
 function AddLinkButton() {
+  const isMobile = useMediaQuery('(max-width:1024px)');
+
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -12,15 +16,15 @@ function AddLinkButton() {
   return (
     <div className="contents">
       <Fab
-        variant="extended"
+        variant={!isMobile ? 'extended' : 'circular'}
         color="primary"
         className="!fixed bottom-6 right-6"
         onClick={handleOpen}
       >
-        ADD LINK
-        <span className="ml-2">+</span>
+        {!isMobile ? 'ADD LINK' : null}
+        <PlusIcon sx={{ ml: !isMobile ? 1 : 0 }} />
       </Fab>
-      {/** duplicate the form to be used in the edit link bit as well. */}
+      {/** TODO: duplicate the form to be used in the edit link bit as well. */}
       <Modal
         open={open}
         onClose={handleClose}

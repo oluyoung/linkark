@@ -3,6 +3,7 @@ import { fetchLinks } from '@/app/lib/actions/links.actions';
 import EmptyContent from '@/app/components/EmptyContent';
 import LinkItem from './Link';
 import { ListLinkWithLink } from '@/app/lib/actions/list.actions';
+import LinksListWrap from './LinksListWrap';
 
 async function LinksList({
   query,
@@ -16,18 +17,14 @@ async function LinksList({
   const fetchedLinks = links || (await fetchLinks({ query }));
 
   return fetchedLinks.length ? (
-    <div
-      className="flex flex-col flex-nowrap items-center mt-10 h-full w-full"
-      id="links-list"
-      style={{ maxHeight: 'calc(90vh - 80px)' }}
-    >
+    <LinksListWrap>
       <div className="max-w-screen-sm w-full overflow-x-hidden py-4">
         {fetchedLinks.map((link) => {
           const linkItem = 'link' in link ? link.link : link;
           return <LinkItem key={link.id} link={linkItem} listId={listId} />;
         })}
       </div>
-    </div>
+    </LinksListWrap>
   ) : (
     <EmptyContent
       query={query || ''}

@@ -17,13 +17,14 @@ const MainStyled = styled('main', {
   }),
   marginLeft: `${drawerWidth}px`,
   height: `calc(100vh - ${headerHeight})`,
-  ...(mobile && {
+  ...(mobile ? {
     transition: theme.transitions.create('margin', {
       easing: theme.transitions.easing.easeOut,
       duration: theme.transitions.duration.enteringScreen,
     }),
     marginLeft: 0,
-  }),
+    padding: theme.spacing(0, 2)
+  } : {}),
 }));
 
 function Main({ children }: { children: React.ReactNode }) {

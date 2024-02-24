@@ -2,12 +2,11 @@ import { Metadata } from 'next';
 import { Suspense } from 'react';
 import ListLinks from '@/app/components/links/LinksList';
 import LinksSkeleton from '@/app/components/links/LinksSkeleton';
-import { Stack, Typography } from '@mui/material';
 import { fetchList } from '@/app/lib/actions/list.actions';
-import ListBreadCrumbs from '@/app/components/lists/BreadCrumbs';
-import SearchBar from '@/app/components/SearchBar';
 import AddListLinksButton from '@/app/components/lists/AddListLinksButton';
 import { fetchLinksAsAutocompleteOptions } from '@/app/lib/actions/links.actions';
+import SearchFab from '@/app/components/lists/SearchFab';
+import ListTitle from '@/app/components/lists/ListTitle';
 
 export const metadata: Metadata = {
   title: 'Links | LinkArk',
@@ -15,7 +14,7 @@ export const metadata: Metadata = {
 
 export default async function page({ params }: { params: { id: string } }) {
   const { links, ...list } = await fetchList({ id: params?.id as string });
-  const allLinks = await fetchLinksAsAutocompleteOptions();
+  const allLinks = await fetchLinksAsAutocompleteOptions(links);
 
   /*
   breadcrumbs with name of list 
@@ -24,14 +23,11 @@ export default async function page({ params }: { params: { id: string } }) {
 
   return (
     <>
-      <Stack spacing={2} sx={{ position: 'absolute', top: 20, left: 25 }}>
-        <ListBreadCrumbs list={list} />
-        {list.description ? <Typography>{list.description}</Typography> : null}
-      </Stack>
-      {links.length ? <SearchBar placeholder="" /> : null}
+      <ListTitle list={list} />
       <Suspense fallback={<LinksSkeleton />}>
         <ListLinks links={links} listId={list.id} />
       </Suspense>
+      {/* <SearchFab /> */}
       <AddListLinksButton list={list} links={allLinks} />
     </>
   );
