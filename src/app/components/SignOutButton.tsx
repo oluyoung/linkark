@@ -1,28 +1,16 @@
 'use client';
 
 import { signOut } from 'next-auth/react';
-import clsx from 'clsx';
+import { useState } from 'react';
+import ConfirmDialog from '@/app/components/ConfirmDialog';
 
-interface SignInButtonProps {
-  size?: 'sm' | 'md' | 'lg';
-  isLoggedIn?: boolean;
-}
+function SignOut() {
+  const [dialogOpen, setDialogOpen] = useState(false);
 
-function SignOut({ size = 'sm', isLoggedIn = true }: SignInButtonProps) {
   return (
     <>
-      {isLoggedIn ? (
-        <button
-          className={clsx('bg-blue-500 text-white py-2 rounded-full', {
-            'text-sm px-4': size === 'sm',
-            'px-6': size === 'md',
-            'text-md px-10': size === 'lg',
-          })}
-          onClick={() => signOut({ callbackUrl: `${window.location.origin}` })}
-        >
-          Sign Out
-        </button>
-      ) : null}
+      <button className="ml-4" onClick={() => setDialogOpen(true)}>Log Out</button>
+      <ConfirmDialog open={dialogOpen} onClose={() => setDialogOpen(false)} onSuccess={() => signOut({ callbackUrl: `${window.location.origin}` })} ariaId="logout-dialog" title="Logging out" message="Are you sure you want to log out?" />
     </>
   );
 }

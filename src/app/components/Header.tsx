@@ -8,13 +8,12 @@ import { IconButton, useMediaQuery } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import Nav from '@/app/components/header/Nav';
 import SignIn from './SignInButton';
-import SignOut from './SignOutButton';
 import clsx from 'clsx';
 
-export const headerHeight = '52px';
+export const headerHeight = '56px';
 
 function Header() {
-  const smScreenWidthMatches = useMediaQuery('(max-width:1024px)');
+  const isMobile = useMediaQuery('(max-width:1024px)');
   const { data: session } = useSession();
   const path = usePathname();
 
@@ -37,12 +36,12 @@ function Header() {
 
   return (
     <header
-      className={clsx('flex justify-center', {
+      className={clsx('flex justify-center py-2', {
         'bg-black': isLanding,
-        'bg-white': !isLanding,
+        'bg-white': !isLanding
       })}
     >
-      {smScreenWidthMatches ? (
+      {isMobile ? (
         <>
           <IconButton onClick={toggleDrawer(true)}>
             <MenuIcon />
@@ -60,7 +59,6 @@ function Header() {
         <Logo shade={isLanding ? 'light' : 'dark'} />
         <div className="flex space-x-4">
           <SignIn isLoggedIn={isLoggedIn} />
-          <SignOut isLoggedIn={isLoggedIn} />
         </div>
       </div>
     </header>

@@ -42,8 +42,7 @@ export const navItems = [
   {
     title: 'Settings',
     href: '/home/settings',
-    Icon: SettingsOutlinedIcon,
-    disabled: true,
+    Icon: SettingsOutlinedIcon
   },
   {
     title: 'Trash',
