@@ -27,7 +27,6 @@ function Link({ link }: { link: LinkModel }) {
           })}
         >
           <div className="flex items-center h-full">
-            <span className="h-4 w-4 bg-blue-500 inline-block rounded-full mr-3"></span>
             <div
               className={clsx('text-wrap max-w-96 h-full flex flex-col', {
                 'justify-between': hasTitle,
