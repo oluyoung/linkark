@@ -1,7 +1,7 @@
 'use client';
 
 import ConfirmDialog from '@/app/components/ConfirmDialog';
-import { removeListLinks } from '@/app/lib/actions/list.actions';
+import { removeListLinks } from '@/app/lib/actions/lists.actions';
 import { useAppDispatch } from '@/store/hooks';
 import { showToast } from '@/store/toastSlice';
 

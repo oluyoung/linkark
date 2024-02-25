@@ -25,36 +25,19 @@ function page() {
                         <EmailOutlinedIcon />
                         <span className="text-gray-900 ml-4 lowercase">Adanna@gmail.com</span>
                     </div>
-                    <div className="flex items-center px-5 py-4">
-                        <PasswordOutlinedIcon />
-                        <span className="text-gray-900 ml-4">Password</span>
-                        <div className="ml-auto">
-                            <Switch disabled />
-                        </div>
-                    </div>
-                    <div className="flex items-center px-5 py-4">
+                    <div className="text-yellow-600 flex items-center px-5 py-4">
                         <LogoutOutlinedIcon />
                         <SignOut />
                     </div>
                 </div>
             </div>
 
-            <div className="mb-8">
-                <h3 className="text-lg font-semibold text-gray-900">Theme</h3>
-                <div className="mt-6 px-5 flex items-center py-4 bg-white">
-                    <ContrastOutlinedIcon />
-                    <span className="text-gray-900 ml-4">Dark Theme</span>
-                    <div className="ml-auto">
-                        <Switch disabled />
-                    </div>
-                </div>
-            </div>
             <div>
                 <h3 className="text-lg font-semibold text-gray-900">More</h3>
                 <div className="mt-6 px-5 bg-white divide-y divide-gray-200">
-                    <div className="flex items-center py-4">
+                    <div className="flex items-center py-4 text-red-600">
                         <DeleteForeverOutlinedIcon />
-                        <span className="text-gray-900 ml-4">Delete Account</span>
+                        <span className="ml-4">Delete Account</span>
                     </div>
                     <div className="flex items-center py-4">
                         <HelpOutlineOutlinedIcon />

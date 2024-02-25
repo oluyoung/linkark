@@ -2,7 +2,7 @@
 
 import React, { useEffect } from 'react';
 import { TextField, InputAdornment, IconButton } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import { SxProps, styled } from '@mui/material/styles';
 import { SearchOutlined, Clear } from '@mui/icons-material';
 import { useDebouncedCallback } from 'use-debounce';
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
@@ -14,11 +14,11 @@ const StyledSearchField = styled(TextField)(({ theme }) => ({
     backgroundColor: theme.palette.common.white,
     borderRadius: '50px',
     borderWidth: 1,
-    borderColor: theme.palette.grey[700]
+    borderColor: theme.palette.grey[300]
   },
 }));
 
-const SearchBar = ({ placeholder, autoFocus, extraClasses }: { placeholder?: string; autoFocus?: boolean; extraClasses?: string }) => {
+const SearchBar = ({ placeholder, autoFocus, classes = '', sx }: { placeholder?: string; autoFocus?: boolean; classes?: string; sx?: SxProps }) => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
@@ -51,7 +51,7 @@ const SearchBar = ({ placeholder, autoFocus, extraClasses }: { placeholder?: str
 
   return (
     <div
-      className={clsx(`flex flex-col flex-nowrap items-center w-[100%] max-w-[640px] ${extraClasses}`, { 'mt-4': isMobile, 'mt-16': !isMobile })}
+      className={clsx(`flex flex-col flex-nowrap items-center w-[100%] max-w-[640px] mt-10`, { 'mt-4': isMobile, [classes]: !!classes })}
       id="search-bar"
     >
       <div className="max-w-screen-sm w-full overflow-x-hidden">
@@ -66,6 +66,7 @@ const SearchBar = ({ placeholder, autoFocus, extraClasses }: { placeholder?: str
           onChange={handleSearch}
           defaultValue={searchParams.get('query')?.toString()}
           inputRef={inputRef}
+          sx={sx}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">

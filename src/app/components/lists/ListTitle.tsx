@@ -21,7 +21,7 @@ import RssFeedIcon from '@mui/icons-material/RssFeed';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import MoreMenuButton from './MoreMenuButton';
 import { format } from 'date-fns';
-import { ListWithUser } from '@/app/lib/actions/list.actions';
+import { ListWithUser } from '@/app/lib/actions/lists.actions';
 
 function ListTitle({ list }: { list: ListWithUser }) {
   const isMobile = useMediaQuery('(max-width:1024px)');

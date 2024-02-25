@@ -17,7 +17,7 @@ import {
   InputAdornment,
 } from '@mui/material';
 import { StyledForm } from '@/app/components/links/AddLinkForm';
-import { addListLinks } from '@/app/lib/actions/list.actions';
+import { addListLinks } from '@/app/lib/actions/lists.actions';
 import { LinkAsAutocompleteOption } from '@/app/lib/actions/links.actions';
 import Add from '@mui/icons-material/Add';
 import DoDisturbOnOutlinedIcon from '@mui/icons-material/DoDisturbOnOutlined';

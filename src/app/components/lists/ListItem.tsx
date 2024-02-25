@@ -1,6 +1,6 @@
 'use client';
 
-import { ListWithUser } from '@/app/lib/actions/list.actions';
+import { ListWithUser } from '@/app/lib/actions/lists.actions';
 import { Chip, IconButton } from '@mui/material';
 import FaceIcon from '@mui/icons-material/Face';
 import RssFeedIcon from '@mui/icons-material/RssFeed';
@@ -84,7 +84,7 @@ export default function List({ list }: { list: ListWithUser }) {
         </div>
         <div className="flex flex-col items-center justify-center h-full">
           <IconButton
-            href={`list/${list.id}`}
+            href={`lists/${list.id}`}
             LinkComponent={Link}
             size="large"
           >

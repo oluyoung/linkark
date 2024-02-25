@@ -1,12 +1,44 @@
 'use client';
 
 import { useState } from 'react';
-import { Fab, Popper, Zoom } from '@mui/material';
+import { Box, ClickAwayListener, Fab } from '@mui/material';
 import SearchBar from '@/app/components/SearchBar';
 import { SearchOutlined, CloseOutlined } from '@mui/icons-material';
 import { grey, red } from '@mui/material/colors';
 import { useMediaQuery } from '@mui/material';
 import clsx from 'clsx';
+
+const openClasses = {
+  color: red[500],
+  boxShadow: 'none',
+};
+
+const desktopOpenClasses = {
+  // borderRadius: 0,
+};
+
+const desktopClasses = {
+  borderTopRightRadius: 0,
+  borderBottomRightRadius: 0,
+};
+
+const boxSxOpen = {
+  backgroundColor: grey[300],
+  width: '85%',
+  borderTopLeftRadius: '50px',
+  borderBottomLeftRadius: '50px',
+};
+
+const fieldSx = {
+  '> .MuiInputBase-root': {
+    borderWidth: 0,
+    borderRadius: 0,
+    borderTopRightRadius: 0,
+    borderBottomRightRadius: 0,
+    borderTopLeftRadius: '50px',
+    borderBottomLeftRadius: '50px',
+  },
+};
 
 function SearchFab() {
   const isMobile = useMediaQuery('(max-width:1024px)');
@@ -20,38 +52,41 @@ function SearchFab() {
   const id = open ? 'search-popover' : undefined;
 
   return (
-    <>
-      <Fab variant={'circular'}
-        sx={{ color: open ? red[500] : grey[800] }}
-        className={clsx("!fixed bottom-20 right-4", { 'bottom-20': isMobile, 'bottom-24': !isMobile })}
-        onClick={handleClick}
-        size={isMobile ? 'medium' : 'large'}
-      >
-        {open ? <CloseOutlined /> : <SearchOutlined />}
-      </Fab>
-      <Popper
-        id={id}
-        open={open}
-        anchorEl={anchorEl}
-        placement="top-end"
-        transition
-        sx={{
-          width: '100%',
-          display: 'inline-flex',
-          flexDirection: 'row',
-          justifyContent: 'flex-end',
-        }}
-      >
-        {({ TransitionProps }) => (
-          <Zoom {...TransitionProps}>
-            <div className="contents">
-              <SearchBar autoFocus extraClasses="!mt-0 mb-2 px-4" />
-            </div>
-          </Zoom>
+    <ClickAwayListener onClickAway={() => setAnchorEl(null)}>
+      <Box
+        className={clsx(
+          '!fixed right-4 flex items-center justify-end pl-1 max-w-[640px] w-fit transition-all',
+          {
+            'rounded-tl-[50px] rounded-bl-[50px]': open,
+            'bottom-20 rounded-tr-[50px] rounded-br-[50px]': isMobile,
+            'top-10 right-0': !isMobile,
+          }
         )}
-      </Popper>
-    </>
-  )
+        sx={{ ...(open ? boxSxOpen : {}) }}
+      >
+        {open ? (
+          <SearchBar
+            autoFocus
+            classes={clsx('!mt-0 rounded-lg')}
+            sx={fieldSx}
+          />
+        ) : null}
+        <Fab
+          variant={'circular'}
+          sx={{
+            color: grey[800],
+            ...(!isMobile ? desktopClasses : {}),
+            ...(open ? openClasses : {}),
+            ...(open && !isMobile ? desktopOpenClasses : {}),
+          }}
+          onClick={handleClick}
+          size={'medium'}
+        >
+          {open ? <CloseOutlined /> : <SearchOutlined />}
+        </Fab>
+      </Box>
+    </ClickAwayListener>
+  );
 }
 
 export default SearchFab;

@@ -16,7 +16,7 @@ import {
   updateList,
   State,
   Fields,
-} from '@/app/lib/actions/list.actions';
+} from '@/app/lib/actions/lists.actions';
 import ClearIcon from '@mui/icons-material/Clear';
 import SubtitlesOutlinedIcon from '@mui/icons-material/SubtitlesOutlined';
 import ViewStreamOutlinedIcon from '@mui/icons-material/ViewStreamOutlined';

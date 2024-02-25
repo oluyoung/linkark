@@ -4,7 +4,6 @@ import React from 'react';
 import { useMediaQuery } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { drawerWidth } from '@/app/components/home/Nav';
-import { headerHeight } from '@/app/components/Header';
 
 const MainStyled = styled('main', {
   shouldForwardProp: (prop) => prop !== 'mobile',
@@ -16,7 +15,6 @@ const MainStyled = styled('main', {
     duration: theme.transitions.duration.leavingScreen,
   }),
   marginLeft: `${drawerWidth}px`,
-  height: `calc(100vh - ${headerHeight})`,
   ...(mobile ? {
     transition: theme.transitions.create('margin', {
       easing: theme.transitions.easing.easeOut,

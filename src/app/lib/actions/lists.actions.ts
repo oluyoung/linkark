@@ -121,7 +121,7 @@ export async function updateList(
 }
 
 /**
- * Function to fetch lists
+ * Function to fetch users' lists
  */
 export async function fetchLists({
   sort = 'desc',
@@ -277,4 +277,32 @@ export async function removeListLinks(listId: string, linkIds: string[]) {
   }
 
   revalidatePath(`/home/list/${listId}`);
+}
+
+/**
+ * Function to fetch all public lists
+ */
+export async function fetchPublicLists({
+  sort = 'desc',
+  orderBy = 'createdAt',
+}: FetchListProps): Promise<ListWithUser[]> {
+  noStore();
+
+  try {
+    const lists = await prismaClient.list.findMany({
+      where: {
+        isPublic: true
+      },
+      include: {
+        creator: true
+      },
+      orderBy: {
+        [orderBy]: sort
+      }
+    });
+
+    return lists;
+  } catch (error) {
+    throw error;
+  }
 }

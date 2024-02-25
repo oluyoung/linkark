@@ -1,4 +1,4 @@
-import { fetchLists } from '@/app/lib/actions/list.actions';
+import { fetchLists } from '@/app/lib/actions/lists.actions';
 import EmptyContent from '@/app/components/EmptyContent';
 import ListIcon from '@mui/icons-material/List';
 import ListItem from './ListItem';

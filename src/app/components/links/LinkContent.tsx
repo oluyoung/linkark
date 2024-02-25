@@ -23,9 +23,6 @@ function LinkContent({ link, hasTitle, hasDescription, children }: Props) {
       })}
     >
       <div className="flex items-center h-full">
-        {!isSm ? (
-          <span className="h-4 w-4 bg-blue-500 inline-block rounded-full mr-3" />
-        ) : null}
         <div
           className={clsx('text-wrap h-full flex flex-col', {
             'max-w-96': !isSm,

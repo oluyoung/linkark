@@ -10,7 +10,7 @@ import Nav from '@/app/components/header/Nav';
 import SignIn from './SignInButton';
 import clsx from 'clsx';
 
-export const headerHeight = '56px';
+export const headerHeight = '40px';
 
 function Header() {
   const isMobile = useMediaQuery('(max-width:1024px)');
@@ -36,7 +36,7 @@ function Header() {
 
   return (
     <header
-      className={clsx('flex justify-center py-2', {
+      className={clsx('flex justify-center', {
         'bg-black': isLanding,
         'bg-white': !isLanding
       })}

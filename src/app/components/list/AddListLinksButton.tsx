@@ -7,7 +7,6 @@ import { List } from '@prisma/client';
 import AddListLinksForm from './AddListLinksForm';
 import PlusIcon from '@mui/icons-material/Add';
 import { useMediaQuery } from '@mui/material';
-import SearchFab from '@/app/components/list/SearchFab';
 
 function AddListLinksButton({
   list,
@@ -28,8 +27,7 @@ function AddListLinksButton({
   }, []);
 
   return (
-    <div className="contents">
-      <SearchFab />
+    <>
       <Fab
         variant={!isMobile ? 'extended' : 'circular'}
         color="primary"
@@ -46,7 +44,7 @@ function AddListLinksButton({
         list={list}
         links={links}
       />
-    </div>
+    </>
   );
 }
 
