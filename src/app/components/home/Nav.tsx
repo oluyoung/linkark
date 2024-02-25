@@ -30,6 +30,7 @@ export const navItems = [
   {
     title: 'Lists',
     href: '/home/lists',
+    path: '/home/list',
     Icon: FormatListBulletedIcon,
   },
   {

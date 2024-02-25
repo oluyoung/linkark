@@ -13,11 +13,12 @@ const StyledSearchField = styled(TextField)(({ theme }) => ({
   '> .MuiInputBase-root': {
     backgroundColor: theme.palette.common.white,
     borderRadius: '50px',
-    border: 0,
+    borderWidth: 1,
+    borderColor: theme.palette.grey[700]
   },
 }));
 
-const SearchBar = ({ placeholder }: { placeholder?: string }) => {
+const SearchBar = ({ placeholder, autoFocus, extraClasses }: { placeholder?: string; autoFocus?: boolean; extraClasses?: string }) => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
@@ -50,7 +51,7 @@ const SearchBar = ({ placeholder }: { placeholder?: string }) => {
 
   return (
     <div
-      className={clsx('flex flex-col flex-nowrap items-center mt-10 w-full', { 'mt-4': isMobile, 'mt-16': !isMobile })}
+      className={clsx(`flex flex-col flex-nowrap items-center w-[100%] max-w-[640px] ${extraClasses}`, { 'mt-4': isMobile, 'mt-16': !isMobile })}
       id="search-bar"
     >
       <div className="max-w-screen-sm w-full overflow-x-hidden">
@@ -61,6 +62,7 @@ const SearchBar = ({ placeholder }: { placeholder?: string }) => {
           label={null}
           variant="outlined"
           size="small"
+          autoFocus={autoFocus}
           onChange={handleSearch}
           defaultValue={searchParams.get('query')?.toString()}
           inputRef={inputRef}
