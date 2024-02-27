@@ -19,12 +19,12 @@ async function LinksList({
 
   return fetchedLinks.length ? (
     <ListWrap id="links" classes={clsx({'lg:mt-20': listId})}>
-      <div className="max-w-screen-sm w-full overflow-x-hidden p-0 max-lg:pb-[60px]">
+      <ul className="max-w-screen-sm w-full overflow-x-hidden p-0 max-lg:pb-[60px]">
         {fetchedLinks.map((link) => {
           const linkItem = 'link' in link ? link.link : link;
           return <LinkItem key={link.id} link={linkItem} listId={listId} />;
         })}
-      </div>
+      </ul>
     </ListWrap>
   ) : (
     <EmptyContent

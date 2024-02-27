@@ -1,10 +1,7 @@
 import React from 'react';
-import { Switch } from '@mui/material';
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
-import PasswordOutlinedIcon from '@mui/icons-material/PasswordOutlined';
-import ContrastOutlinedIcon from '@mui/icons-material/ContrastOutlined';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 import SignOut from '@/app/components/SignOutButton';

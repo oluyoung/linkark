@@ -8,7 +8,7 @@ function Link({ link, listId }: { link: LinkModel; listId?: string }) {
   const hasDescription = !!(link.description || link.ogDescription);
 
   return (
-    <div className="bg-white rounded-lg p-4 w-full card-shadow mb-4 border-l-[10px] border-l-blue-500">
+    <li className="bg-white rounded-lg p-4 w-full card-shadow mb-4 border-l-[10px] border-l-blue-500">
       <LinkContent link={link} hasTitle={hasTitle} hasDescription={hasDescription}>
         <div className="flex flex-col items-end justify-between h-full">
           <p className="text-gray-400 text-sm">
@@ -17,7 +17,7 @@ function Link({ link, listId }: { link: LinkModel; listId?: string }) {
           <MoreMenuButton link={link} listId={listId} />
         </div>
       </LinkContent>
-    </div>
+    </li>
   );
 }
 

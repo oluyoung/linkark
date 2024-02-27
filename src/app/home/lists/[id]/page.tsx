@@ -7,8 +7,6 @@ import AddListLinksButton from '@/app/components/list/AddListLinksButton';
 import { fetchLinksAsAutocompleteOptions } from '@/app/lib/actions/links.actions';
 import ListTitle from '@/app/components/lists/ListTitle';
 import SearchFab from '@/app/components/list/SearchFab';
-import SearchBar from '@/app/components/SearchBar';
-import clsx from 'clsx';
 
 export const metadata: Metadata = {
   title: 'Links | LinkArk',

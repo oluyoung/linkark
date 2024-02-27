@@ -49,16 +49,15 @@ function SearchFab() {
   };
 
   const open = Boolean(anchorEl);
-  const id = open ? 'search-popover' : undefined;
 
   return (
     <ClickAwayListener onClickAway={() => setAnchorEl(null)}>
       <Box
         className={clsx(
-          '!fixed right-4 flex items-center justify-end pl-1 max-w-[640px] w-fit transition-all',
+          '!fixed flex items-center justify-end pl-1 max-w-[640px] w-fit transition-all',
           {
             'rounded-tl-[50px] rounded-bl-[50px]': open,
-            'bottom-20 rounded-tr-[50px] rounded-br-[50px]': isMobile,
+            'bottom-20 rounded-tr-[50px] rounded-br-[50px] right-4': isMobile,
             'top-10 right-0': !isMobile,
           }
         )}
