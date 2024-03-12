@@ -23,7 +23,7 @@ import MoreMenuButton from './MoreMenuButton';
 import { format } from 'date-fns';
 import { ListWithUser } from '@/app/lib/actions/lists.actions';
 
-function ListTitle({ list }: { list: ListWithUser }) {
+function ListTitle({ list, fromPublic }: { list: ListWithUser, fromPublic?: boolean }) {
   const isMobile = useMediaQuery('(max-width:1024px)');
   const [expanded, setExpanded] = useState(false);
 
@@ -34,7 +34,7 @@ function ListTitle({ list }: { list: ListWithUser }) {
     >
       {!isMobile ? (
         <Breadcrumbs separator="›" aria-label="breadcrumb">
-          <NextLink key={1} href="/home/lists">
+          <NextLink key={1} href={fromPublic ? '/lists' : "/home/lists"}>
             Lists
           </NextLink>
           <Typography key={2} color="text.primary">
@@ -81,13 +81,13 @@ function ListTitle({ list }: { list: ListWithUser }) {
               </Typography>
             ) : null}
             <div className="flex items-center">
-              <span className="inline-block mr-2">
+              {fromPublic ? (<span className="inline-block mr-2">
                 {list.isPublic ? (
                   <LockOpenIcon fontSize="small" />
                 ) : (
                   <LockIcon fontSize="small" />
                 )}
-              </span>
+              </span>) : null}
               {!list.isPublic ? (
                 <span className="inline-block mr-4">
                   <Chip
@@ -114,9 +114,10 @@ function ListTitle({ list }: { list: ListWithUser }) {
                   size="small"
                 />
               </span>
+              {!fromPublic ? (
               <span className="inline-block">
                 <MoreMenuButton list={list} />
-              </span>
+              </span>) : null}
             </div>
           </AccordionDetails>
         </Accordion>

@@ -10,7 +10,7 @@ import Nav from '@/app/components/header/Nav';
 import SignIn from './SignInButton';
 import clsx from 'clsx';
 
-export const headerHeight = '40px';
+export const headerHeight = '56px';
 
 function Header() {
   const isMobile = useMediaQuery('(max-width:1024px)');
@@ -19,7 +19,7 @@ function Header() {
 
   const [open, setOpen] = useState(false);
 
-  const isLanding = path === '/' && !session;
+  const isPublic = !path.includes('/home');
   const isLoggedIn = !!session && !!session?.user?.name;
 
   const toggleDrawer =
@@ -37,8 +37,8 @@ function Header() {
   return (
     <header
       className={clsx('flex justify-center', {
-        'bg-black': isLanding,
-        'bg-white': !isLanding
+        'bg-black': isPublic,
+        'bg-white': !isPublic
       })}
     >
       {isMobile ? (
@@ -54,9 +54,9 @@ function Header() {
         </>
       ) : null}
       <div
-        className={clsx('flex justify-between items-center px-6 py-2 w-full')}
+        className={clsx('flex justify-between items-center px-6 py-4 w-full')}
       >
-        <Logo shade={isLanding ? 'light' : 'dark'} />
+        <Logo shade={isPublic ? 'light' : 'dark'} />
         <div className="flex space-x-4">
           <SignIn isLoggedIn={isLoggedIn} />
         </div>

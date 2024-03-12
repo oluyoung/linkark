@@ -40,7 +40,7 @@ const fieldSx = {
   },
 };
 
-function SearchFab() {
+function SearchFab({ fromPublic }: { fromPublic?: boolean }) {
   const isMobile = useMediaQuery('(max-width:1024px)');
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
@@ -57,8 +57,10 @@ function SearchFab() {
           '!fixed flex items-center justify-end pl-1 max-w-[640px] w-fit transition-all',
           {
             'rounded-tl-[50px] rounded-bl-[50px]': open,
-            'bottom-20 rounded-tr-[50px] rounded-br-[50px] right-4': isMobile,
-            'top-10 right-0': !isMobile,
+            'rounded-tr-[50px] rounded-br-[50px] right-4': isMobile,
+            'top-14 right-0': !isMobile,
+            'bottom-20': isMobile && !fromPublic,
+            'bottom-5': isMobile && fromPublic,
           }
         )}
         sx={{ ...(open ? boxSxOpen : {}) }}

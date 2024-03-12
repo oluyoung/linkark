@@ -4,10 +4,7 @@ import { ListWithUser } from '@/app/lib/actions/lists.actions';
 import { Chip, IconButton } from '@mui/material';
 import FaceIcon from '@mui/icons-material/Face';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import LockOpenIcon from '@mui/icons-material/LockOpen';
-import LockIcon from '@mui/icons-material/Lock';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import MoreMenuButton from './MoreMenuButton';
 import { format } from 'date-fns';
 import Link from 'next/link';
 import clsx from 'clsx';
@@ -43,13 +40,6 @@ export default function List({ list }: { list: ListWithUser }) {
             </div>
             <div className="flex items-center">
               <span className="inline-block mr-2">
-                {list.isPublic ? (
-                  <LockOpenIcon fontSize="small" />
-                ) : (
-                  <LockIcon fontSize="small" />
-                )}
-              </span>
-              <span className="inline-block mr-2">
                 <Chip
                   icon={<FaceIcon />}
                   label={list.creator.name}
@@ -69,13 +59,12 @@ export default function List({ list }: { list: ListWithUser }) {
                     </span>
                   </>
                 ) : null}
-              <MoreMenuButton list={list} />
             </div>
           </div>
         </div>
         <div className="flex flex-col items-center justify-center h-full">
           <IconButton
-            href={`lists/${list.id}`}
+            href={`/lists/${list.id}`}
             LinkComponent={Link}
             size="large"
           >

@@ -259,6 +259,9 @@ export async function addListLinks(
   revalidatePath(`/home/list/${listId}`);
 }
 
+/**
+ * Function to remove multiple links from a list
+ */
 export async function removeListLinks(listId: string, linkIds: string[]) {
   try {
     await prismaClient.$transaction([
@@ -283,25 +286,43 @@ export async function removeListLinks(listId: string, linkIds: string[]) {
  * Function to fetch all public lists
  */
 export async function fetchPublicLists({
+  query,
   sort = 'desc',
   orderBy = 'createdAt',
 }: FetchListProps): Promise<ListWithUser[]> {
   noStore();
 
   try {
-    const lists = await prismaClient.list.findMany({
-      where: {
-        isPublic: true
-      },
-      include: {
-        creator: true
-      },
-      orderBy: {
-        [orderBy]: sort
-      }
-    });
+    if (query) {
+      // const fullTextQuery = query?.split(' ').map((word) => Boolean(word) &&`+${word}`).join(' ');
 
-    return lists;
+      return await prismaClient.list.findMany({
+        where: {
+          AND: {
+            isPublic: true,
+            OR: [
+              { name: { contains: query } },
+              { description: { contains: query } }
+            ]
+          }
+        },
+        include: {
+          creator: true
+        }
+      });
+    } else {
+      return await prismaClient.list.findMany({
+        where: {
+          isPublic: true,
+        },
+        include: {
+          creator: true
+        },
+        orderBy: {
+          [orderBy]: sort
+        }
+      });
+    }
   } catch (error) {
     throw error;
   }
