@@ -128,7 +128,7 @@ export default function List({
         </div>
       </div>
     </div>
-    {editModalOpen && (
+    {editModalOpen ? (
       <Modal
         open={editModalOpen}
         onClose={() => toggleModal(setEditModalOpen, false)}
@@ -143,15 +143,15 @@ export default function List({
           />
         </div>
       </Modal>
-    )}
-    {deleteDialogOpen && (
+    ) : null}
+    {deleteDialogOpen ? (
       <DeleteListDialog
         open={deleteDialogOpen}
         onClose={() => toggleModal(setDeleteDialogOpen, false)}
         name={list.name}
         id={list.id}
       />
-    )}
+    ) : null}
     </>
   );
 }
