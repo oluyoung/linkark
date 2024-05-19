@@ -31,10 +31,10 @@ export const authOptions = {
         };
       },
     }),
-    FacebookProvider({
-      clientId: process.env.FB_ID as string,
-      clientSecret: process.env.FB_SECRET as string,
-    })
+    // FacebookProvider({
+    //   clientId: process.env.FB_ID as string,
+    //   clientSecret: process.env.FB_SECRET as string,
+    // })
   ],
   debug: process.env.NODE_ENV === 'development',
   session: {
