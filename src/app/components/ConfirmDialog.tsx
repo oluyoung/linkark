@@ -31,7 +31,13 @@ export default function ConfirmDialog({
     <Fragment>
       <Dialog
         open={open}
-        onClose={onClose}
+        onClose={(e, reason) => {
+          if (reason === 'backdropClick' || reason === 'escapeKeyDown') {
+            onClose();
+            return;
+          }
+          onClose();
+        }}
         aria-labelledby={`${ariaId}-dialog`}
       >
         <DialogTitle id={`${ariaId}-dialog`}>{title}</DialogTitle>
@@ -39,10 +45,16 @@ export default function ConfirmDialog({
           <DialogContentText>{message}</DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={onClose} autoFocus aria-label="no-button">
+          <Button onClick={onClose} aria-label="no-button">
             No
           </Button>
-          <Button onClick={onSuccess} aria-label="yes-button">
+          <Button
+            onClick={() => {
+              onSuccess();
+              onClose();
+            }}
+            aria-label="yes-button"
+          >
             Yes
           </Button>
         </DialogActions>

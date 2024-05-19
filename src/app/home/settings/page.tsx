@@ -5,8 +5,11 @@ import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 import SignOut from '@/app/components/SignOutButton';
+import { fetchUser } from '@/app/lib/actions/users.actions';
+import DeleteAccount from '@/app/components/settings/DeleteAccount';
 
-function page() {
+async function page() {
+    const user = await fetchUser();
     
     return (
         <div className="max-w-lg mx-auto my-10 w-[90%]">
@@ -16,11 +19,11 @@ function page() {
                 <div className="mt-6 divide-y divide-gray-200 bg-white">
                     <div className="flex items-center px-5 py-4">
                         <PersonOutlineOutlinedIcon />
-                        <span className="text-gray-900 ml-4 ">Adanna Rita</span>
+                        <span className="text-gray-900 ml-4 capitalize">{user.name}</span>
                     </div>
                     <div className="flex items-center px-5 py-4">
                         <EmailOutlinedIcon />
-                        <span className="text-gray-900 ml-4 lowercase">Adanna@gmail.com</span>
+                        <span className="text-gray-900 ml-4 lowercase">{user.email}</span>
                     </div>
                     <div className="text-yellow-600 flex items-center px-5 py-4">
                         <LogoutOutlinedIcon />
@@ -34,7 +37,7 @@ function page() {
                 <div className="mt-6 px-5 bg-white divide-y divide-gray-200">
                     <div className="flex items-center py-4 text-red-600">
                         <DeleteForeverOutlinedIcon />
-                        <span className="ml-4">Delete Account</span>
+                        <DeleteAccount />
                     </div>
                     <div className="flex items-center py-4">
                         <HelpOutlineOutlinedIcon />

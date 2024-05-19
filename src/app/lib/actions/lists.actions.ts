@@ -1,15 +1,18 @@
 'use server';
 
 import prismaClient from '@/app/db/prisma-client';
-import { List, User, ListLink, Link } from '@prisma/client';
+import { List, User, ListLink, Link, ListSubscriber } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
 import { unstable_noStore as noStore } from 'next/cache';
 import { ListSchema, MultiLinkSchema } from './schemas';
-import { LinkAsAutocompleteOption, getIdOrRedirect } from './links.actions';
+import { LinkAsAutocompleteOption } from './links.actions';
+import { getIdOrRedirect } from './utils';
+import { isAfter, isBefore } from 'date-fns';
 
 export type ListWithUser = List & { creator: User };
 export type ListLinkWithLink = ListLink & { link: Link };
 export type ListWithLinks = ListWithUser & { links: ListLinkWithLink[] };
+export type ListWithSubscribers = ListWithUser & { subscribers: ListSubscriber[] };
 
 interface StateErrors {
   name?: string[];
@@ -124,7 +127,7 @@ export async function updateList(
  * Function to fetch users' lists
  */
 export async function fetchLists({
-  sort = 'desc',
+  // sort = 'desc',
   orderBy = 'createdAt',
 }: FetchListProps): Promise<ListWithUser[]> {
   noStore();
@@ -132,19 +135,33 @@ export async function fetchLists({
   const creatorId = await getIdOrRedirect();
 
   try {
-    const lists = await prismaClient.list.findMany({
+    const mine = await prismaClient.list.findMany({
       where: {
         creatorId,
       },
       include: {
         creator: true,
       },
-      orderBy: {
-        [orderBy]: sort,
+    });
+
+    const subd = await prismaClient.listSubscriber.findMany({
+      where: {
+        subscriberId: creatorId,
+      },
+      include: {
+        list: {
+          include: {
+            creator: true
+          }
+        },
       },
     });
 
-    return lists;
+    return mine.concat(subd.map((s) => s.list)).sort((a, b) => {
+      if (isBefore(b[orderBy], a[orderBy])) return -1;
+      if (isAfter(b[orderBy], a[orderBy])) return 1;
+      return 0;
+    });
   } catch (error) {
     throw error;
   }
@@ -289,7 +306,7 @@ export async function fetchPublicLists({
   query,
   sort = 'desc',
   orderBy = 'createdAt',
-}: FetchListProps): Promise<ListWithUser[]> {
+}: FetchListProps): Promise<ListWithSubscribers[]> {
   noStore();
 
   try {
@@ -307,7 +324,8 @@ export async function fetchPublicLists({
           }
         },
         include: {
-          creator: true
+          creator: true,
+          subscribers: true,
         }
       });
     } else {
@@ -316,7 +334,8 @@ export async function fetchPublicLists({
           isPublic: true,
         },
         include: {
-          creator: true
+          creator: true,
+          subscribers: true,
         },
         orderBy: {
           [orderBy]: sort

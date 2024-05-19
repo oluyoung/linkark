@@ -20,7 +20,7 @@ model User {
   links Link[]
   lists List[] @relation("creator")
   editingLists ListEditor[]
-  subcribedLists ListSubscriber[]
+  subscribedLists ListSubscriber[]
   accounts Account[]
 
   @@map("user")
@@ -63,7 +63,7 @@ model Link {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   list ListLink[]
-  creator User @relation(fields: [creatorId], references: [id])
+  creator User @relation(fields: [creatorId], references: [id], onDelete: Cascade)
   creatorId String
 
   @@unique([rawUrlHash, creatorId])
@@ -79,7 +79,7 @@ model List {
   links ListLink[]
   editors ListEditor[]
   subscribers ListSubscriber[]
-  creator User @relation("creator", fields: [creatorId], references: [id])
+  creator User @relation("creator", fields: [creatorId], references: [id], onDelete: Cascade)
   creatorId String
   createdAt DateTime                                                                                                                                                                                                                                                                                                             @default(now())
   updatedAt DateTime @updatedAt

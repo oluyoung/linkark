@@ -1,11 +1,11 @@
 import { Fragment } from 'react';
-import Nav from '@/app/components/public/Nav';
-import Main from '../components/Main';
+// import Nav from '@/app/components/public/Nav';
+import Main from '../components/public/Main';
 
 async function layout({ children }: { children: React.ReactNode }) {
   return (
     <Fragment>
-      <Nav />
+      {/* <Nav /> */}
       <Main>{children}</Main>
     </Fragment>
   );

@@ -18,6 +18,7 @@ import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import { headerHeight } from '@/app/components/Header';
+import { grey } from '@mui/material/colors';
 
 export const drawerWidth = 250;
 
@@ -67,6 +68,7 @@ function Nav() {
         flexShrink: { sm: 0 },
         '& .MuiPaper-root': {
           marginTop: { sm: headerHeight, xs: 0 },
+          backgroundColor: grey['A200'],
         },
       }}
     >

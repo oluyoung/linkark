@@ -2,14 +2,12 @@
 
 import prismaClient from '@/app/db/prisma-client';
 import { Link } from '@prisma/client';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/authOptions';
 import ogs, { SuccessResult } from 'open-graph-scraper';
-import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { unstable_noStore as noStore } from 'next/cache';
 import { LinkSchema } from './schemas';
 import { ListLinkWithLink } from './lists.actions';
+import { getIdOrRedirect } from './utils';
 
 export type LinkMeta = Omit<
   Link,
@@ -64,14 +62,7 @@ export type LinkAsAutocompleteOption = Partial<
   > & { isOption?: boolean; inputValue?: string }
 >;
 
-export async function getIdOrRedirect(): Promise<string> {
-  const session = await getServerSession(authOptions);
 
-  if (!session || !session.user || !session.user.id)
-    return redirect('/auth/signin');
-
-  return session.user.id;
-}
 
 /**
  * Function to create a new link
