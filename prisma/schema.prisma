@@ -7,12 +7,12 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url = env("MYSQL_URL") // uses connection pooling
+  provider = "mongodb"
+  url = env("MONGO_URL") // uses connection pooling
 }
 
 model User {
-  id String @id @default(uuid())
+  id String @id @default(auto()) @map("_id") @db.ObjectId
   name String @unique
   email String @unique
   emailVerified DateTime?
@@ -22,13 +22,11 @@ model User {
   editingLists ListEditor[]
   subscribedLists ListSubscriber[]
   accounts Account[]
-
-  @@map("user")
 }
 
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
+  id                 String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId             String  @db.ObjectId
   type               String
   provider           String
   providerAccountId  String
@@ -46,25 +44,25 @@ model Account {
 }
 
 model Link {
-  id String @id @default(cuid())
+  id String @id @default(auto()) @map("_id") @db.ObjectId
   hostname String
   origin String
-  path String @db.TinyText
+  path String
   title String?
-  description String? @db.Text
+  description String?
   ogTitle String? // used if no title
-  ogDescription String? @db.Text // used if no description
+  ogDescription String? // used if no description
   ogType String? // can be used to display image if product or sth like it or fun icons to denote the type? and can also be used to group products?
-  ogUrl String? @db.Text
-  query String? @db.Text
-  rawUrl String @db.Text
+  ogUrl String?
+  query String?
+  rawUrl String
   rawUrlHash String
   isDeleted Boolean? @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   list ListLink[]
   creator User @relation(fields: [creatorId], references: [id], onDelete: Cascade)
-  creatorId String
+  creatorId String @db.ObjectId
 
   @@unique([rawUrlHash, creatorId])
   @@index([hostname, origin])
@@ -72,15 +70,15 @@ model Link {
 }
 
 model List {
-  id String @id @default(cuid())
+  id String @id @default(auto()) @map("_id") @db.ObjectId
   name String
-  description String? @db.Text
+  description String?
   isPublic Boolean @default(false)
   links ListLink[]
   editors ListEditor[]
   subscribers ListSubscriber[]
   creator User @relation("creator", fields: [creatorId], references: [id], onDelete: Cascade)
-  creatorId String
+  creatorId String @db.ObjectId
   createdAt DateTime                                                                                                                                                                                                                                                                                                             @default(now())
   updatedAt DateTime @updatedAt
 
@@ -89,34 +87,31 @@ model List {
 }
 
 model ListLink {
-  id String @id @default(cuid())
+  id String @id @default(auto()) @map("_id") @db.ObjectId
   link Link @relation(fields: [linkId], references: [id])
-  linkId String
+  linkId String @db.ObjectId
   list   List @relation(fields: [listId], references: [id], onDelete: Cascade)
-  listId String
+  listId String @db.ObjectId
 
   @@unique([linkId, listId])
-  @@index([linkId, listId])
 }
 
 model ListEditor {
-  id String @id @default(cuid())
+  id String @id @default(auto()) @map("_id") @db.ObjectId
   editor User @relation(fields: [editorId], references: [id])
-  editorId String
+  editorId String @db.ObjectId
   list   List @relation(fields: [listId], references: [id], onDelete: Cascade)
-  listId String
+  listId String @db.ObjectId
 
   @@unique([editorId, listId])
-  @@index([editorId, listId])
 }
 
 model ListSubscriber {
-  id String @id @default(cuid())
+  id String @id @default(auto()) @map("_id") @db.ObjectId
   subscriber User @relation(fields: [subscriberId], references: [id])
-  subscriberId String
+  subscriberId String @db.ObjectId
   list   List @relation(fields: [listId], references: [id], onDelete: Cascade)
-  listId String
+  listId String @db.ObjectId
 
   @@unique([subscriberId, listId])
-  @@index([subscriberId, listId])
 }

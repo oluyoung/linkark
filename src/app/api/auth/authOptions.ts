@@ -2,6 +2,7 @@ import type { NextAuthOptions } from 'next-auth';
 import { Adapter } from 'next-auth/adapters';
 import GithubProvider, { GithubProfile } from 'next-auth/providers/github';
 import GoogleProvider, { GoogleProfile } from 'next-auth/providers/google';
+import FacebookProvider from 'next-auth/providers/facebook';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import prismaClient from '@/app/db/prisma-client';
 
@@ -30,6 +31,10 @@ export const authOptions = {
         };
       },
     }),
+    FacebookProvider({
+      clientId: process.env.FB_ID as string,
+      clientSecret: process.env.FB_SECRET as string,
+    })
   ],
   debug: process.env.NODE_ENV === 'development',
   session: {
