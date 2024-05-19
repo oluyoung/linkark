@@ -40,10 +40,6 @@ export default function List({ list, uid }: { list: ListWithSubscribers; uid: st
     },
   ];
 
-  /**
-   check if userId is subscriberId in list.subscriber with listId
-   */
-
   return (
     <>
       <div className="bg-white rounded-lg p-4 w-full card-shadow mb-4">
@@ -88,7 +84,7 @@ export default function List({ list, uid }: { list: ListWithSubscribers; uid: st
                     </span>
                   </>
                 ) : null}
-                {!!uid && list.creatorId === uid ? <MoreMenuButton menuItems={menuItems} /> : null}
+                {!!uid && list.creatorId !== uid ? <MoreMenuButton menuItems={menuItems} /> : null}
               </div>
             </div>
           </div>

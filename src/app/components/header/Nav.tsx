@@ -8,11 +8,13 @@ import {
   ListItem,
   ListItemButton,
   Typography,
+  IconButton,
 } from '@mui/material';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { drawerWidth, navItems } from '../home/Nav';
 import React from 'react';
+import { Close } from '@mui/icons-material';
 
 interface NavProps {
   open: boolean;
@@ -39,7 +41,8 @@ function Nav({ open, onOpen, onClose }: NavProps) {
         flexShrink: { sm: 0 },
       }}
     >
-      <Box role="presentation" sx={{ width: { sm: drawerWidth, xs: '100vw' } }}>
+      <Box role="presentation" sx={{ width: { sm: drawerWidth, xs: '100vw' }, position: 'relative' }}>
+        <IconButton onClick={onClose} sx={{ position: 'absolute', top: 5, right: 5 }}><Close color="info" /></IconButton>
         <List component="nav">
           {navItems.map((item) => (
             <ListItem

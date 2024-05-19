@@ -41,10 +41,10 @@ function Header() {
         'bg-white': !isPublic
       })}
     >
-      {isMobile ? (
+      {isMobile && isLoggedIn ? (
         <>
           <IconButton onClick={toggleDrawer(true)}>
-            <MenuIcon />
+            <MenuIcon color="info" />
           </IconButton>
           <Nav
             open={open}
