@@ -1,3 +1,4 @@
+import { redirect } from 'next/navigation';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -5,7 +6,7 @@ export const metadata: Metadata = {
 };
 
 async function page() {
-  return <p>PAGE HOME</p>;
+  return redirect('/home/links');
 }
 
 export default page;
