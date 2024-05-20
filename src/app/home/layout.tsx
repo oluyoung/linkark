@@ -1,13 +1,7 @@
-import { Fragment } from 'react';
-import Nav from '@/app/components/home/Nav';
-import Main from '../components/Main';
 
-async function layout({ children }: { children: React.ReactNode }) {
+async function layout() {
   return (
-    <Fragment>
-      <Nav />
-      <Main>{children}</Main>
-    </Fragment>
+    <p>LAYOUT HOME</p>
   );
 }
 

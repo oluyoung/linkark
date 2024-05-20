@@ -18,7 +18,7 @@ import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import { headerHeight } from '@/app/components/Header';
-import { grey } from '@mui/material/colors';
+import grey from '@mui/material/colors/grey';
 
 export const drawerWidth = 250;
 

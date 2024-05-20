@@ -14,7 +14,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { drawerWidth, navItems } from '../home/Nav';
 import React from 'react';
-import { Close } from '@mui/icons-material';
+import CloseIcon from '@mui/icons-material/Close';
 
 interface NavProps {
   open: boolean;
@@ -42,7 +42,7 @@ function Nav({ open, onOpen, onClose }: NavProps) {
       }}
     >
       <Box role="presentation" sx={{ width: { sm: drawerWidth, xs: '100vw' }, position: 'relative' }}>
-        <IconButton onClick={onClose} sx={{ position: 'absolute', top: 5, right: 5 }}><Close color="info" /></IconButton>
+        <IconButton onClick={onClose} sx={{ position: 'absolute', top: 5, right: 5 }}><CloseIcon color="info" /></IconButton>
         <List component="nav">
           {navItems.map((item) => (
             <ListItem

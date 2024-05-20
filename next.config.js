@@ -4,6 +4,9 @@ const nextConfig = {
     "@mui/material": {
       transform: "@mui/material/{{member}}",
     },
+    "@mui/material/colors": {
+      transform: "@mui/material/colors/{{member}}",
+    },
     "@mui/icons-material": {
       transform: "@mui/icons-material/{{member}}",
     },
