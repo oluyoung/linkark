@@ -9,7 +9,7 @@ generator client {
 
 datasource db {
   provider = "mongodb"
-  url = "mongodb+srv://tr3vryng:MUe_Qs9uCRkC@cluster0.agha6ya.mongodb.net/linkark?retryWrites=true&w=majority&appName=Cluster0" // uses connection pooling
+  url = env("MONGO_URL") // uses connection pooling
 }
 
 model User {
