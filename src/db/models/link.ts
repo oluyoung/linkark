@@ -17,7 +17,6 @@ export interface ILink {
   isDeleted?: boolean;
   createdAt: Date;
   updatedAt: Date;
-  list: mongoose.Types.ObjectId[];
   creator: mongoose.Types.ObjectId;
 }
 
@@ -37,7 +36,6 @@ const LinkSchema: Schema = new Schema({
   isDeleted: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
-  list: [{ type: mongoose.Schema.Types.ObjectId, ref: 'ListLink' }],
   creator: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
 }, { timestamps: true });
 

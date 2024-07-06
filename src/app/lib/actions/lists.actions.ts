@@ -5,7 +5,7 @@ import { unstable_noStore as noStore } from 'next/cache';
 import { ListSchema, MultiLinkSchema } from './schemas';
 
 import { List, IList } from '../../../db/models/list';
-import { IUser } from '../../../db/models/user';
+import { IUser, User } from '../../../db/models/user';
 import { ListLink, IListLink } from '../../../db/models/listLink';
 import { ILink } from '../../../db/models/link';
 import { IListSubscriber } from '../../../db/models/listSubscriber';
@@ -166,11 +166,13 @@ export async function fetchList({ id }: { id: string }): Promise<ListWithLinks> 
           match: { isDeleted: false },
         },
       })
-      .populate('creator')
+      // .populate({ path: 'creator', })
       .exec();
+      const creator = await User.findById(list.creator).lean().exec();
 
-    if (!list) throw new Error('List not found');
-    return list.toJSON() as ListWithLinks;
+    if (!list || !creator) throw new Error('List not found');
+
+    return { ...(list.toJSON()), creator } as ListWithLinks;
   } catch (error) {
     throw error;
   }
@@ -211,26 +213,28 @@ export async function addListLinks(
 
   const links_ = validatedFields.data;
 
-  const connectedOrCreatedLinks = links_.map((l) => {
-    return {
-      link: {
-        connectOrCreate: {
-          where: { _id: l.id || '' },
-          create: {
-            ...l,
-            creatorId,
-          },
-        },
-      },
-    };
-  });
+  // const connectedOrCreatedLinks = links_.map((l) => {
+  //   return {
+  //     link: {
+  //       connectOrCreate: {
+  //         where: { _id: l.id || '' },
+  //         create: {
+  //           ...l,
+  //           creatorId,
+  //         },
+  //       },
+  //     },
+  //   };
+  // });
 
   try {
-    await List.findOneAndUpdate(
-      { _id: listId, creatorId },
-      { $push: { links: { $each: connectedOrCreatedLinks } } },
-      { new: true }
-    );
+    const list = await List.findOne({ _id: listId, creatorId }).exec();
+    // TODO create new links if they don't exist
+    if (!list) throw new Error('List not found');
+
+    list.links.push(links_);
+
+    await list.save();
   } catch (error) {
     console.error(error);
     throw error;

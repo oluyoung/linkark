@@ -4,7 +4,7 @@ import GithubProvider, { GithubProfile } from 'next-auth/providers/github';
 import GoogleProvider, { GoogleProfile } from 'next-auth/providers/google';
 import TwitterProvider, { TwitterProfile } from 'next-auth/providers/twitter';
 import { MongoDBAdapter } from '@next-auth/mongodb-adapter';
-// import FacebookProvider from 'next-auth/providers/facebook';
+import FacebookProvider from 'next-auth/providers/facebook';
 import MongoClient from '../../../db/mongoClient';
 
 export const authOptions = {
@@ -44,10 +44,10 @@ export const authOptions = {
         };
       },
     }),
-    // FacebookProvider({
-    //   clientId: process.env.FB_ID as string,
-    //   clientSecret: process.env.FB_SECRET as string,
-    // })
+    FacebookProvider({
+      clientId: process.env.FB_ID as string,
+      clientSecret: process.env.FB_SECRET as string,
+    }),
   ],
   debug: process.env.NODE_ENV === 'development',
   session: {

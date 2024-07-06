@@ -167,7 +167,7 @@ function AddListLinksForm({ open, onClose, list, links }: Props) {
 
     if (!validatedFields.success) {
       const errors = validatedFields.error.flatten().fieldErrors;
-      console.log(validatedFields.error)
+
       const firstErrors = Object.entries(errors).reduce((acc, [k, e]) => {
         e && e.length && (acc[Number(k)] = e[0]);
         return acc;
