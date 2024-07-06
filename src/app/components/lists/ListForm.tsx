@@ -25,7 +25,7 @@ import { showToast } from '@/store/toastSlice';
 import { ListSchema } from '@/app/lib/actions/schemas';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 import { StyledForm } from '../links/AddLinkForm';
-import { List } from '@prisma/client';
+import { IList } from '@/db/models/list';
 import { grey } from '@mui/material/colors';
 
 const ListForm = ({
@@ -34,7 +34,7 @@ const ListForm = ({
   onClose,
 }: {
   createMode: boolean;
-  list?: List;
+  list?: IList;
   onClose: () => void;
 }) => {
   const [state, setState] = useState<State>({});
@@ -48,7 +48,7 @@ const ListForm = ({
     },
     validationSchema: toFormikValidationSchema(ListSchema),
     onSubmit: (values) => {
-      (createMode ? createList(values) : updateList(values, list?.id || ''))
+      (createMode ? createList(values) : updateList(values, list?._id.toString() || ''))
         .then(() => {
           dispatch(
             showToast({

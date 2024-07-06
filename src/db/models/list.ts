@@ -5,9 +5,9 @@ export interface IList {
   name: string;
   description?: string;
   isPublic: boolean;
-  links: mongoose.Types.ObjectId[];
-  editors: mongoose.Types.ObjectId[];
-  subscribers: mongoose.Types.ObjectId[];
+  links?: mongoose.Types.ObjectId[];
+  editors?: mongoose.Types.ObjectId[];
+  subscribers?: mongoose.Types.ObjectId[];
   creator: mongoose.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;

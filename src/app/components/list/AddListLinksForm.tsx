@@ -26,7 +26,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ViewStreamOutlinedIcon from '@mui/icons-material/ViewStreamOutlined';
 import { MultiLinkSchema } from '@/app/lib/actions/schemas';
-import { List } from '@prisma/client';
+import { IList } from '@/db/models/list';
 import z from 'zod';
 import { createFilterOptions } from '@mui/material/Autocomplete';
 
@@ -39,7 +39,7 @@ const urlSchema = z.string().url();
 interface Props {
   open: boolean;
   onClose: () => void;
-  list: List;
+  list: IList;
   links: readonly LinkAsAutocompleteOption[];
 }
 
@@ -176,7 +176,7 @@ function AddListLinksForm({ open, onClose, list, links }: Props) {
       return;
     }
 
-    await addListLinks(list.id, urls);
+    await addListLinks(list._id.toString(), urls);
   };
 
   useEffect(() => {
@@ -240,7 +240,7 @@ function AddListLinksForm({ open, onClose, list, links }: Props) {
                       freeSolo
                       size="small"
                       getOptionKey={(option) =>
-                        (option as LinkAsAutocompleteOption).id as string
+                        (option as LinkAsAutocompleteOption)._id?.toString() as string
                       }
                       getOptionLabel={(option_) => {
                         if (typeof option_ === 'string') {
@@ -255,7 +255,7 @@ function AddListLinksForm({ open, onClose, list, links }: Props) {
                         );
                       }}
                       renderOption={(props, option) => (
-                        <MenuItem {...props} key={option.id}>
+                        <MenuItem {...props} key={option._id?.toString()}>
                           {option.ogTitle ||
                             option.title ||
                             option.rawUrl ||

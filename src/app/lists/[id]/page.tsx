@@ -17,7 +17,7 @@ export default async function page({ params }: { params: { id: string } }) {
     <>
       <ListTitle list={list} fromPublic />
       <Suspense fallback={<LinksSkeleton />}>
-        <ListLinks links={links} listId={list.id} />
+        <ListLinks links={links} listId={list._id.toString()} />
       </Suspense>
       <div className="contents">
         <SearchFab />

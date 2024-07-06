@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { Fab } from '@mui/material';
 import { LinkAsAutocompleteOption } from '@/app/lib/actions/links.actions';
-import { List } from '@prisma/client';
+import { IList } from '@/db/models/list';
 import AddListLinksForm from './AddListLinksForm';
 import PlusIcon from '@mui/icons-material/Add';
 import { useMediaQuery } from '@mui/material';
@@ -12,7 +12,7 @@ function AddListLinksButton({
   list,
   links
 }: {
-  list: List;
+  list: IList;
   links: readonly LinkAsAutocompleteOption[];
 }) {
   const isMobile = useMediaQuery('(max-width:1024px)');

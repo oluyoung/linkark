@@ -43,7 +43,7 @@ export interface FetchLinkProps {
 }
 
 export type LinkAsAutocompleteOption = Partial<
-  Pick<ILink, 'title' | 'ogTitle' | 'rawUrl' | 'rawUrlHash' | 'description' | 'ogDescription'>
+  Pick<ILink, '_id' | 'title' | 'ogTitle' | 'rawUrl' | 'rawUrlHash' | 'description' | 'ogDescription'>
 > & { isOption?: boolean; inputValue?: string };
 
 /**
@@ -208,21 +208,13 @@ export async function deleteLink(linkId: string): Promise<State> {
   const creator = await getIdOrRedirect();
 
   try {
-    const link = await Link.findOne({ _id: linkId, creator }).populate('list', 'listId');
-
-    if (!link) throw new Error('Link not found');
-
-    const listIds = link.list.map((l: any) => l.listId);
-
     await Promise.all([
       Link.deleteMany({
         _id: linkId,
         creator,
       }),
       ListLink.deleteMany({
-        linkId: {
-          $in: listIds,
-        },
+        linkId,
       }),
     ]);
 

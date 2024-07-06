@@ -14,6 +14,7 @@ import { LinkAsAutocompleteOption } from './links.actions';
 
 import { getIdOrRedirect } from './utils';
 import connect from '../../../db/connect';
+import { FilterQuery } from 'mongoose';
 
 export type ListWithUser = IList & { creator: IUser };
 export type ListLinkWithLink = IListLink & { link: ILink };
@@ -110,7 +111,6 @@ export async function updateList(values: Fields, listId: string) {
     );
   } catch (error) {
     console.error(error);
-    if ('errors' in (error as any)) throw error;
     throw new Error('Could not update list, please try again.');
   }
 
@@ -264,7 +264,7 @@ export async function fetchPublicLists({
   await connect();
 
   try {
-    const filter: any = { isPublic: true };
+    const filter: FilterQuery<IList> = { isPublic: true };
 
     if (query) {
       filter.$or = [{ name: { $regex: query, $options: 'i' } }, { description: { $regex: query, $options: 'i' } }];

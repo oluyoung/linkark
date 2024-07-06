@@ -2,7 +2,7 @@
 
 import { ListWithUser } from '@/app/lib/actions/lists.actions';
 import { Modal, Chip, IconButton } from '@mui/material';
-import FaceIcon from '@mui/icons-material/Face';
+// import FaceIcon from '@mui/icons-material/Face';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import LockIcon from '@mui/icons-material/Lock';
@@ -20,7 +20,7 @@ import DeleteListDialog from '@/app/components/lists/DeleteListDialog';
 
 export default function List({
   list,
-  creatorId,
+  // creatorId,
 }: {
   list: ListWithUser;
   creatorId: string;

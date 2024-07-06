@@ -12,7 +12,7 @@ async function ListList({ query }: { query: string }) {
   return lists.length ? (
     <ListWrap id="lists">
       <div className="max-w-screen-sm w-full overflow-x-hidden p-0">
-        {lists.map((l) => <ListItem key={l.id} list={l} uid={uid} />)}
+        {lists.map((l) => <ListItem key={l._id.toString()} list={l} uid={uid} />)}
       </div>
     </ListWrap>
   ) : (

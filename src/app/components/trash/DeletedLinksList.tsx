@@ -14,7 +14,7 @@ async function DeletedLinksList({ query }: { query: string }) {
     >
       <div className="max-w-screen-sm w-full overflow-x-hidden py-4">
         {links.map((l) => (
-          <DeletedLink key={l.id} link={l} />
+          <DeletedLink key={l._id.toString()} link={l} />
         ))}
       </div>
     </div>

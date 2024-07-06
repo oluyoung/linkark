@@ -23,7 +23,7 @@ export default function List({ list, uid }: { list: ListWithSubscribers; uid: st
   const hasDescription = list.name && list.description && !isSm;
   const [subscribeDialogOpen, setSubscribeDialogOpen] = useState(false);
 
-  const isSubscriber = uid && list.subscribers.findIndex(s => s.subscriberId === uid) > -1;
+  const isSubscriber = uid && list.subscribers.findIndex(s => s.toString() === uid) > -1;
 
   const toggleModal = (
     setStateFn: React.Dispatch<React.SetStateAction<boolean>>,
@@ -84,13 +84,13 @@ export default function List({ list, uid }: { list: ListWithSubscribers; uid: st
                     </span>
                   </>
                 ) : null}
-                {!!uid && list.creatorId !== uid ? <MoreMenuButton menuItems={menuItems} /> : null}
+                {!!uid && list.creator.toString() !== uid ? <MoreMenuButton menuItems={menuItems} /> : null}
               </div>
             </div>
           </div>
           <div className="flex flex-col items-center justify-center h-full">
             <IconButton
-              href={`/lists/${list.id}`}
+              href={`/lists/${list._id.toString()}`}
               LinkComponent={Link}
               size="large"
             >
@@ -104,7 +104,7 @@ export default function List({ list, uid }: { list: ListWithSubscribers; uid: st
           open={subscribeDialogOpen}
           onClose={() => toggleModal(setSubscribeDialogOpen, false)}
           name={list.name}
-          id={list.id}
+          id={list._id.toString()}
           subscribe={!!isSubscriber}
         />
       ) : null}

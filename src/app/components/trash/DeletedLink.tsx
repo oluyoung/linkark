@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Link as LinkModel } from '@prisma/client';
+import { ILink as LinkModel } from '@/db/models/link';
 import clsx from 'clsx';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import RestoreIcon from '@mui/icons-material/Restore';
@@ -74,14 +74,14 @@ function Link({ link }: { link: LinkModel }) {
       </div>
       {restoreDialogOpen && (
         <RestoreDialog
-          id={link.id}
+          id={link._id.toString()}
           onClose={() => setRestoreDialogOpen(false)}
           open={restoreDialogOpen}
         />
       )}
       {deleteDialogOpen && (
         <DeleteDIalog
-          id={link.id}
+          id={link._id.toString()}
           onClose={() => setDeleteDialogOpenOpen(false)}
           open={deleteDialogOpen}
         />
