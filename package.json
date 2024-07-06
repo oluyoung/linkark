@@ -9,8 +9,7 @@
     "lint": "next lint",
     "eslint": "eslint '*/**/*.{js,jsx,ts,tsx}'",
     "eslint:fix": "eslint '*/**/*.{js,jsx,ts,tsx}' --quiet --fix",
-    "format": "prettier --write '*/**/*.{js,jsx,ts,tsx,json,css,md}'",
-    "postinstall": "prisma generate"
+    "format": "prettier --write '*/**/*.{js,jsx,ts,tsx,json,css,md}'"
   },
   "dependencies": {
     "@emotion/cache": "^11.11.0",
