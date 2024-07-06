@@ -1,12 +1,12 @@
 import { Metadata } from 'next';
 import { Suspense } from 'react';
-import ListLinks from '@/app/components/links/LinksList';
-import LinksSkeleton from '@/app/components/links/LinksSkeleton';
-import { fetchList, ListWithUser } from '@/app/lib/actions/lists.actions';
-import AddListLinksButton from '@/app/components/list/AddListLinksButton';
-import { fetchLinksAsAutocompleteOptions } from '@/app/lib/actions/links.actions';
-import ListTitle from '@/app/components/lists/ListTitle';
-import SearchFab from '@/app/components/list/SearchFab';
+import ListLinks from '../../../components/links/LinksList';
+import LinksSkeleton from '../../../components/links/LinksSkeleton';
+import { fetchList, ListWithUser } from '../../../lib/actions/lists.actions';
+import AddListLinksButton from '../../../components/list/AddListLinksButton';
+import { fetchLinksAsAutocompleteOptions } from '../../../lib/actions/links.actions';
+import ListTitle from '../../../components/lists/ListTitle';
+import SearchFab from '../../../components/list/SearchFab';
 
 export const metadata: Metadata = {
   title: 'Links | LinkArk',

@@ -1,9 +1,9 @@
 import { Metadata } from 'next';
 import { Suspense } from 'react';
-import ListsList from '@/app/components/lists/ListsList';
-import LinksSkeleton from '@/app/components/links/LinksSkeleton';
-import SearchBar from '@/app/components/SearchBar';
-import AddListButton from '@/app/components/lists/AddListButton';
+import ListsList from '../../components/lists/ListsList';
+import LinksSkeleton from '../../components/links/LinksSkeleton';
+import SearchBar from '../../components/SearchBar';
+import AddListButton from '../../components/lists/AddListButton';
 
 export const metadata: Metadata = {
   title: 'Lists | LinkArk',

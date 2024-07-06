@@ -1,7 +1,7 @@
 'use client';
 
 import ConfirmDialog from '@/app/components/ConfirmDialog';
-import { subscribeToList } from '@/app/lib/actions/listSubscriber.action';
+import { subscribeToList } from '../../../lib/actions/listSubscriber.actions';
 import { useAppDispatch } from '@/store/hooks';
 import { showToast } from '@/store/toastSlice';
 import { usePathname } from 'next/navigation';
