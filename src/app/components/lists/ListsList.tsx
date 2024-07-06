@@ -13,7 +13,7 @@ async function ListItems({ query }: { query: string }) {
     <ListWrap id="lists">
       <div className="max-w-screen-sm w-full overflow-x-hidden p-0">
         {lists.map((l) => (
-          <ListItem key={l.id} list={l} creatorId={creatorId} />
+          <ListItem key={l._id.toString()} list={l} creatorId={creatorId} />
         ))}
       </div>
     </ListWrap>

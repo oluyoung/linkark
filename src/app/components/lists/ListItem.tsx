@@ -91,7 +91,7 @@ export default function List({
                   <LockIcon fontSize="small" />
                 )}
               </span>
-              {list.creatorId !== creatorId ? (
+              {/* {list.creator !== creatorId ? (
                 <span className="inline-block mr-2">
                   <Chip
                     icon={<FaceIcon />}
@@ -100,7 +100,7 @@ export default function List({
                     size="small"
                   />
                 </span>
-              ) : null}
+              ) : null} */}
               {!isMobile ? (
                 <>
                   <span className="inline-block ml-2">
@@ -119,7 +119,7 @@ export default function List({
         </div>
         <div className="flex flex-col items-center justify-center h-full">
           <IconButton
-            href={`lists/${list.id}`}
+            href={`lists/${list._id.toString()}`}
             LinkComponent={Link}
             size="large"
           >
@@ -149,7 +149,7 @@ export default function List({
         open={deleteDialogOpen}
         onClose={() => toggleModal(setDeleteDialogOpen, false)}
         name={list.name}
-        id={list.id}
+        id={list._id.toString()}
       />
     ) : null}
     </>

@@ -1,6 +1,5 @@
 'use client';
 
-import { Link as LinkModel } from '@prisma/client';
 import { format } from 'date-fns';
 import { usePathname } from 'next/navigation';
 import MoreMenuButton, { MoreMenuItems } from '@/app/components/MoreMenuButton';
@@ -16,6 +15,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditLinkForm from '@/app/components/links/EditLinkForm';
 import DeleteLinkDialog from '@/app/components/links/DeleteLinkDialog';
 import RemoveListLinksDialog from '@/app/components/list/RemoveListLinksDialog';
+import { ILink as LinkModel } from '@/db/models/link';
 
 function Link({ link, listId }: { link: LinkModel; listId?: string }) {
   const pathname = usePathname();
@@ -128,7 +128,7 @@ function Link({ link, listId }: { link: LinkModel; listId?: string }) {
             <DeleteLinkDialog
               open={deleteDialogOpen}
               onClose={() => toggleModal(setDeleteDialogOpen, false)}
-              id={link.id}
+              id={link._id.toString()}
             />
           ) : null}
           {copyOpen ? (
@@ -142,7 +142,7 @@ function Link({ link, listId }: { link: LinkModel; listId?: string }) {
               open={removeListLinksDialogOpen}
               onClose={() => toggleModal(setRemoveDialogOpen, false)}
               listId={listId}
-              linkId={link.id}
+              linkId={link._id.toString()}
             />
           ) : null}
     </>

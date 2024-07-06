@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import { Suspense } from 'react';
 import ListLinks from '@/app/components/links/LinksList';
 import LinksSkeleton from '@/app/components/links/LinksSkeleton';
-import { fetchList } from '@/app/lib/actions/lists.actions';
+import { fetchList, ListWithUser } from '@/app/lib/actions/lists.actions';
 import AddListLinksButton from '@/app/components/list/AddListLinksButton';
 import { fetchLinksAsAutocompleteOptions } from '@/app/lib/actions/links.actions';
 import ListTitle from '@/app/components/lists/ListTitle';
@@ -18,9 +18,9 @@ export default async function page({ params }: { params: { id: string } }) {
 
   return (
     <>
-      <ListTitle list={list} />
+      <ListTitle list={list as ListWithUser} />
       <Suspense fallback={<LinksSkeleton />}>
-        <ListLinks links={links} listId={list.id} />
+        <ListLinks links={links} listId={list._id.toString()} />
       </Suspense>
       <div className="contents">
         <SearchFab />

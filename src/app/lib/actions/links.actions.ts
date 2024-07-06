@@ -1,24 +1,17 @@
 'use server';
 
-import prismaClient from '@/app/db/prisma-client';
-import { Link } from '@prisma/client';
+import { Link, ILink } from '@/db/models/link'; // Assuming you have the Link model setup here
+import { ListLink } from '@/db/models/listLink'; // Assuming you have the ListLink model setup here
+import { getIdOrRedirect } from './utils';
 import ogs, { SuccessResult } from 'open-graph-scraper';
 import { revalidatePath } from 'next/cache';
 import { unstable_noStore as noStore } from 'next/cache';
 import { LinkSchema } from './schemas';
 import { ListLinkWithLink } from './lists.actions';
-import { getIdOrRedirect } from './utils';
+import connect from '@/db/connect';
+import axios from 'axios';
 
-export type LinkMeta = Omit<
-  Link,
-  | 'id'
-  | 'createdAt'
-  | 'updatedAt'
-  | 'title'
-  | 'description'
-  | 'creatorId'
-  | 'isDeleted'
->;
+export type LinkMeta = Omit<ILink, 'id' | 'createdAt' | 'updatedAt' | 'title' | 'description' | 'creatorId'>;
 
 interface StateErrors {
   url?: string[];
@@ -50,25 +43,16 @@ export interface FetchLinkProps {
 }
 
 export type LinkAsAutocompleteOption = Partial<
-  Pick<
-    Link,
-    | 'id'
-    | 'title'
-    | 'ogTitle'
-    | 'rawUrl'
-    | 'rawUrlHash'
-    | 'description'
-    | 'ogDescription'
-  > & { isOption?: boolean; inputValue?: string }
->;
-
-
+  Pick<ILink, 'title' | 'ogTitle' | 'rawUrl' | 'rawUrlHash' | 'description' | 'ogDescription'>
+> & { isOption?: boolean; inputValue?: string };
 
 /**
  * Function to create a new link
  */
 export async function createLink(values: Fields) {
-  const creatorId = await getIdOrRedirect();
+  await connect();
+
+  const creator = await getIdOrRedirect();
 
   if (!values.title && values.description) {
     throw {
@@ -98,13 +82,11 @@ export async function createLink(values: Fields) {
       };
     }
 
-    await prismaClient.link.create({
-      data: {
-        ...meta,
-        title,
-        description,
-        creatorId
-      },
+    await Link.create({
+      ...meta,
+      title,
+      description,
+      creator,
     });
   } catch (error) {
     console.error(error);
@@ -117,11 +99,10 @@ export async function createLink(values: Fields) {
 /**
  * Function to update a link
  */
-export async function updateLink(
-  linkId: string,
-  values: Fields
-): Promise<State> {
-  const creatorId = await getIdOrRedirect();
+export async function updateLink(linkId: string, values: Fields): Promise<State> {
+  await connect();
+
+  const creator = await getIdOrRedirect();
 
   if (!values.title && values.description) {
     return {
@@ -143,24 +124,20 @@ export async function updateLink(
 
   try {
     const meta = await getLinkMetadata(url);
-    if (!meta)
+    if (!meta) {
       return {
         errors: {
           url: ['This URL does not exist.'],
         },
       };
+    }
 
-    await prismaClient.link.update({
-      data: {
-        ...meta,
-        title,
-        description,
-      },
-      where: {
-        id: linkId,
-        creatorId
-      },
+    await Link.findOneAndUpdate({ _id: linkId, creator }, {
+      ...meta,
+      title,
+      description,
     });
+
   } catch (error) {
     throw error;
   }
@@ -175,18 +152,15 @@ export async function updateLink(
  * Function to send a link to trash
  */
 export async function trashLink(linkId: string): Promise<State> {
-  const creatorId = await getIdOrRedirect();
+  await connect();
+
+  const creator = await getIdOrRedirect();
 
   try {
-    await prismaClient.link.update({
-      data: {
-        isDeleted: true,
-      },
-      where: {
-        id: linkId,
-        creatorId
-      },
+    await Link.findOneAndUpdate({ _id: linkId, creator }, {
+      isDeleted: true,
     });
+
   } catch (error) {
     throw error;
   }
@@ -201,18 +175,14 @@ export async function trashLink(linkId: string): Promise<State> {
  * Function to restore a link from trash
  */
 export async function restoreLink(linkId: string): Promise<State> {
-  const creatorId = await getIdOrRedirect();
+  await connect();
+  const creator = await getIdOrRedirect();
 
   try {
-    await prismaClient.link.update({
-      data: {
-        isDeleted: false,
-      },
-      where: {
-        id: linkId,
-        creatorId
-      },
+    await Link.findOneAndUpdate({ _id: linkId, creator }, {
+      isDeleted: false,
     });
+
   } catch (error) {
     throw error;
   }
@@ -226,7 +196,7 @@ export async function restoreLink(linkId: string): Promise<State> {
 /**
  * Function to fetch all trashed links
  */
-export async function fetchTrashLinks(query?: string): Promise<Link[]> {
+export async function fetchTrashLinks(query?: string): Promise<ILink[]> {
   return await fetchLinks({ query, isDeleted: true, orderBy: 'updatedAt' });
 }
 
@@ -234,35 +204,28 @@ export async function fetchTrashLinks(query?: string): Promise<Link[]> {
  * Function to permanently delete a link
  */
 export async function deleteLink(linkId: string): Promise<State> {
-  const creatorId = await getIdOrRedirect();
+  await connect();
+  const creator = await getIdOrRedirect();
 
   try {
-    const link = prismaClient.link.findFirstOrThrow({
-      where: {
-        id: linkId,
-      },
-      select: {
-        list: true,
-      },
-    });
+    const link = await Link.findOne({ _id: linkId, creator }).populate('list', 'listId');
 
-    const listIds = (await link.list()).map((l) => l.listId);
+    if (!link) throw new Error('Link not found');
 
-    await prismaClient.$transaction([
-      prismaClient.listLink.deleteMany({
-        where: {
-          linkId,
-          listId: {
-            in: listIds,
-          },
+    const listIds = link.list.map((l: any) => l.listId);
+
+    await Promise.all([
+      Link.deleteMany({
+        _id: linkId,
+        creator,
+      }),
+      ListLink.deleteMany({
+        linkId: {
+          $in: listIds,
         },
       }),
-      prismaClient.link.delete({
-        where: {
-          id: linkId,
-          creatorId
-      }})
     ]);
+
   } catch (error) {
     console.error(error);
     throw new Error('Could not delete link, please try again.');
@@ -281,58 +244,52 @@ export async function fetchLinks({
   query,
   isDeleted = false,
   sort = 'desc',
-  orderBy = 'createdAt'
-}: FetchLinkProps): Promise<Link[]> {
+  orderBy = 'createdAt',
+}: FetchLinkProps): Promise<ILink[]> {
   noStore();
 
-  const creatorId = await getIdOrRedirect();
+  await connect();
 
-  let links = [];
+  const creator = await getIdOrRedirect();
 
   try {
+    let links = [];
     if (query) {
-      links = await searchLinks(query, creatorId, isDeleted);
+      links = await searchLinks(query, creator, isDeleted);
     } else {
-      links = await prismaClient.link.findMany({
-        where: {
-          creatorId,
-          isDeleted,
-        },
-        orderBy: {
-          [orderBy]: sort,
-        },
-      });
+      links = await Link.find({
+        creator,
+        isDeleted,
+      }).sort({ [orderBy]: sort }).exec();
     }
+
+    return links;
   } catch (error) {
     throw error;
   }
-
-  return links;
 }
 
 /**
  * Function to fetch links for Autocomplete options
  */
-export async function fetchLinksAsAutocompleteOptions(links?: ListLinkWithLink[]): Promise<
-  LinkAsAutocompleteOption[]
-> {
+export async function fetchLinksAsAutocompleteOptions(links?: ListLinkWithLink[]): Promise<LinkAsAutocompleteOption[]> {
   noStore();
-  const creatorId = await getIdOrRedirect();
+  
+  await connect();
+
+  const creator = await getIdOrRedirect();
 
   const listLinksIds = (links || []).map(l => l.id);
 
   try {
-    return await prismaClient.link.findMany({
-      where: {
-        creatorId,
-        isDeleted: false,
-        AND: {
-          id: {
-            notIn: listLinksIds
-          }
-        }
-      }
+    return await Link.find({
+      creator,
+      isDeleted: false,
+      id: {
+        $nin: listLinksIds,
+      },
     });
+
   } catch (error) {
     throw error;
   }
@@ -341,41 +298,26 @@ export async function fetchLinksAsAutocompleteOptions(links?: ListLinkWithLink[]
 /**
  * Function to fetch links based on a query
  */
-export async function searchLinks(
-  query: string,
-  creatorId: string,
-  isDeleted = false
-): Promise<Link[]> {
-  let links = [];
+export async function searchLinks(query: string, creatorId: string, isDeleted = false): Promise<ILink[]> {
+  await connect();
 
   try {
-    links = await prismaClient.link.findMany({
-      where: {
-        AND: [
-          {
-            creatorId,
-            isDeleted,
-            OR: [
-              { title: { contains: query } },
-              { description: { contains: query } },
-              { ogDescription: { contains: query } },
-              { ogTitle: { contains: query } },
-              { rawUrl: { contains: query } },
-            ],
-          },
-        ],
-      },
-      orderBy: {
-        updatedAt: 'desc',
-      },
-    });
+    return await Link.find({
+      creator: creatorId,
+      isDeleted,
+      $or: [
+        { title: { $regex: query, $options: 'i' } },
+        { description: { $regex: query, $options: 'i' } },
+        { ogDescription: { $regex: query, $options: 'i' } },
+        { ogTitle: { $regex: query, $options: 'i' } },
+        { rawUrl: { $regex: query, $options: 'i' } },
+      ],
+    }).sort({ updatedAt: 'desc' });
+
   } catch (error) {
     console.error(error);
     throw new Error('Could not find any links with this query.');
   }
-
-  revalidatePath('/home/links');
-  return links;
 }
 
 /**
@@ -400,10 +342,12 @@ export async function fetchOgMeta(url: string): Promise<State | SuccessResult> {
  */
 async function getLinkMetadata(uri: string): Promise<LinkMeta | undefined> {
   try {
-    return await fetch('http://localhost:3000/api/ogs', {
-      method: 'POST',
-      body: JSON.stringify({ uri }),
-    }).then((res) => res.json());
+    const response = await axios.post(`${process.env.API_URL}/api/ogs`, { uri }).catch((error) => {
+      console.error(error);
+      throw new Error('Failed to fetch metadata');
+    });
+
+    return response.data;
   } catch (error) {
     console.error(error);
   }

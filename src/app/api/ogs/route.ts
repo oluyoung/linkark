@@ -10,7 +10,6 @@ import { LinkMeta } from '@/app/lib/actions/links.actions';
 */
 export async function POST(req: NextRequest) {
   const { uri } = (await req.json()) as { uri: string };
-
   const hash = createHash('sha512');
   const url = new URL(uri);
 

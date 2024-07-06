@@ -14,7 +14,7 @@ import LinkIcon from '@mui/icons-material/Link';
 import ClearIcon from '@mui/icons-material/Clear';
 import SubtitlesOutlinedIcon from '@mui/icons-material/SubtitlesOutlined';
 import ViewStreamOutlinedIcon from '@mui/icons-material/ViewStreamOutlined';
-import { Link } from '@prisma/client';
+import { ILink as Link } from '@/db/models/link';
 import { StyledForm } from './AddLinkForm';
 import { useAppDispatch } from '@/store/hooks';
 import { showToast } from '@/store/toastSlice';
@@ -37,7 +37,7 @@ const EditLinkForm = ({ open, onClose, link }: Props) => {
       tags: [],
     },
     onSubmit: async (values) => {
-      updateLink(link.id, values)
+      updateLink(link._id.toString(), values)
         .then((res) => {
           if (res.success) {
             dispatch(

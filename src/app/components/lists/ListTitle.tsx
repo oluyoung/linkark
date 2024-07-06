@@ -180,7 +180,7 @@ function ListTitle({ list, fromPublic }: { list: ListWithUser, fromPublic?: bool
         open={deleteDialogOpen}
         onClose={() => toggleModal(setDeleteDialogOpen, false)}
         name={list.name}
-        id={list.id}
+        id={list._id.toString()}
       />
     ) : null}
     </>

@@ -3,12 +3,12 @@ import { Adapter } from 'next-auth/adapters';
 import GithubProvider, { GithubProfile } from 'next-auth/providers/github';
 import GoogleProvider, { GoogleProfile } from 'next-auth/providers/google';
 import TwitterProvider, { TwitterProfile } from 'next-auth/providers/twitter';
+import { MongoDBAdapter } from '@next-auth/mongodb-adapter';
 // import FacebookProvider from 'next-auth/providers/facebook';
-import { PrismaAdapter } from '@auth/prisma-adapter';
-import prismaClient from '@/app/db/prisma-client';
+import MongoClient from '../../../db/mongoClient';
 
 export const authOptions = {
-  adapter: PrismaAdapter(prismaClient) as Adapter,
+  adapter: MongoDBAdapter(MongoClient) as Adapter,
   providers: [
     GithubProvider({
       clientId: process.env.GITHUB_CLIENT_ID as string,

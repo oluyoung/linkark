@@ -1,18 +1,24 @@
 'use server';
 
-import prismaClient from '@/app/db/prisma-client';
-import { List, User, ListLink, Link, ListSubscriber } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
 import { unstable_noStore as noStore } from 'next/cache';
 import { ListSchema, MultiLinkSchema } from './schemas';
-import { LinkAsAutocompleteOption } from './links.actions';
-import { getIdOrRedirect } from './utils';
-import { isAfter, isBefore } from 'date-fns';
 
-export type ListWithUser = List & { creator: User };
-export type ListLinkWithLink = ListLink & { link: Link };
+import { List, IList } from '@/db/models/list';
+import { User, IUser } from '@/db/models/user';
+import { ListLink, IListLink } from '@/db/models/listLink';
+import { Link, ILink } from '@/db/models/link';
+import { ListSubscriber, IListSubscriber } from '@/db/models/listSubscriber';
+import { isValid, isAfter, isBefore } from 'date-fns';
+import { LinkAsAutocompleteOption } from './links.actions';
+
+import { getIdOrRedirect } from './utils';
+import connect from '@/db/connect';
+
+export type ListWithUser = IList & { creator: IUser };
+export type ListLinkWithLink = IListLink & { link: ILink };
 export type ListWithLinks = ListWithUser & { links: ListLinkWithLink[] };
-export type ListWithSubscribers = ListWithUser & { subscribers: ListSubscriber[] };
+export type ListWithSubscribers = ListWithUser & { subscribers: IListSubscriber[] };
 
 interface StateErrors {
   name?: string[];
@@ -63,22 +69,20 @@ function validatedFields(values: Fields) {
   return validatedFields.data;
 }
 
-/**
- * Function to create a new list
- */
+// Function to create a new list
 export async function createList(values: Fields) {
-  const creatorId = await getIdOrRedirect();
+  await connect();
+
+  const creator = await getIdOrRedirect();
 
   const { name, description, isPublic } = validatedFields(values);
 
   try {
-    await prismaClient.list.create({
-      data: {
-        name,
-        description,
-        isPublic,
-        creatorId,
-      },
+    await List.create({
+      name,
+      description,
+      isPublic,
+      creator,
     });
   } catch (error) {
     console.error(error);
@@ -88,34 +92,24 @@ export async function createList(values: Fields) {
   revalidatePath('/home/lists');
 }
 
-/**
- * Function to update a new list
- */
-export async function updateList(
-  values: Fields,
-  listId: string
-) {
+// Function to update a list
+export async function updateList(values: Fields, listId: string) {
+  await connect();
+
   if (!listId) return;
 
-  const creatorId = await getIdOrRedirect();
+  const creator = await getIdOrRedirect();
 
   const { name, description, isPublic } = validatedFields(values);
 
   try {
-    await prismaClient.list.update({
-      data: {
-        name,
-        description,
-        isPublic,
-      },
-      where: {
-        id: listId,
-        creatorId,
-      },
-    });
+    await List.findOneAndUpdate(
+      { _id: listId, creator },
+      { name, description, isPublic },
+      { new: true }
+    );
   } catch (error) {
     console.error(error);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if ('errors' in (error as any)) throw error;
     throw new Error('Could not update list, please try again.');
   }
@@ -123,98 +117,73 @@ export async function updateList(
   revalidatePath('/home/lists');
 }
 
-/**
- * Function to fetch users' lists
- */
+// Function to fetch users' lists
 export async function fetchLists({
-  // sort = 'desc',
   orderBy = 'createdAt',
 }: FetchListProps): Promise<ListWithUser[]> {
   noStore();
 
-  const creatorId = await getIdOrRedirect();
+  await connect();
+
+  const creator = await getIdOrRedirect();
 
   try {
-    const mine = await prismaClient.list.findMany({
-      where: {
-        creatorId,
-      },
-      include: {
-        creator: true,
-      },
-    });
-
-    const subd = await prismaClient.listSubscriber.findMany({
-      where: {
-        subscriberId: creatorId,
-      },
-      include: {
-        list: {
-          include: {
-            creator: true
-          }
+    const lists = await List.find({ creator: creator }).exec();
+    
+    const subd: ListWithUser[] = await List.find({ subscribers: creator })
+      .populate({
+        path: 'list',
+        populate: {
+          path: 'creator',
         },
-      },
-    });
+      })
+      .exec();
 
-    return mine.concat(subd.map((s) => s.list)).sort((a, b) => {
-      if (isBefore(b[orderBy], a[orderBy])) return -1;
-      if (isAfter(b[orderBy], a[orderBy])) return 1;
-      return 0;
-    });
+    return [...lists, ...subd]
+      .sort((a, b) => {
+        if (isBefore(b[orderBy], a[orderBy])) return -1;
+        if (isAfter(b[orderBy], a[orderBy])) return 1;
+        return 0;
+      });
+    // return lists as ListWithUser[];
   } catch (error) {
     throw error;
   }
 }
 
-/**
- * Function to fetch a single list with its child links
- */
-export async function fetchList({
-  id,
-}: {
-  id: string;
-}): Promise<ListWithLinks> {
+// Function to fetch a single list with its child links
+export async function fetchList({ id }: { id: string }): Promise<ListWithLinks> {
+  await connect();
+
   const creatorId = await getIdOrRedirect();
 
   try {
-    return await prismaClient.list.findFirstOrThrow({
-      where: {
-        id,
-        creatorId,
-      },
-      include: {
-        links: {
-          where: {
-            link: {
-              isDeleted: false,
-            },
-          },
-          include: {
-            link: true,
-          },
+    const list = await List.findOne({ _id: id, creator: creatorId })
+      .populate({
+        path: 'links',
+        populate: {
+          path: 'link',
+          match: { isDeleted: false },
         },
-        creator: true
-      },
-    });
+      })
+      .populate('creator')
+      .exec();
+
+    if (!list) throw new Error('List not found');
+    return list.toJSON() as ListWithLinks;
   } catch (error) {
     throw error;
   }
 }
 
-/**
- * Function to permanently delete a list
- */
+// Function to permanently delete a list
 export async function deleteList(listId: string) {
+  await connect();
+
   const creatorId = await getIdOrRedirect();
 
   try {
-    await prismaClient.list.delete({
-      where: {
-        id: listId,
-        creatorId,
-      },
-    });
+    await List.findOneAndDelete({ _id: listId, creatorId }).exec();
   } catch (error) {
     console.error(error);
     throw new Error('Could not delete list, please try again.');
@@ -223,13 +192,13 @@ export async function deleteList(listId: string) {
   revalidatePath('/home/lists');
 }
 
-/**
- * Function to add multiple links to a list
- */
+// Function to add multiple links to a list
 export async function addListLinks(
   listId: string,
   links: Partial<LinkAsAutocompleteOption>[]
 ) {
+  await connect();
+
   const creatorId = await getIdOrRedirect();
 
   const validatedFields = MultiLinkSchema.safeParse(links);
@@ -246,7 +215,7 @@ export async function addListLinks(
     return {
       link: {
         connectOrCreate: {
-          where: { id: l.id || '' },
+          where: { _id: l.id || '' },
           create: {
             ...l,
             creatorId,
@@ -257,17 +226,11 @@ export async function addListLinks(
   });
 
   try {
-    await prismaClient.list.update({
-      data: {
-        links: {
-          create: connectedOrCreatedLinks,
-        },
-      },
-      where: {
-        id: listId,
-        creatorId,
-      },
-    });
+    await List.findOneAndUpdate(
+      { _id: listId, creatorId },
+      { $push: { links: { $each: connectedOrCreatedLinks } } },
+      { new: true }
+    );
   } catch (error) {
     console.error(error);
     throw error;
@@ -276,21 +239,12 @@ export async function addListLinks(
   revalidatePath(`/home/list/${listId}`);
 }
 
-/**
- * Function to remove multiple links from a list
- */
+// Function to remove multiple links from a list
 export async function removeListLinks(listId: string, linkIds: string[]) {
+  await connect();
+
   try {
-    await prismaClient.$transaction([
-      prismaClient.listLink.deleteMany({
-        where: {
-          linkId: {
-            in: linkIds,
-          },
-          listId,
-        },
-      }),
-    ]);
+    await ListLink.deleteMany({ linkId: { $in: linkIds }, listId }).exec();
   } catch (error) {
     console.error(error);
     throw error;
@@ -299,9 +253,7 @@ export async function removeListLinks(listId: string, linkIds: string[]) {
   revalidatePath(`/home/list/${listId}`);
 }
 
-/**
- * Function to fetch all public lists
- */
+// Function to fetch all public lists
 export async function fetchPublicLists({
   query,
   sort = 'desc',
@@ -309,39 +261,22 @@ export async function fetchPublicLists({
 }: FetchListProps): Promise<ListWithSubscribers[]> {
   noStore();
 
-  try {
-    if (query) {
-      // const fullTextQuery = query?.split(' ').map((word) => Boolean(word) &&`+${word}`).join(' ');
+  await connect();
 
-      return await prismaClient.list.findMany({
-        where: {
-          AND: {
-            isPublic: true,
-            OR: [
-              { name: { contains: query } },
-              { description: { contains: query } }
-            ]
-          }
-        },
-        include: {
-          creator: true,
-          subscribers: true,
-        }
-      });
-    } else {
-      return await prismaClient.list.findMany({
-        where: {
-          isPublic: true,
-        },
-        include: {
-          creator: true,
-          subscribers: true,
-        },
-        orderBy: {
-          [orderBy]: sort
-        }
-      });
+  try {
+    const filter: any = { isPublic: true };
+
+    if (query) {
+      filter.$or = [{ name: { $regex: query, $options: 'i' } }, { description: { $regex: query, $options: 'i' } }];
     }
+
+    const lists = await List.find(filter)
+      .populate('creator')
+      .populate('subscribers')
+      .sort({ [orderBy]: sort })
+      .exec();
+
+    return lists as ListWithSubscribers[];
   } catch (error) {
     throw error;
   }

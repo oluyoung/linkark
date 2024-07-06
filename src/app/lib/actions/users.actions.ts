@@ -1,25 +1,22 @@
 'use server';
 
-import prismaClient from '@/app/db/prisma-client';
-import { User } from '@prisma/client';
+import { User, IUser } from '@/db/models/user';
 import { getIdOrRedirect } from './utils';
 
 /**
  * Function to fetch current user
  */
-export async function fetchUser(): Promise<Pick<User, 'name' | 'email'>> {
+export async function fetchUser(): Promise<Pick<IUser, 'name' | 'email'>> {
   const creatorId = await getIdOrRedirect();
 
   try {
-    return await prismaClient.user.findFirstOrThrow({
-      where: {
-        id: creatorId,
-      },
-      select: {
-        name: true,
-        email: true
-      }
-    });
+    const user = await User.findById(creatorId).select('name email').lean();
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    return user as IUser;
   } catch (error) {
     throw error;
   }
@@ -28,15 +25,17 @@ export async function fetchUser(): Promise<Pick<User, 'name' | 'email'>> {
 /**
  * Function to delete a user
  */
-export async function deleteAccount(): Promise<User> {
+export async function deleteAccount(): Promise<IUser> {
   const creatorId = await getIdOrRedirect();
 
   try {
-    return await prismaClient.user.delete({
-      where: {
-        id: creatorId,
-      },
-    });
+    const user = await User.findByIdAndDelete(creatorId).lean();
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    return user as IUser;
   } catch (error) {
     throw error;
   }

@@ -20,7 +20,7 @@ function AddListButton() {
         className="!fixed bottom-6 right-6"
         onClick={handleOpen}
       >
-        {!isMobile ? 'ADD LINKS' : null}
+        {!isMobile ? 'Add Lists' : null}
         <AddIcon sx={{ ml: !isMobile ? 1 : 0 }} />
       </Fab>
       <Modal
