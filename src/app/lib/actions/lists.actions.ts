@@ -5,11 +5,11 @@ import { unstable_noStore as noStore } from 'next/cache';
 import { ListSchema, MultiLinkSchema } from './schemas';
 
 import { List, IList } from '../../../db/models/list';
-import { User, IUser } from '../../../db/models/user';
+import { IUser } from '../../../db/models/user';
 import { ListLink, IListLink } from '../../../db/models/listLink';
-import { Link, ILink } from '../../../db/models/link';
-import { ListSubscriber, IListSubscriber } from '../../../db/models/listSubscriber';
-import { isValid, isAfter, isBefore } from 'date-fns';
+import { ILink } from '../../../db/models/link';
+import { IListSubscriber } from '../../../db/models/listSubscriber';
+import { isAfter, isBefore } from 'date-fns';
 import { LinkAsAutocompleteOption } from './links.actions';
 
 import { getIdOrRedirect } from './utils';

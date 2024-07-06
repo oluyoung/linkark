@@ -1,7 +1,7 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
 export interface IList {
-  _id: mongoose.Types.ObjectId;
+  readonly _id: mongoose.Types.ObjectId;
   name: string;
   description?: string;
   isPublic: boolean;

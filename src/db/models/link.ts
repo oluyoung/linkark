@@ -1,7 +1,7 @@
 import mongoose, { Schema } from 'mongoose';
 
 export interface ILink {
-  _id: mongoose.Types.ObjectId;
+  readonly _id: mongoose.Types.ObjectId;
   hostname: string;
   origin: string;
   path: string;
