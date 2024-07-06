@@ -1,6 +1,6 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
-export interface IListLink extends Document {
+export interface IListLink {
   _id: mongoose.Types.ObjectId;
   linkId: mongoose.Types.ObjectId;
   listId: mongoose.Types.ObjectId;

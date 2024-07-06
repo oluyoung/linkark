@@ -1,15 +1,15 @@
 'use server';
 
-import { Link, ILink } from '@/db/models/link'; // Assuming you have the Link model setup here
-import { ListLink } from '@/db/models/listLink'; // Assuming you have the ListLink model setup here
-import { getIdOrRedirect } from './utils';
+import axios from 'axios';
 import ogs, { SuccessResult } from 'open-graph-scraper';
 import { revalidatePath } from 'next/cache';
 import { unstable_noStore as noStore } from 'next/cache';
+import { Link, ILink } from '../../..//db/models/link'; // Assuming you have the Link model setup here
+import { ListLink } from '../../..//db/models/listLink'; // Assuming you have the ListLink model setup here
+import { getIdOrRedirect } from './utils';
 import { LinkSchema } from './schemas';
 import { ListLinkWithLink } from './lists.actions';
-import connect from '@/db/connect';
-import axios from 'axios';
+import connect from '../../../db/connect';
 
 export type LinkMeta = Omit<ILink, 'id' | 'createdAt' | 'updatedAt' | 'title' | 'description' | 'creatorId'>;
 
@@ -253,7 +253,7 @@ export async function fetchLinks({
   const creator = await getIdOrRedirect();
 
   try {
-    let links = [];
+    let links: ILink[] = [];
     if (query) {
       links = await searchLinks(query, creator, isDeleted);
     } else {
@@ -279,7 +279,7 @@ export async function fetchLinksAsAutocompleteOptions(links?: ListLinkWithLink[]
 
   const creator = await getIdOrRedirect();
 
-  const listLinksIds = (links || []).map(l => l.id);
+  const listLinksIds = (links || []).map(l => l._id);
 
   try {
     return await Link.find({
@@ -342,7 +342,7 @@ export async function fetchOgMeta(url: string): Promise<State | SuccessResult> {
  */
 async function getLinkMetadata(uri: string): Promise<LinkMeta | undefined> {
   try {
-    const response = await axios.post(`${process.env.API_URL}/api/ogs`, { uri }).catch((error) => {
+    const response = await axios.post(`${process.env.API_URL}/ogs`, { uri }).catch((error) => {
       console.error(error);
       throw new Error('Failed to fetch metadata');
     });

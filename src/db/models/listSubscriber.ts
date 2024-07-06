@@ -1,6 +1,7 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
-export interface IListSubscriber extends Document {
+export interface IListSubscriber {
+  _id: mongoose.Types.ObjectId;
   subscriberId: mongoose.Types.ObjectId;
   listId: mongoose.Types.ObjectId;
 }

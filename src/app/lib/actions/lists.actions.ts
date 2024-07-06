@@ -4,16 +4,16 @@ import { revalidatePath } from 'next/cache';
 import { unstable_noStore as noStore } from 'next/cache';
 import { ListSchema, MultiLinkSchema } from './schemas';
 
-import { List, IList } from '@/db/models/list';
-import { User, IUser } from '@/db/models/user';
-import { ListLink, IListLink } from '@/db/models/listLink';
-import { Link, ILink } from '@/db/models/link';
-import { ListSubscriber, IListSubscriber } from '@/db/models/listSubscriber';
+import { List, IList } from '../../../db/models/list';
+import { User, IUser } from '../../../db/models/user';
+import { ListLink, IListLink } from '../../../db/models/listLink';
+import { Link, ILink } from '../../../db/models/link';
+import { ListSubscriber, IListSubscriber } from '../../../db/models/listSubscriber';
 import { isValid, isAfter, isBefore } from 'date-fns';
 import { LinkAsAutocompleteOption } from './links.actions';
 
 import { getIdOrRedirect } from './utils';
-import connect from '@/db/connect';
+import connect from '../../../db/connect';
 
 export type ListWithUser = IList & { creator: IUser };
 export type ListLinkWithLink = IListLink & { link: ILink };

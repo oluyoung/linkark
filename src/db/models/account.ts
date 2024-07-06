@@ -1,6 +1,7 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
 export interface IAccount {
+  _id: mongoose.Types.ObjectId;
   userId: mongoose.Types.ObjectId;
   type: string;
   provider: string;

@@ -1,6 +1,6 @@
 'use server';
 
-import { User, IUser } from '@/db/models/user';
+import { User, IUser } from '../../../db/models/user';
 import { getIdOrRedirect } from './utils';
 
 /**
